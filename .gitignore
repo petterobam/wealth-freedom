@@ -38,6 +38,14 @@ test-*.js
 test-*.png
 test-downloads/
 
+# Coverage reports
+coverage/
+
 # Temporary files
 *.tmp
 .temp/
+
+# Database
+*.db
+*.db-shm
+*.db-wal
