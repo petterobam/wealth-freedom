@@ -1,0 +1,40 @@
+appId: com.wealth-freedom.app
+productName: 财富自由之路
+
+directories:
+  buildResources: build
+  output: release
+
+files:
+  - dist/**/*
+  - out/**/*
+  - package.json
+
+mac:
+  category: public.app-category.finance
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.icns
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+  icon: build/icon.ico
+
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Office
+  icon: build/icon.png
+
+nsis:
+  oneClick: false
+  perMachine: true
+  allowToChangeInstallationDirectory: true

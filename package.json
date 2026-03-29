@@ -1,0 +1,22 @@
+{
+  "name": "wealth-freedom",
+  "version": "0.1.0",
+  "private": true,
+  "description": "财富自由之路 - 个人财务管理软件",
+  "author": "欧阳洁",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -F @wealth-freedom/desktop dev",
+    "build": "pnpm -F @wealth-freedom/desktop build",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx --fix"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

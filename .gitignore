@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+out/
+release/
+*.dmg
+*.exe
+*.AppImage
+*.deb
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Test files
+test-*.js
+test-*.png
+test-downloads/
+
+# Temporary files
+*.tmp
+.temp/

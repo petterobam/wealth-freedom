@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- 金币外圈 -->
+  <circle cx="16" cy="16" r="14" fill="#FFD700" stroke="#DAA520" stroke-width="2"/>
+  <!-- 金币内圈 -->
+  <circle cx="16" cy="16" r="10" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <!-- 上升箭头 -->
+  <path d="M16 8 L16 22 M11 13 L16 8 L21 13" stroke="#8B4513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- ¥ 符号 -->
+  <text x="16" y="27" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#8B4513" text-anchor="middle">¥</text>
+</svg>

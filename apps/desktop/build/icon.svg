@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 背景渐变 -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffb700;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 圆角矩形背景 -->
+  <rect x="32" y="32" width="448" height="448" rx="80" fill="url(#bgGrad)"/>
+  
+  <!-- 上升箭头（代表财富增长） -->
+  <path d="M256 120 L356 240 L306 240 L306 340 L206 340 L206 240 L156 240 Z" 
+        fill="url(#coinGrad)" 
+        stroke="#fff" 
+        stroke-width="8"
+        stroke-linejoin="round"/>
+  
+  <!-- 进度条（代表追踪进度） -->
+  <rect x="120" y="380" width="272" height="24" rx="12" fill="rgba(255,255,255,0.3)"/>
+  <rect x="120" y="380" width="180" height="24" rx="12" fill="#67c23a"/>
+  
+  <!-- 进度百分比文字 -->
+  <text x="256" y="398" 
+        font-family="Arial, sans-serif" 
+        font-size="16" 
+        font-weight="bold" 
+        fill="#fff" 
+        text-anchor="middle">66%</text>
+</svg>

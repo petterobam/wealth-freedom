@@ -1,0 +1,33 @@
+{
+  "name": "@wealth-freedom/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/types/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "require": "./dist/utils/index.js"
+    },
+    "./calculators/freedom-timeline": {
+      "types": "./dist/src/calculators/freedom-timeline.d.ts",
+      "import": "./dist/src/calculators/freedom-timeline.js",
+      "require": "./dist/src/calculators/freedom-timeline.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
