@@ -17,74 +17,100 @@
           router
           class="app-menu"
           :collapse="!sidebarVisible"
+          :unique-opened="true"
         >
-          <el-menu-item index="/dashboard">
-            <el-icon><DataBoard /></el-icon>
-            <template #title>财务看板</template>
-          </el-menu-item>
-          <el-menu-item index="/goals">
-            <el-icon><Flag /></el-icon>
-            <template #title>目标追踪</template>
-          </el-menu-item>
-          <el-menu-item index="/transactions">
-            <el-icon><List /></el-icon>
-            <template #title>收支记录</template>
-          </el-menu-item>
-          <el-menu-item index="/accounts">
-            <el-icon><Wallet /></el-icon>
-            <template #title>账户管理</template>
-          </el-menu-item>
-          <el-menu-item index="/debts">
-            <el-icon><CreditCard /></el-icon>
-            <template #title>负债管理</template>
-          </el-menu-item>
+          <!-- 财务管理分组 -->
+          <el-sub-menu index="finance">
+            <template #title>
+              <el-icon><Wallet /></el-icon>
+              <span>财务管理</span>
+            </template>
+            <el-menu-item index="/dashboard">
+              <el-icon><DataBoard /></el-icon>
+              <template #title>财务看板</template>
+            </el-menu-item>
+            <el-menu-item index="/goals">
+              <el-icon><Flag /></el-icon>
+              <template #title>目标追踪</template>
+            </el-menu-item>
+            <el-menu-item index="/transactions">
+              <el-icon><List /></el-icon>
+              <template #title>收支记录</template>
+            </el-menu-item>
+            <el-menu-item index="/accounts">
+              <el-icon><Wallet /></el-icon>
+              <template #title>账户管理</template>
+            </el-menu-item>
+            <el-menu-item index="/debts">
+              <el-icon><CreditCard /></el-icon>
+              <template #title>负债管理</template>
+            </el-menu-item>
+          </el-sub-menu>
+
+          <!-- 收入提升分组 -->
+          <el-sub-menu index="income">
+            <template #title>
+              <el-icon><TrendCharts /></el-icon>
+              <span>收入提升</span>
+            </template>
+            <el-menu-item index="/income-dashboard">
+              <el-icon><DataBoard /></el-icon>
+              <template #title>收入看板</template>
+            </el-menu-item>
+            <el-menu-item index="/income-goals">
+              <el-icon><Flag /></el-icon>
+              <template #title>收入目标</template>
+            </el-menu-item>
+            <el-menu-item index="/income-analysis">
+              <el-icon><DataAnalysis /></el-icon>
+              <template #title>收入分析</template>
+            </el-menu-item>
+            <el-menu-item index="/income-strategies">
+              <el-icon><Trophy /></el-icon>
+              <template #title>收入策略</template>
+            </el-menu-item>
+            <el-menu-item index="/income-actions">
+              <el-icon><List /></el-icon>
+              <template #title>行动计划</template>
+            </el-menu-item>
+          </el-sub-menu>
+
+          <!-- 规划工具分组 -->
+          <el-sub-menu index="planning">
+            <template #title>
+              <el-icon><DataAnalysis /></el-icon>
+              <span>规划工具</span>
+            </template>
+            <el-menu-item index="/calculator">
+              <el-icon><TrendCharts /></el-icon>
+              <template #title>复利计算器</template>
+            </el-menu-item>
+            <el-menu-item index="/prepayment-calculator">
+              <el-icon><CreditCard /></el-icon>
+              <template #title>提前还款计算器</template>
+            </el-menu-item>
+            <el-menu-item index="/retirement-planner">
+              <el-icon><Flag /></el-icon>
+              <template #title>退休规划</template>
+            </el-menu-item>
+            <el-menu-item index="/large-expense-planner">
+              <el-icon><Wallet /></el-icon>
+              <template #title>大额支出规划</template>
+            </el-menu-item>
+            <el-menu-item index="/scenario-simulator">
+              <el-icon><DataAnalysis /></el-icon>
+              <template #title>情景模拟</template>
+            </el-menu-item>
+            <el-menu-item index="/asset-allocation">
+              <el-icon><PieChart /></el-icon>
+              <template #title>资产配置</template>
+            </el-menu-item>
+          </el-sub-menu>
+
+          <!-- 其他功能 -->
           <el-menu-item index="/dreams">
             <el-icon><PictureFilled /></el-icon>
             <template #title>梦想图册</template>
-          </el-menu-item>
-          <el-menu-item index="/income-dashboard">
-            <el-icon><TrendCharts /></el-icon>
-            <template #title>收入看板</template>
-          </el-menu-item>
-          <el-menu-item index="/income-goals">
-            <el-icon><Flag /></el-icon>
-            <template #title>收入目标</template>
-          </el-menu-item>
-          <el-menu-item index="/income-analysis">
-            <el-icon><DataAnalysis /></el-icon>
-            <template #title>收入分析</template>
-          </el-menu-item>
-          <el-menu-item index="/income-strategies">
-            <el-icon><Trophy /></el-icon>
-            <template #title>收入策略</template>
-          </el-menu-item>
-          <el-menu-item index="/income-actions">
-            <el-icon><List /></el-icon>
-            <template #title>收入行动计划</template>
-          </el-menu-item>
-          <el-menu-item index="/calculator">
-            <el-icon><TrendCharts /></el-icon>
-            <template #title>复利计算器</template>
-          </el-menu-item>
-          <el-menu-item index="/prepayment-calculator">
-            <el-icon><TrendCharts /></el-icon>
-            <template #title>提前还款计算器</template>
-          </el-menu-item>
-          <el-menu-item index="/retirement-planner">
-            <el-icon><TrendCharts /></el-icon>
-            <template #title>退休规划工具</template>
-          </el-menu-item>
-          <el-menu-item index="/large-expense-planner">
-            <el-icon><TrendCharts /></el-icon>
-            <template #title>大额支出规划</template>
-          </el-menu-item>
-          <el-menu-item index="/scenario-simulator">
-            <el-icon><TrendCharts /></el-icon>
-            <template #title>情景模拟</template>
-          </el-menu-item>
-          <el-menu-item index="/asset-allocation">
-            <el-icon><PieChart /></el-icon>
-            <template #title>资产配置可视化</template>
           </el-menu-item>
           <el-menu-item index="/settings">
             <el-icon><Setting /></el-icon>
@@ -291,6 +317,52 @@ onMounted(() => {
     &.is-active {
       background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
       color: #fff;
+    }
+  }
+
+  // 子菜单标题样式
+  :deep(.el-sub-menu__title) {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .el-sub-menu__icon-arrow {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  // 子菜单展开时的背景
+  :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
+    color: #fff;
+  }
+
+  // 子菜单内的菜单项
+  :deep(.el-sub-menu .el-menu-item) {
+    padding-left: 52px !important;
+    min-width: auto;
+  }
+
+  // 折叠状态下子菜单的弹出菜单样式
+  :deep(.el-menu--vertical .el-menu--popup) {
+    background: #1a1a2e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    .el-menu-item {
+      color: rgba(255, 255, 255, 0.7);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+
+      &.is-active {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        color: #fff;
+      }
     }
   }
 }

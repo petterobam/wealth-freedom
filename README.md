@@ -3,9 +3,9 @@
 > 个人财务管理软件，辅助实现财务自由 - 从保障到安全再到自由
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform: macOS](https://img.shields.io/badge/Platform-macOS-blue.svg)](https://github.com/oyjie/wealth-freedom/releases)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://github.com/oyjie/wealth-freedom/releases)
-[![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-green.svg)](https://github.com/oyjie/wealth-freedom/releases/tag/v0.1.0)
+[![Platform: macOS](https://img.shields.io/badge/Platform-macOS-blue.svg)](https://github.com/petterobam/wealth-freedom/releases)
+[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://github.com/petterobam/wealth-freedom/releases)
+[![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-green.svg)](https://github.com/petterobam/wealth-freedom/releases/tag/v0.1.0)
 
 ## ✨ 核心功能（v0.1.0）
 
@@ -26,20 +26,20 @@
 - ✅ 离线使用：所有数据本地存储，保护隐私
 
 **截图预览**：
-![资产配置工具](https://github.com/oyjie/wealth-freedom/releases/download/v0.1.0/asset-allocation-preview.png)
+![资产配置工具](https://github.com/petterobam/wealth-freedom/releases/download/v0.1.0/asset-allocation-preview.png)
 
 ## 🚀 快速开始
 
 ### 下载安装包
 
-- **macOS (Intel/M1/M2)**: [下载 DMG (117MB)](https://github.com/oyjie/wealth-freedom/releases/download/v0.1.0/Wealth-Freedom-0.1.0-arm64.dmg)
+- **macOS (Intel/M1/M2)**: [下载 DMG (117MB)](https://github.com/petterobam/wealth-freedom/releases/download/v0.1.0/Wealth-Freedom-0.1.0-arm64.dmg)
 - **Windows**: 即将发布
 
 ### 从源码运行
 
 ```bash
 # 克隆仓库
-git clone https://github.com/oyjie/wealth-freedom.git
+git clone https://github.com/petterobam/wealth-freedom.git
 cd wealth-freedom
 
 # 安装依赖（需要 Node.js 18+）
@@ -157,16 +157,16 @@ wealth-freedom/
 
 ## 📮 反馈与支持
 
-- 🐛 [提交 Bug](https://github.com/oyjie/wealth-freedom/issues/new?template=bug_report.md)
-- 💡 [功能建议](https://github.com/oyjie/wealth-freedom/issues/new?template=feature_request.md)
-- 💬 [讨论区](https://github.com/oyjie/wealth-freedom/discussions)
+- 🐛 [提交 Bug](https://github.com/petterobam/wealth-freedom/issues/new?template=bug_report.md)
+- 💡 [功能建议](https://github.com/petterobam/wealth-freedom/issues/new?template=feature_request.md)
+- 💬 [讨论区](https://github.com/petterobam/wealth-freedom/discussions)
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=oyjie/wealth-freedom&type=Date)](https://star-history.com/#oyjie/wealth-freedom&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=petterobam/wealth-freedom&type=Date)](https://star-history.com/#petterobam/wealth-freedom&Date)
 
 ---
 
 **如果你觉得这个项目有用，请给一个 ⭐️ Star！**
 
-📧 联系作者: [GitHub](https://github.com/oyjie) | [知乎](https://zhihu.com/people/oyjie) | [LinkedIn](https://linkedin.com/in/oyjie)
+📧 联系作者: [GitHub](https://github.com/petterobam) | [知乎](https://zhihu.com/people/oy6666) | [LinkedIn](https://linkedin.com/in/petterobam)

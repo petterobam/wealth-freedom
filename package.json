@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "财富自由之路 - 个人财务管理软件",
-  "author": "欧阳洁",
+  "author": "欧阳洁 <petterobam@gmail.com> (https://github.com/petterobam)",
   "license": "MIT",
   "type": "module",
   "scripts": {

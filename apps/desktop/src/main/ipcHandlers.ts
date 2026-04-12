@@ -85,12 +85,17 @@ async function handleUserGet() {
   return stmt.get() as any;
 }
 
+// 生成唯一 ID 的辅助函数
+const generateId = (prefix: string): string => {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 async function handleUserCreate(_event: any, data: any) {
   const stmt = db.prepare(`
     INSERT INTO users (id, name, email, avatar, currency, guarantee_months, expected_return_rate, settings, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
   `);
-  const id = `user-${Date.now()}`;
+  const id = generateId('user');
   const result = stmt.run(
     id,
     data.name || '用户',
@@ -135,7 +140,8 @@ async function handleAccountGetById(_event: any, id: number) {
 }
 
 async function handleAccountCreate(_event: any, data: any) {
-  const id = `account-${Date.now()}`;
+  // 使用时间戳 + 随机数避免 ID 碰撞
+  const id = `account-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const stmt = db.prepare(`
     INSERT INTO accounts (id, user_id, name, type, balance, currency, institution, notes, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
@@ -172,7 +178,7 @@ async function handleDebtGetById(_event: any, id: number) {
 }
 
 async function handleDebtCreate(_event: any, data: any) {
-  const id = `debt-${Date.now()}`;
+  const id = generateId('debt');
   const stmt = db.prepare(`
     INSERT INTO debts (id, user_id, name, total_amount, paid_amount, remaining_amount, monthly_payment, interest_rate, type, priority, due_date, notes, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
@@ -254,7 +260,7 @@ async function handleTransactionGetById(_event: any, id: number) {
 }
 
 async function handleTransactionCreate(_event: any, data: any) {
-  const id = `tx-${Date.now()}`;
+  const id = generateId('tx');
   const stmt = db.prepare(`
     INSERT INTO transactions (id, user_id, date, type, category, amount, account_id, description, tags, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
@@ -310,7 +316,7 @@ async function handleGoalGetById(_event: any, id: number) {
 }
 
 async function handleGoalCreate(_event: any, data: any) {
-  const id = `goal-${Date.now()}`;
+  const id = generateId('goal');
   const stmt = db.prepare(`
     INSERT INTO goals (id, user_id, stage, target_amount, current_amount, target_date, notes, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
@@ -347,7 +353,7 @@ async function handleDreamGetById(_event: any, id: number) {
 }
 
 async function handleDreamCreate(_event: any, data: any) {
-  const id = `dream-${Date.now()}`;
+  const id = generateId('dream');
   const stmt = db.prepare(`
     INSERT INTO dreams (id, user_id, title, description, image_url, estimated_cost, priority, is_achieved, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))

@@ -44,7 +44,7 @@ const createWindow = async () => {
 
   // 开发环境加载开发服务器
   if (process.env.NODE_ENV === 'development') {
-    await mainWindow.loadURL('http://localhost:5173');
+    await mainWindow.loadURL('http://localhost:5175');
     mainWindow.webContents.openDevTools();
   } else {
     await mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));

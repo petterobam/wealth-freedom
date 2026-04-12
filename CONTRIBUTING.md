@@ -175,7 +175,7 @@ wealth-freedom/
 
 - 💬 [GitHub Discussions](https://github.com/oyjie/wealth-freedom/discussions) - 功能讨论、问题交流
 - 🐛 [GitHub Issues](https://github.com/oyjie/wealth-freedom/issues) - Bug 报告、功能建议
-- 📧 邮箱: [your-email@example.com]
+- 📧 邮箱: [1460300366@qq.com]
 
 ## 📄 开源协议
 

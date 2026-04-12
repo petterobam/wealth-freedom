@@ -92,11 +92,11 @@ export function getSidebarWidth(): number {
 
   const widthMap: Record<Breakpoint, number> = {
     xs: 0,      // 移动端：隐藏
-    sm: 180,    // 小屏：180px
-    md: 200,    // 平板：200px
-    lg: 220,    // 桌面：220px
-    xl: 240,    // 大屏：240px
-    xxl: 240    // 超大屏：240px
+    sm: 200,    // 小屏：200px
+    md: 220,    // 平板：220px
+    lg: 240,    // 桌面：240px
+    xl: 260,    // 大屏：260px
+    xxl: 260    // 超大屏：260px
   }
 
   return widthMap[breakpoint]
