@@ -1,3 +1,10 @@
+# Test artifacts
+*.png
+test-*.*
+auto-export-test.js
+manual-export-test.js
+test-downloads/
+
 # Dependencies
 node_modules/
 .pnpm-store/
