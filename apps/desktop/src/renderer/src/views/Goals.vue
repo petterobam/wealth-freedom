@@ -361,7 +361,6 @@ const recalculateTimeline = () => {
   }
   
   timelineResult.value = null // calculateFreedomTimeline(input)
-  console.log('时间路径计算功能暂时禁用')
 }
 
 const getMilestoneIcon = (key: string) => {

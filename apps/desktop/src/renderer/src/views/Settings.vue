@@ -253,6 +253,17 @@
       </el-alert>
 
       <div class="settings-actions">
+        <el-button-group style="margin-bottom: 12px;">
+          <el-button type="success" @click="handleExportBackup" :loading="exporting">
+            <el-icon><Download /></el-icon>
+            导出备份
+          </el-button>
+          <el-button type="warning" @click="handleImportBackup" :loading="importing">
+            <el-icon><Upload /></el-icon>
+            导入数据
+          </el-button>
+        </el-button-group>
+
         <el-button 
           type="danger" 
           @click="showResetDialog"
@@ -263,7 +274,9 @@
         </el-button>
         
         <p class="action-hint">
-          点击后将重新进入初始化引导流程，可以重新填写财务数据
+          导出备份：将所有数据保存为 JSON 文件，用于数据迁移或备份<br>
+          导入数据：从 JSON/Excel 文件恢复数据（会覆盖现有数据）<br>
+          重新初始化：清除所有数据，重新进入引导流程
         </p>
       </div>
     </el-card>
@@ -284,6 +297,37 @@
         <el-descriptions-item label="数据创建时间">{{ createdAt }}</el-descriptions-item>
       </el-descriptions>
     </el-card>
+
+    <!-- 导入预览对话框 -->
+    <el-dialog
+      v-model="importPreviewVisible"
+      title="📦 导入数据预览"
+      width="500px"
+      :close-on-click-modal="false"
+    >
+      <el-alert
+        type="warning"
+        :closable="false"
+        show-icon
+        style="margin-bottom: 16px"
+      >
+        <p v-if="importMode === 'replace'">全量覆盖：将替换当前所有数据。系统会先自动备份当前数据。</p>
+        <p v-else>增量合并：仅添加新记录，不删除现有数据。重复记录将被跳过。</p>
+      </el-alert>
+      <pre class="import-preview-text">{{ importPreviewText }}</pre>
+      <div style="margin-top: 16px">
+        <el-radio-group v-model="importMode">
+          <el-radio value="incremental">增量合并（推荐）</el-radio>
+          <el-radio value="replace">全量覆盖</el-radio>
+        </el-radio-group>
+      </div>
+      <template #footer>
+        <el-button @click="importPreviewVisible = false">取消</el-button>
+        <el-button type="primary" @click="executeImport" :loading="importing">
+          确认导入
+        </el-button>
+      </template>
+    </el-dialog>
 
     <!-- 确认对话框 -->
     <el-dialog
@@ -330,7 +374,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { RefreshRight, InfoFilled, QuestionFilled } from '@element-plus/icons-vue'
+import { RefreshRight, InfoFilled, QuestionFilled, Upload, Download } from '@element-plus/icons-vue'
+import { pickFile, exportFullBackup, previewImport, formatPreviewText, type FullBackupData } from '@/utils/import'
+import { exportMultiSheetToExcel } from '@/utils/export'
 import { useUserStore } from '@/stores/user'
 import { useAccountStore } from '@/stores/accounts'
 import { useDebtStore } from '@/stores/debts'
@@ -346,7 +392,13 @@ const goalStore = useGoalStore()
 
 const saving = ref(false)
 const resetting = ref(false)
+const exporting = ref(false)
+const importing = ref(false)
 const resetDialogVisible = ref(false)
+const importPreviewVisible = ref(false)
+const importPreviewText = ref('')
+const importMode = ref<'replace' | 'incremental'>('incremental')
+let pendingImportData: FullBackupData | null = null
 const confirmForm = ref({
   text: ''
 })
@@ -570,6 +622,228 @@ const handleReset = async () => {
   }
 }
 
+// 导出全量备份
+const handleExportBackup = async () => {
+  exporting.value = true
+  try {
+    const backup: FullBackupData = {
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      user: userStore.user || undefined,
+      accounts: accountStore.accounts || [],
+      debts: debtStore.debts || [],
+      transactions: transactionStore.transactions || [],
+      goals: goalStore.goals || [],
+      settings: userStore.user?.settings || undefined
+    }
+    exportFullBackup(backup)
+  } catch (error) {
+    console.error('导出失败:', error)
+    ElMessage.error('导出备份失败')
+  } finally {
+    exporting.value = false
+  }
+}
+
+// 导入数据（先预览）
+const handleImportBackup = async () => {
+  try {
+    const { content } = await pickFile()
+    const preview = previewImport(content)
+    importPreviewText.value = formatPreviewText(preview)
+    pendingImportData = content
+    importPreviewVisible.value = true
+  } catch (error: any) {
+    if (error.message !== '未选择文件') {
+      console.error('读取文件失败:', error)
+      ElMessage.error(`读取失败: ${error.message}`)
+    }
+  }
+}
+
+// 导入前自动备份当前数据
+const autoBackupBeforeImport = (): FullBackupData => {
+  return {
+    version: '1.0',
+    exportedAt: new Date().toISOString(),
+    user: userStore.user || undefined,
+    accounts: accountStore.accounts || [],
+    debts: debtStore.debts || [],
+    transactions: transactionStore.transactions || [],
+    goals: goalStore.goals || [],
+    settings: userStore.user?.settings || undefined
+  }
+}
+
+// 执行导入（预览确认后）
+const executeImport = async () => {
+  if (!pendingImportData) return
+
+  importing.value = true
+  const isIncremental = importMode.value === 'incremental'
+
+  // 全量覆盖模式下自动备份
+  if (!isIncremental) {
+    try {
+      const backup = autoBackupBeforeImport()
+      exportFullBackup(backup)
+    } catch (e) {
+      console.warn('自动备份失败，继续导入:', e)
+    }
+  }
+
+  try {
+    const content = pendingImportData
+    let importedCount = 0
+    let skippedCount = 0
+
+    if (isIncremental) {
+      // ========== 增量合并模式 ==========
+
+      // 账户：按 type 匹配，存在则更新，不存在则创建
+      if (content.accounts?.length) {
+        for (const account of content.accounts) {
+          const existing = accountStore.accounts.find(a => a.type === account.type)
+          if (existing) {
+            await accountStore.updateAccount(existing.id, account)
+            importedCount++
+          } else {
+            try {
+              await accountStore.createAccount(account)
+              importedCount++
+            } catch (e) {
+              skippedCount++
+            }
+          }
+        }
+      }
+
+      // 负债：按名称匹配
+      if (content.debts?.length) {
+        for (const debt of content.debts) {
+          const existing = debtStore.debts.find(d => d.name === debt.name)
+          if (existing) {
+            await debtStore.updateDebt(existing.id, debt)
+            importedCount++
+          } else {
+            try {
+              await debtStore.createDebt(debt)
+              importedCount++
+            } catch (e) {
+              skippedCount++
+            }
+          }
+        }
+      }
+
+      // 交易记录：按 id 去重
+      if (content.transactions?.length) {
+        const existingIds = new Set(transactionStore.transactions.map(t => t.id))
+        for (const tx of content.transactions) {
+          if (existingIds.has(tx.id)) {
+            skippedCount++
+          } else {
+            try {
+              await transactionStore.createTransaction(tx)
+              importedCount++
+            } catch (e) {
+              skippedCount++
+            }
+          }
+        }
+      }
+
+      // 目标：按类型匹配
+      if (content.goals?.length) {
+        for (const goal of content.goals) {
+          const existing = goalStore.goals.find(g => g.type === goal.type)
+          if (existing) {
+            await goalStore.updateGoal(existing.id, goal)
+            importedCount++
+          } else {
+            try {
+              await goalStore.createGoal(goal)
+              importedCount++
+            } catch (e) {
+              skippedCount++
+            }
+          }
+        }
+      }
+
+      // 用户设置：合并
+      if (content.settings && userStore.user) {
+        const existingSettings = typeof userStore.user.settings === 'string'
+          ? JSON.parse(userStore.user.settings)
+          : userStore.user.settings || {}
+        const newSettings = typeof content.settings === 'string'
+          ? JSON.parse(content.settings)
+          : content.settings
+        const merged = { ...existingSettings, ...newSettings }
+        await userStore.updateUser(userStore.user.id, { settings: JSON.stringify(merged) })
+      }
+
+    } else {
+      // ========== 全量覆盖模式（原有逻辑） ==========
+
+      // 导入账户
+      if (content.accounts?.length) {
+        for (const account of content.accounts) {
+          const existing = accountStore.accounts.find(a => a.type === account.type)
+          if (existing) {
+            await accountStore.updateAccount(existing.id, account)
+          }
+        }
+        importedCount += content.accounts.length
+      }
+
+      // 导入负债
+      if (content.debts?.length) {
+        for (const debt of content.debts) {
+          if (debtStore.debts.length > 0 && debtStore.debts[0]) {
+            await debtStore.updateDebt(debtStore.debts[0].id, debt)
+          }
+        }
+        importedCount += content.debts.length
+      }
+
+      // 导入交易记录
+      if (content.transactions?.length) {
+        importedCount += content.transactions.length
+        for (const tx of content.transactions) {
+          try {
+            await transactionStore.createTransaction(tx)
+          } catch (e) {
+            // 跳过重复记录
+          }
+        }
+      }
+
+      // 导入用户设置
+      if (content.settings && userStore.user) {
+        const settings = typeof content.settings === 'string'
+          ? JSON.parse(content.settings)
+          : content.settings
+        await userStore.updateUser(userStore.user.id, { settings: JSON.stringify(settings) })
+      }
+    }
+
+    const modeMsg = isIncremental ? '增量合并' : '全量覆盖'
+    const skipMsg = skippedCount > 0 ? `，跳过 ${skippedCount} 条重复` : ''
+    ElMessage.success(`${modeMsg}导入成功！共导入 ${importedCount} 条记录${skipMsg}`)
+    importPreviewVisible.value = false
+    pendingImportData = null
+
+    await loadBasicData()
+    await loadStatistics()
+  } catch (error: any) {
+    console.error('导入失败:', error)
+    ElMessage.error(`导入失败: ${error.message}`)
+  } finally {
+    importing.value = false
+  }
+}
+
 onMounted(async () => {
   await loadBasicData()
   await loadStatistics()
@@ -770,6 +1044,17 @@ onMounted(async () => {
     color: #909399;
     margin: 0;
   }
+}
+
+.import-preview-text {
+  background: #f5f7fa;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #303133;
+  white-space: pre-wrap;
+  margin: 0;
 }
 
 :deep(.el-alert) {

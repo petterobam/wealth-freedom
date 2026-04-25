@@ -589,7 +589,6 @@ const exportReport = async () => {
     const chartsToExport = []
 
     if (pieChartInstance) {
-      console.log('✅ 饼图实例已初始化')
       chartsToExport.push({
         instance: pieChartInstance,
         filename: '资产配置饼图'
@@ -599,7 +598,6 @@ const exportReport = async () => {
     }
 
     if (radarChartInstance) {
-      console.log('✅ 雷达图实例已初始化')
       chartsToExport.push({
         instance: radarChartInstance,
         filename: '风险收益评估雷达图'
@@ -608,13 +606,7 @@ const exportReport = async () => {
       console.error('❌ 雷达图实例未初始化')
     }
 
-    // 检查增长曲线图表的 DOM 元素
-    console.log('growthChartRef.value:', growthChartRef.value ? '存在' : '不存在')
-    console.log('growthChartInstance:', growthChartInstance ? '存在' : '不存在')
-
     if (growthChartInstance) {
-      console.log('✅ 增长曲线实例已初始化')
-
       // 强制更新增长曲线图表
       updateGrowthChart()
 
@@ -627,10 +619,6 @@ const exportReport = async () => {
 
       // 等待图表完全渲染（增加延迟时间）
       await new Promise(resolve => setTimeout(resolve, 1000))
-
-      // 检查图表选项
-      const option = growthChartInstance.getOption()
-      console.log('增长曲线图表选项:', option?.series?.length, '条数据')
 
       // 再次强制刷新并等待
       growthChartInstance.resize()

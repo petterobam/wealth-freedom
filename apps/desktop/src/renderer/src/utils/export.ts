@@ -129,8 +129,6 @@ export async function exportChartToImage(
       throw error
     }
 
-    console.log(`准备导出图表: ${filename}, 数据 URL 长度: ${dataURL.length}`)
-
     // 创建下载链接
     const link = document.createElement('a')
     link.href = dataURL
@@ -152,7 +150,6 @@ export async function exportChartToImage(
       // 元素可能已经被移除，忽略
     }
 
-    console.log(`图表导出成功: ${filename}`)
   } catch (error) {
     console.error(`图片导出失败 (${filename}):`, error)
     throw error

@@ -199,7 +199,6 @@ const checkInit = async () => {
   try {
     // 检查是否在 Electron 环境中
     if (!window.electronAPI) {
-      console.log('非 Electron 环境，直接初始化')
       initialized.value = true
       return
     }

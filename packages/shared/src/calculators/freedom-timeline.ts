@@ -334,7 +334,6 @@ if (require.main === module) {
     monthlyDreamLiving: 20000
   };
   
-  const output = calculateFreedomTimeline(input);
-  console.log(formatTimelineOutput(output));
+  calculateFreedomTimeline(input);
 }
 */
