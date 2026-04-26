@@ -258,6 +258,10 @@
             <el-icon><Download /></el-icon>
             导出备份
           </el-button>
+          <el-button type="primary" @click="handleExportExcel" :loading="exportingExcel">
+            <el-icon><Download /></el-icon>
+            导出 Excel 报表
+          </el-button>
           <el-button type="warning" @click="handleImportBackup" :loading="importing">
             <el-icon><Upload /></el-icon>
             导入数据
@@ -275,6 +279,7 @@
         
         <p class="action-hint">
           导出备份：将所有数据保存为 JSON 文件，用于数据迁移或备份<br>
+          导出 Excel 报表：将交易记录、账户、负债、目标导出为多工作表 Excel 文件<br>
           导入数据：从 JSON/Excel 文件恢复数据（会覆盖现有数据）<br>
           重新初始化：清除所有数据，重新进入引导流程
         </p>
@@ -393,6 +398,7 @@ const goalStore = useGoalStore()
 const saving = ref(false)
 const resetting = ref(false)
 const exporting = ref(false)
+const exportingExcel = ref(false)
 const importing = ref(false)
 const resetDialogVisible = ref(false)
 const importPreviewVisible = ref(false)
@@ -623,6 +629,86 @@ const handleReset = async () => {
 }
 
 // 导出全量备份
+// 导出 Excel 报表（多工作表：交易、账户、负债、目标）
+const handleExportExcel = () => {
+  exportingExcel.value = true
+  try {
+    const sheets: Array<{ name: string; data: Record<string, any>[] }> = []
+
+    // 交易记录
+    if (transactionStore.transactions?.length) {
+      sheets.push({
+        name: '交易记录',
+        data: transactionStore.transactions.map(t => ({
+          '日期': t.date,
+          '类型': t.type === 'income' ? '收入' : '支出',
+          '分类': t.category,
+          '金额': t.amount,
+          '账户': t.accountId,
+          '备注': t.note || t.description || ''
+        }))
+      })
+    }
+
+    // 账户（资产）
+    if (accountStore.accounts?.length) {
+      sheets.push({
+        name: '账户',
+        data: accountStore.accounts.map(a => ({
+          '名称': a.name,
+          '类型': a.type,
+          '余额': a.balance,
+          '机构': a.institution || '',
+          '备注': a.notes || ''
+        }))
+      })
+    }
+
+    // 负债
+    if (debtStore.debts?.length) {
+      sheets.push({
+        name: '负债',
+        data: debtStore.debts.map(d => ({
+          '名称': d.name,
+          '类型': d.type,
+          '总额': d.totalAmount,
+          '已还': d.paidAmount,
+          '剩余': d.remainingAmount,
+          '月供': d.monthlyPayment || '',
+          '利率': d.interestRate ? `${d.interestRate}%` : ''
+        }))
+      })
+    }
+
+    // 目标
+    if (goalStore.goals?.length) {
+      sheets.push({
+        name: '目标',
+        data: goalStore.goals.map(g => ({
+          '阶段': g.stage,
+          '目标金额': g.targetAmount,
+          '当前金额': g.currentAmount,
+          '完成率': g.targetAmount > 0 ? `${((g.currentAmount / g.targetAmount) * 100).toFixed(1)}%` : '',
+          '目标日期': g.targetDate || ''
+        }))
+      })
+    }
+
+    if (sheets.length === 0) {
+      ElMessage.warning('没有可导出的数据')
+      return
+    }
+
+    exportMultiSheetToExcel(sheets, '财富自由报表')
+    ElMessage.success(`已导出 ${sheets.length} 个工作表`)
+  } catch (error) {
+    console.error('Excel 导出失败:', error)
+    ElMessage.error('Excel 导出失败')
+  } finally {
+    exportingExcel.value = false
+  }
+}
+
 const handleExportBackup = async () => {
   exporting.value = true
   try {
