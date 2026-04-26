@@ -109,7 +109,15 @@
       </div>
     </div>
 
-    <!-- 资产负债结构 -->
+    <!-- 净资产趋势 -->
+    <div class="finance-card chart-card full-width">
+      <div class="card-header">
+        <span class="card-title">净资产趋势（近12个月）</span>
+      </div>
+      <div ref="netWorthChartRef" class="chart-container chart-tall"></div>
+    </div>
+
+    <!-- 资产结构 + 收支对比 -->
     <div class="charts-row">
       <div class="finance-card chart-card">
         <div class="card-header">
@@ -120,10 +128,18 @@
 
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">收支趋势</span>
+          <span class="card-title">月度收支对比</span>
         </div>
         <div ref="cashFlowChartRef" class="chart-container"></div>
       </div>
+    </div>
+
+    <!-- 支出分类 Top5 -->
+    <div class="finance-card chart-card full-width">
+      <div class="card-header">
+        <span class="card-title">本月支出分类 Top 5</span>
+      </div>
+      <div ref="expenseTop5Ref" class="chart-container"></div>
     </div>
 
     <!-- 快捷操作 -->
@@ -219,6 +235,8 @@ const transactionForm = ref({
 
 const assetChartRef = ref<HTMLElement>()
 const cashFlowChartRef = ref<HTMLElement>()
+const netWorthChartRef = ref<HTMLElement>()
+const expenseTop5Ref = ref<HTMLElement>()
 
 // 财富洞察数据库
 const wealthInsights = [
@@ -261,10 +279,10 @@ const ratios = computed(() => {
   const passiveIncome = transactionStore.monthlyPassiveIncome
 
   return {
-    savingsRate: Math.round(((metrics.value.monthlyBalance / income) * 100)),
-    passiveIncomeRatio: Math.round((passiveIncome / expense) * 100),
-    debtRatio: Math.round((debtStore.totalDebt / assets) * 100),
-    freedomProgress: goal ? Math.round((metrics.value.netWorth / goal.targetAmount) * 100) : 0
+    savingsRate: Math.min(100, Math.max(0, Math.round(((metrics.value.monthlyBalance / income) * 100)))),
+    passiveIncomeRatio: Math.min(100, Math.max(0, Math.round((passiveIncome / expense) * 100))),
+    debtRatio: Math.min(100, Math.max(0, Math.round((debtStore.totalDebt / assets) * 100))),
+    freedomProgress: Math.min(100, Math.max(0, goal ? Math.round((metrics.value.netWorth / goal.targetAmount) * 100) : 0))
   }
 })
 
@@ -276,8 +294,57 @@ const formatCurrency = (value: number) => {
   }).format(value)
 }
 
+const categoryLabels: Record<string, string> = {
+  food: '餐饮', transport: '交通', shopping: '购物', entertainment: '娱乐',
+  housing: '住房', health: '医疗', education: '教育', other: '其他',
+  salary: '工资', parttime: '兼职', investment: '投资收益', dividend: '分红',
+  interest: '利息', product: '产品收入', rental: '租金', royalty: '版税', passive: '其他被动'
+}
+
 const initCharts = () => {
-  // 资产结构图
+  const transactions = transactionStore.transactions
+
+  // ========== 1. 净资产趋势（近12个月） ==========
+  if (netWorthChartRef.value) {
+    const chart = echarts.init(netWorthChartRef.value)
+    const months: string[] = []
+    const netWorthData: number[] = []
+    const currentNetWorth = accountStore.totalAssets - debtStore.totalDebt
+
+    // 按月汇总收支差额
+    const monthlyBalances: number[] = []
+    for (let i = 11; i >= 0; i--) {
+      const m = dayjs().subtract(i, 'month')
+      months.push(m.format('YYYY-MM'))
+      const start = m.startOf('month').format('YYYY-MM-DD')
+      const end = m.endOf('month').format('YYYY-MM-DD')
+      const monthTxs = transactions.filter(t => t.date >= start && t.date <= end)
+      const income = monthTxs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+      const expense = monthTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
+      monthlyBalances.push(income - expense)
+    }
+
+    // 从当前净资产往回反推：每月减去该月结余
+    netWorthData[11] = currentNetWorth
+    for (let i = 10; i >= 0; i--) {
+      netWorthData[i] = netWorthData[i + 1] - monthlyBalances[i + 1]
+    }
+
+    chart.setOption({
+      tooltip: { trigger: 'axis', formatter: (p: any) => `${p[0].axisValue}<br/>净资产: ¥${p[0].value.toLocaleString()}` },
+      grid: { left: 80, right: 20, top: 20, bottom: 30 },
+      xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11 } },
+      yAxis: { type: 'value', axisLabel: { formatter: (v: number) => `¥${(v / 1000).toFixed(0)}k` } },
+      series: [{
+        type: 'line', data: netWorthData, smooth: true,
+        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(79,172,254,0.4)' }, { offset: 1, color: 'rgba(79,172,254,0.05)' }]) },
+        lineStyle: { color: '#4facfe', width: 3 },
+        itemStyle: { color: '#4facfe' }, symbol: 'circle', symbolSize: 6
+      }]
+    })
+  }
+
+  // ========== 2. 资产结构饼图 ==========
   if (assetChartRef.value) {
     const chart = echarts.init(assetChartRef.value)
     const assetData = [
@@ -285,12 +352,10 @@ const initCharts = () => {
       { value: accountStore.byType('investment').reduce((s, a) => s + a.balance, 0), name: '投资' },
       { value: accountStore.byType('fixed').reduce((s, a) => s + a.balance, 0), name: '固定资产' }
     ]
-
     chart.setOption({
-      tooltip: { trigger: 'item' },
+      tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
       series: [{
-        type: 'pie',
-        radius: ['40%', '70%'],
+        type: 'pie', radius: ['40%', '70%'],
         itemStyle: { borderRadius: 10 },
         label: { show: true, formatter: '{b}: {d}%' },
         data: assetData.filter(d => d.value > 0)
@@ -298,28 +363,66 @@ const initCharts = () => {
     })
   }
 
-  // 收支趋势图
+  // ========== 3. 月度收支对比（近6个月，真实数据） ==========
   if (cashFlowChartRef.value) {
     const chart = echarts.init(cashFlowChartRef.value)
-    const months = []
-    const incomeData = []
-    const expenseData = []
+    const months: string[] = []
+    const incomeData: number[] = []
+    const expenseData: number[] = []
 
     for (let i = 5; i >= 0; i--) {
-      months.push(dayjs().subtract(i, 'month').format('MM月'))
-      incomeData.push(Math.round(Math.random() * 5000 + 10000))
-      expenseData.push(Math.round(Math.random() * 3000 + 5000))
+      const m = dayjs().subtract(i, 'month')
+      months.push(m.format('MM月'))
+      const start = m.startOf('month').format('YYYY-MM-DD')
+      const end = m.endOf('month').format('YYYY-MM-DD')
+      const monthTxs = transactions.filter(t => t.date >= start && t.date <= end)
+      incomeData.push(monthTxs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0))
+      expenseData.push(monthTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0))
     }
 
     chart.setOption({
-      tooltip: { trigger: 'axis' },
+      tooltip: { trigger: 'axis', formatter: (params: any) => {
+        return params.map((p: any) => `${p.seriesName}: ¥${p.value.toLocaleString()}`).join('<br/>')
+      }},
       legend: { data: ['收入', '支出'] },
+      grid: { left: 60, right: 20, top: 40, bottom: 30 },
       xAxis: { type: 'category', data: months },
-      yAxis: { type: 'value' },
+      yAxis: { type: 'value', axisLabel: { formatter: (v: number) => `¥${(v / 1000).toFixed(0)}k` } },
       series: [
-        { name: '收入', type: 'bar', data: incomeData, itemStyle: { color: '#67c23a' } },
-        { name: '支出', type: 'bar', data: expenseData, itemStyle: { color: '#e6a23c' } }
+        { name: '收入', type: 'bar', data: incomeData, itemStyle: { color: '#67c23a', borderRadius: [4, 4, 0, 0] } },
+        { name: '支出', type: 'bar', data: expenseData, itemStyle: { color: '#e6a23c', borderRadius: [4, 4, 0, 0] } }
       ]
+    })
+  }
+
+  // ========== 4. 支出分类 Top5 ==========
+  if (expenseTop5Ref.value) {
+    const chart = echarts.init(expenseTop5Ref.value)
+    const now = dayjs()
+    const monthStart = now.startOf('month').format('YYYY-MM-DD')
+    const monthEnd = now.endOf('month').format('YYYY-MM-DD')
+    const monthExpenses = transactions.filter(t =>
+      t.type === 'expense' && t.date >= monthStart && t.date <= monthEnd
+    )
+    const categoryMap: Record<string, number> = {}
+    monthExpenses.forEach(t => {
+      const label = categoryLabels[t.category] || t.category
+      categoryMap[label] = (categoryMap[label] || 0) + t.amount
+    })
+    const top5 = Object.entries(categoryMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, value]) => ({ name, value: Math.round(value) }))
+
+    chart.setOption({
+      tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
+      series: [{
+        type: 'pie', radius: ['0%', '65%'],
+        itemStyle: { borderRadius: 6 },
+        label: { show: true, formatter: '{b}: ¥{c}' },
+        emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.2)' } },
+        data: top5.length > 0 ? top5 : [{ name: '暂无数据', value: 1 }]
+      }]
     })
   }
 }
@@ -437,9 +540,16 @@ onMounted(async () => {
     gap: 16px;
   }
 
+  .full-width {
+    margin-bottom: 16px;
+  }
+
   .chart-card {
     .chart-container {
       height: 250px;
+    }
+    .chart-tall {
+      height: 300px;
     }
   }
 
