@@ -1,7 +1,14 @@
 <template>
   <div class="report-page">
-    <h1 class="page-title">报表分析</h1>
-    <p class="page-desc">用数据说话，看清你的财务全貌</p>
+    <div class="title-row">
+      <div>
+        <h1 class="page-title">报表分析</h1>
+        <p class="page-desc">用数据说话，看清你的财务全貌</p>
+      </div>
+      <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
+        导出 PDF 报表
+      </el-button>
+    </div>
 
     <!-- Tab 切换 -->
     <el-tabs v-model="activeTab" class="report-tabs">
@@ -293,9 +300,23 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Download } from '@element-plus/icons-vue'
 import HealthScore from './HealthScore.vue'
+import { exportToPDF } from '../utils/export'
 
 const activeTab = ref('health')
+const pdfLoading = ref(false)
+
+async function handleExportPDF() {
+  pdfLoading.value = true
+  try {
+    await exportToPDF('财富自由报表')
+  } catch (e: any) {
+    ElMessage.error('PDF 导出失败: ' + e.message)
+  } finally {
+    pdfLoading.value = false
+  }
+}
 
 // ==================== 月度报表 ====================
 const monthlyPeriod = ref(new Date().toISOString().slice(0, 7))
@@ -434,6 +455,13 @@ onMounted(() => {
 .report-page {
   max-width: 960px;
   margin: 0 auto;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
 }
 
 .page-title {
@@ -753,5 +781,13 @@ onMounted(() => {
   padding: 60px 20px;
   color: #999;
   .empty-icon { font-size: 48px; margin-bottom: 12px; }
+}
+
+// PDF 打印优化
+@media print {
+  .title-row button { display: none; }
+  .toolbar { display: none; }
+  .el-tabs__header { display: none; }
+  .report-page { max-width: 100%; }
 }
 </style>
