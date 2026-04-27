@@ -8,6 +8,7 @@ import path from 'path';
 import fs from 'fs';
 import { initDatabase } from './database';
 import { initIncomeHandlers } from './incomeHandlers';
+import { initBudgetHandlers } from './budgetHandlers';
 import {
   calculateNetWorth,
   calculateCashFlow,
@@ -25,6 +26,9 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 
   // 初始化收入规划 IPC 处理程序
   initIncomeHandlers(db);
+
+  // 初始化预算管理 IPC 处理程序
+  initBudgetHandlers(db);
 
   // ==================== 用户相关 ====================
   ipcMain.handle('user:get', handleUserGet);
