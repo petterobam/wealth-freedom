@@ -45,6 +45,10 @@
               <el-icon><CreditCard /></el-icon>
               <template #title>负债管理</template>
             </el-menu-item>
+            <el-menu-item index="/budget">
+              <el-icon><PieChart /></el-icon>
+              <template #title>预算管理</template>
+            </el-menu-item>
           </el-sub-menu>
 
           <!-- 收入提升分组 -->

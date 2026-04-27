@@ -93,6 +93,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 财务自由预测
   predictFinancialFreedom: (params: any) => ipcRenderer.invoke('income:predictFinancialFreedom', params),
 
+  // 预算相关
+  getBudgetList: (data: any) => ipcRenderer.invoke('budget:list', data),
+  getBudgetById: (data: any) => ipcRenderer.invoke('budget:getById', data),
+  createBudget: (data: any) => ipcRenderer.invoke('budget:create', data),
+  updateBudget: (data: any) => ipcRenderer.invoke('budget:update', data),
+  deleteBudget: (data: any) => ipcRenderer.invoke('budget:delete', data),
+  getBudgetStatus: (data: any) => ipcRenderer.invoke('budget:status', data),
+  getBudgetHistory: (data: any) => ipcRenderer.invoke('budget:history', data),
+  takeBudgetSnapshot: (data: any) => ipcRenderer.invoke('budget:snapshot', data),
+
   // 导出相关
   exportToPDF: (filename: string) => ipcRenderer.invoke('export:toPDF', filename),
 })
