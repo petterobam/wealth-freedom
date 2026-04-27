@@ -110,6 +110,12 @@ const router = createRouter({
       meta: { title: '收入行动计划' }
     },
     {
+      path: '/investment',
+      name: 'Investment',
+      component: () => import('@/views/Investment.vue'),
+      meta: { title: '投资追踪' }
+    },
+    {
       path: '/budget',
       name: 'Budget',
       component: () => import('@/views/Budget.vue'),

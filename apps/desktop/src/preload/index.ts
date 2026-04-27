@@ -103,6 +103,29 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getBudgetHistory: (data: any) => ipcRenderer.invoke('budget:history', data),
   takeBudgetSnapshot: (data: any) => ipcRenderer.invoke('budget:snapshot', data),
 
+  // 投资追踪相关 (v0.5.0)
+  getInvestmentAccounts: () => ipcRenderer.invoke('investment:get-accounts'),
+  addInvestmentAccount: (data: any) => ipcRenderer.invoke('investment:add-account', data),
+  updateInvestmentAccount: (data: any) => ipcRenderer.invoke('investment:update-account', data),
+  deleteInvestmentAccount: (id: string) => ipcRenderer.invoke('investment:delete-account', id),
+
+  getPortfolios: (accountId?: string) => ipcRenderer.invoke('investment:get-portfolios', accountId),
+  addPortfolio: (data: any) => ipcRenderer.invoke('investment:add-portfolio', data),
+  deletePortfolio: (id: string) => ipcRenderer.invoke('investment:delete-portfolio', id),
+
+  getHoldings: (portfolioId: string) => ipcRenderer.invoke('investment:get-holdings', portfolioId),
+  addHolding: (data: any) => ipcRenderer.invoke('investment:add-holding', data),
+  updateHoldingPrice: (data: any) => ipcRenderer.invoke('investment:update-price', data),
+  batchUpdatePrices: (updates: any[]) => ipcRenderer.invoke('investment:batch-update-prices', updates),
+  deleteHolding: (id: string) => ipcRenderer.invoke('investment:delete-holding', id),
+
+  getInvestmentTransactions: (opts: any) => ipcRenderer.invoke('investment:get-transactions', opts),
+  addInvestmentTransaction: (data: any) => ipcRenderer.invoke('investment:add-transaction', data),
+  deleteInvestmentTransaction: (id: string) => ipcRenderer.invoke('investment:delete-transaction', id),
+
+  getInvestmentSummary: () => ipcRenderer.invoke('investment:get-summary'),
+  getInvestmentAllocation: () => ipcRenderer.invoke('investment:get-allocation'),
+
   // 导出相关
   exportToPDF: (filename: string) => ipcRenderer.invoke('export:toPDF', filename),
 })

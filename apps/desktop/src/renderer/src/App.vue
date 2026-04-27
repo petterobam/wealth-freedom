@@ -49,6 +49,10 @@
               <el-icon><PieChart /></el-icon>
               <template #title>预算管理</template>
             </el-menu-item>
+            <el-menu-item index="/investment">
+              <el-icon><TrendCharts /></el-icon>
+              <template #title>投资追踪</template>
+            </el-menu-item>
           </el-sub-menu>
 
           <!-- 收入提升分组 -->
