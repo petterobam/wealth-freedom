@@ -129,6 +129,12 @@
             <template #title>设置</template>
           </el-menu-item>
         </el-menu>
+
+        <!-- 主题切换 -->
+        <div class="theme-toggle" @click="toggleTheme">
+          <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
+          <span class="theme-label" v-show="sidebarVisible">{{ isDark ? '切换亮色' : '切换暗色' }}</span>
+        </div>
       </el-aside>
 
       <!-- 主内容区 -->
@@ -161,6 +167,7 @@ import {
 } from '@element-plus/icons-vue'
 import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'
+import { useTheme } from '@/composables/useTheme'
 import {
   getCurrentBreakpoint,
   getSidebarWidth,
@@ -170,6 +177,7 @@ import {
 
 const route = useRoute()
 const userStore = useUserStore()
+const { isDark, toggleTheme } = useTheme()
 
 const currentRoute = computed(() => route.path)
 const initialized = ref(false)
@@ -242,7 +250,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .app-container {
   height: 100vh;
-  background: #f5f7fa;
+  background: var(--bg-body);
 }
 
 // 移动端菜单按钮
@@ -383,6 +391,7 @@ onMounted(() => {
   height: 100vh;
   overflow-y: auto;
   transition: padding-left 0.3s ease;
+  background: var(--bg-body);
 
   // 移动端：调整 padding
   @media (max-width: 575px) {
@@ -392,6 +401,34 @@ onMounted(() => {
   // 小屏：调整 padding
   @media (min-width: 576px) and (max-width: 767px) {
     padding: 16px;
+  }
+}
+
+// 主题切换按钮
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  margin-top: auto;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .theme-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+  }
+
+  .theme-label {
+    font-size: 14px;
   }
 }
 </style>

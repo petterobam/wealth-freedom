@@ -64,24 +64,14 @@ $breakpoint-xxl: 1400px;
   }
 }
 
-// 财务主题色
-:root {
-  --primary-color: #4facfe;
-  --secondary-color: #00f2fe;
-  --success-color: #67c23a;
-  --warning-color: #e6a23c;
-  --danger-color: #f56c6c;
-  --text-primary: #303133;
-  --text-secondary: #909399;
-  --bg-color: #f5f7fa;
-}
+// 主题变量已在 theme.css 中定义
 
 // 卡片样式
 .finance-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 
   // 响应式 padding
   @include respond-below(sm) {

@@ -536,7 +536,7 @@ onBeforeUnmount(() => {
   }
 
   .ratio-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
