@@ -9,6 +9,7 @@ import fs from 'fs';
 import { initDatabase } from './database';
 import { initIncomeHandlers } from './incomeHandlers';
 import { initBudgetHandlers } from './budgetHandlers';
+import { registerInvestmentHandlers } from './investmentHandlers';
 import {
   calculateNetWorth,
   calculateCashFlow,
@@ -29,6 +30,9 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 
   // 初始化预算管理 IPC 处理程序
   initBudgetHandlers(db);
+
+  // 初始化投资追踪 IPC 处理程序 (v0.5.0)
+  registerInvestmentHandlers(db);
 
   // ==================== 用户相关 ====================
   ipcMain.handle('user:get', handleUserGet);

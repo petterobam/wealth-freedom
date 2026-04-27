@@ -313,6 +313,72 @@ const createTables = (db: Database.Database): void => {
     )
   `);
 
+  // 投资账户表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS investment_accounts (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      platform TEXT NOT NULL,
+      type TEXT DEFAULT 'stock',
+      notes TEXT,
+      is_active INTEGER DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+
+  // 投资组合表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS portfolios (
+      id TEXT PRIMARY KEY,
+      account_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      description TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (account_id) REFERENCES investment_accounts(id)
+    )
+  `);
+
+  // 持仓表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS holdings (
+      id TEXT PRIMARY KEY,
+      portfolio_id TEXT NOT NULL,
+      symbol TEXT NOT NULL,
+      name TEXT,
+      type TEXT DEFAULT 'stock',
+      quantity REAL DEFAULT 0,
+      avg_cost REAL DEFAULT 0,
+      current_price REAL DEFAULT 0,
+      market_value REAL DEFAULT 0,
+      profit_loss REAL DEFAULT 0,
+      profit_loss_pct REAL DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (portfolio_id) REFERENCES portfolios(id)
+    )
+  `);
+
+  // 投资交易记录表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS investment_transactions (
+      id TEXT PRIMARY KEY,
+      holding_id TEXT NOT NULL,
+      type TEXT NOT NULL,
+      quantity REAL NOT NULL,
+      price REAL NOT NULL,
+      amount REAL,
+      fee REAL DEFAULT 0,
+      transaction_date TEXT NOT NULL,
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (holding_id) REFERENCES holdings(id)
+    )
+  `);
+
   // 创建索引
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_transactions_user_date ON transactions(user_id, date);
@@ -331,6 +397,12 @@ const createTables = (db: Database.Database): void => {
     CREATE INDEX IF NOT EXISTS idx_income_simulations_user ON income_simulations(user_id);
     CREATE INDEX IF NOT EXISTS idx_budgets_user_active ON budgets(user_id, is_active);
     CREATE INDEX IF NOT EXISTS idx_budget_snapshots_budget_period ON budget_snapshots(budget_id, period_start);
+    CREATE INDEX IF NOT EXISTS idx_investment_accounts_user ON investment_accounts(user_id);
+    CREATE INDEX IF NOT EXISTS idx_portfolios_account ON portfolios(account_id);
+    CREATE INDEX IF NOT EXISTS idx_holdings_portfolio ON holdings(portfolio_id);
+    CREATE INDEX IF NOT EXISTS idx_holdings_symbol ON holdings(symbol);
+    CREATE INDEX IF NOT EXISTS idx_investment_transactions_holding ON investment_transactions(holding_id);
+    CREATE INDEX IF NOT EXISTS idx_investment_transactions_date ON investment_transactions(transaction_date);
   `);
 };
 
