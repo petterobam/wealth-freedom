@@ -92,6 +92,16 @@ interface ElectronAPI {
   // 财务自由预测
   predictFinancialFreedom: (params: any) => Promise<any>
 
+  // 报表分析相关 (v0.6.0)
+  report: {
+    monthlySummary: (data: { userId: string; year: number; month: number }) => Promise<any>
+    yearlySummary: (data: { userId: string; year: number }) => Promise<any>
+    categoryRanking: (data: { userId: string; year: number; month?: number }) => Promise<any>
+    monthlyTrend: (data: { userId: string; months: number }) => Promise<any>
+    healthScore: (userId: string) => Promise<any>
+    goalProgress: (data: { userId: string }) => Promise<any>
+  }
+
   // 导出相关
   exportToPDF: (filename: string) => Promise<{ success: boolean; canceled?: boolean; filePath?: string }>
 

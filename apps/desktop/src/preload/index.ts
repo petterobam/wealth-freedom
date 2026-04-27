@@ -126,6 +126,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getInvestmentSummary: () => ipcRenderer.invoke('investment:get-summary'),
   getInvestmentAllocation: () => ipcRenderer.invoke('investment:get-allocation'),
 
+  // 报表分析相关 (v0.6.0)
+  report: {
+    monthlySummary: (data: { userId: string; year: number; month: number }) => ipcRenderer.invoke('report:monthly-summary', data),
+    yearlySummary: (data: { userId: string; year: number }) => ipcRenderer.invoke('report:yearly-summary', data),
+    categoryRanking: (data: { userId: string; year: number; month?: number }) => ipcRenderer.invoke('report:category-ranking', data),
+    monthlyTrend: (data: { userId: string; months: number }) => ipcRenderer.invoke('report:monthly-trend', data),
+    healthScore: (userId: string) => ipcRenderer.invoke('report:health-score', { userId }),
+    goalProgress: (data: { userId: string }) => ipcRenderer.invoke('report:goal-progress', data),
+  },
+
   // 导出相关
   exportToPDF: (filename: string) => ipcRenderer.invoke('export:toPDF', filename),
 })
