@@ -211,7 +211,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { Plus, Flag, PictureFilled, Sunny } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { useAccountStore } from '@/stores/accounts'
@@ -237,6 +237,18 @@ const assetChartRef = ref<HTMLElement>()
 const cashFlowChartRef = ref<HTMLElement>()
 const netWorthChartRef = ref<HTMLElement>()
 const expenseTop5Ref = ref<HTMLElement>()
+
+let netWorthChart: echarts.ECharts | null = null
+let cashFlowChart: echarts.ECharts | null = null
+let assetChart: echarts.ECharts | null = null
+let expenseTop5Chart: echarts.ECharts | null = null
+
+const handleResize = () => {
+  netWorthChart?.resize()
+  cashFlowChart?.resize()
+  assetChart?.resize()
+  expenseTop5Chart?.resize()
+}
 
 // 财富洞察数据库
 const wealthInsights = [
@@ -306,7 +318,8 @@ const initCharts = () => {
 
   // ========== 1. 净资产趋势（近12个月） ==========
   if (netWorthChartRef.value) {
-    const chart = echarts.init(netWorthChartRef.value)
+    netWorthChart = echarts.init(netWorthChartRef.value)
+    const chart = netWorthChart
     const months: string[] = []
     const netWorthData: number[] = []
     const currentNetWorth = accountStore.totalAssets - debtStore.totalDebt
@@ -346,7 +359,8 @@ const initCharts = () => {
 
   // ========== 2. 资产结构饼图 ==========
   if (assetChartRef.value) {
-    const chart = echarts.init(assetChartRef.value)
+    assetChart = echarts.init(assetChartRef.value)
+    const chart = assetChart
     const assetData = [
       { value: accountStore.byType('cash').reduce((s, a) => s + a.balance, 0), name: '现金' },
       { value: accountStore.byType('investment').reduce((s, a) => s + a.balance, 0), name: '投资' },
@@ -365,7 +379,8 @@ const initCharts = () => {
 
   // ========== 3. 月度收支对比（近6个月，真实数据） ==========
   if (cashFlowChartRef.value) {
-    const chart = echarts.init(cashFlowChartRef.value)
+    cashFlowChart = echarts.init(cashFlowChartRef.value)
+    const chart = cashFlowChart
     const months: string[] = []
     const incomeData: number[] = []
     const expenseData: number[] = []
@@ -397,7 +412,8 @@ const initCharts = () => {
 
   // ========== 4. 支出分类 Top5 ==========
   if (expenseTop5Ref.value) {
-    const chart = echarts.init(expenseTop5Ref.value)
+    expenseTop5Chart = echarts.init(expenseTop5Ref.value)
+    const chart = expenseTop5Chart
     const now = dayjs()
     const monthStart = now.startOf('month').format('YYYY-MM-DD')
     const monthEnd = now.endOf('month').format('YYYY-MM-DD')
@@ -454,6 +470,15 @@ onMounted(async () => {
     goalStore.fetchGoals()
   ])
   initCharts()
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+  netWorthChart?.dispose()
+  cashFlowChart?.dispose()
+  assetChart?.dispose()
+  expenseTop5Chart?.dispose()
 })
 </script>
 

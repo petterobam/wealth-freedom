@@ -277,6 +277,42 @@ const createTables = (db: Database.Database): void => {
     )
   `);
 
+  // 预算表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS budgets (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      category TEXT,
+      amount REAL NOT NULL,
+      period TEXT DEFAULT 'monthly',
+      start_date TEXT NOT NULL,
+      is_active INTEGER DEFAULT 1,
+      icon TEXT,
+      color TEXT,
+      rollover INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+
+  // 预算快照表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS budget_snapshots (
+      id TEXT PRIMARY KEY,
+      budget_id TEXT NOT NULL,
+      period_start TEXT NOT NULL,
+      period_end TEXT NOT NULL,
+      budget_amount REAL NOT NULL,
+      actual_amount REAL NOT NULL,
+      remaining REAL NOT NULL,
+      percentage REAL NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (budget_id) REFERENCES budgets(id)
+    )
+  `);
+
   // 创建索引
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_transactions_user_date ON transactions(user_id, date);
@@ -293,6 +329,8 @@ const createTables = (db: Database.Database): void => {
     CREATE INDEX IF NOT EXISTS idx_income_actions_user ON income_actions(user_id);
     CREATE INDEX IF NOT EXISTS idx_income_actions_strategy ON income_actions(strategy_id);
     CREATE INDEX IF NOT EXISTS idx_income_simulations_user ON income_simulations(user_id);
+    CREATE INDEX IF NOT EXISTS idx_budgets_user_active ON budgets(user_id, is_active);
+    CREATE INDEX IF NOT EXISTS idx_budget_snapshots_budget_period ON budget_snapshots(budget_id, period_start);
   `);
 };
 
