@@ -67,6 +67,22 @@ const api = {
     getRatios: () => ipcRenderer.invoke('calculation:getRatios'),
   },
 
+  // 报表分析 (v0.6.0)
+  report: {
+    monthlySummary: (userId: string, year: number, month: number) =>
+      ipcRenderer.invoke('report:monthly-summary', { userId, year, month }),
+    yearlySummary: (userId: string, year: number) =>
+      ipcRenderer.invoke('report:yearly-summary', { userId, year }),
+    categoryRanking: (userId: string, startDate: string, endDate: string, type?: string, limit?: number) =>
+      ipcRenderer.invoke('report:category-ranking', { userId, startDate, endDate, type, limit }),
+    monthlyTrend: (userId: string, months?: number) =>
+      ipcRenderer.invoke('report:monthly-trend', { userId, months }),
+    healthScore: (userId: string) =>
+      ipcRenderer.invoke('report:health-score', { userId }),
+    goalProgress: (userId: string) =>
+      ipcRenderer.invoke('report:goal-progress', { userId }),
+  },
+
   // 数据库管理
   resetDatabase: () => ipcRenderer.invoke('database:reset'),
 };

@@ -53,6 +53,10 @@
               <el-icon><TrendCharts /></el-icon>
               <template #title>投资追踪</template>
             </el-menu-item>
+            <el-menu-item index="/report">
+              <el-icon><DataAnalysis /></el-icon>
+              <template #title>报表分析</template>
+            </el-menu-item>
           </el-sub-menu>
 
           <!-- 收入提升分组 -->

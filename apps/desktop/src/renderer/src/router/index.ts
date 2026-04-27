@@ -122,6 +122,12 @@ const router = createRouter({
       meta: { title: '预算管理' }
     },
     {
+      path: '/report',
+      name: 'Report',
+      component: () => import('@/views/Report.vue'),
+      meta: { title: '报表分析' }
+    },
+    {
       path: '/settings',
       name: 'Settings',
       component: () => import('@/views/Settings.vue'),

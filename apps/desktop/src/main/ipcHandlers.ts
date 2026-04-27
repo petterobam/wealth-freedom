@@ -10,6 +10,7 @@ import { initDatabase } from './database';
 import { initIncomeHandlers } from './incomeHandlers';
 import { initBudgetHandlers } from './budgetHandlers';
 import { registerInvestmentHandlers } from './investmentHandlers';
+import { initReportHandlers } from './reportHandlers';
 import {
   calculateNetWorth,
   calculateCashFlow,
@@ -33,6 +34,9 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 
   // 初始化投资追踪 IPC 处理程序 (v0.5.0)
   registerInvestmentHandlers(db);
+
+  // 初始化报表分析 IPC 处理程序 (v0.6.0)
+  initReportHandlers(db);
 
   // ==================== 用户相关 ====================
   ipcMain.handle('user:get', handleUserGet);
