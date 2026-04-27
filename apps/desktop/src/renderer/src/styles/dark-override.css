@@ -1,0 +1,246 @@
+/* ========================================
+   暗色模式全局覆盖 — 替换各 .vue 中硬编码颜色
+   通过 [data-theme="dark"] 选择器，不影响亮色模式
+   ======================================== */
+
+[data-theme="dark"] {
+
+  /* === 通用背景覆盖 === */
+  /* 白色背景 → 暗色卡片背景 */
+  .app-wrapper { background: var(--bg-card) !important; }
+  .main-content { background: var(--bg-body) !important; }
+
+  /* === App.vue 侧边栏 === */
+  .sidebar {
+    background: var(--bg-sidebar) !important;
+  }
+  .sidebar .brand {
+    background: transparent !important;
+  }
+
+  /* === 通用页面容器背景 === */
+  .page-container,
+  .dashboard-container,
+  .transactions-container,
+  .goals-container,
+  .budget-container,
+  .report-container,
+  .settings-container,
+  .accounts-container,
+  .debts-container,
+  .dreams-container,
+  .calculator-container,
+  .welcome-container {
+    background: var(--bg-body) !important;
+  }
+
+  /* === 卡片/面板背景 #fff → var(--bg-card) === */
+  .overview-card,
+  .account-section,
+  .allocation-card,
+  .stat-card,
+  .goal-card,
+  .budget-card,
+  .transaction-card,
+  .account-card,
+  .debt-card,
+  .dream-card,
+  .report-card,
+  .analysis-card,
+  .plan-card,
+  .summary-card,
+  .detail-card,
+  .health-card,
+  .income-card,
+  .strategy-card,
+  .scenario-card,
+  .expense-card,
+  .retirement-card,
+  .prepayment-card,
+  .action-card {
+    background: var(--bg-card) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* === 次级背景 #f5f7fa / #fafafa → var(--bg-hover) === */
+  .sub-header,
+  .section-header,
+  .list-header,
+  .account-header,
+  .category-row,
+  .filter-bar,
+  .toolbar,
+  .tab-panel {
+    background: var(--bg-hover) !important;
+  }
+
+  /* === App.vue 侧边栏暗色 === */
+  .sidebar .nav-item:hover,
+  .sidebar .nav-item.active {
+    background: var(--bg-hover) !important;
+  }
+
+  /* === Goals.vue === */
+  .goals-page { background: var(--bg-body) !important; }
+  .goal-detail,
+  .goal-edit-form,
+  .milestone-card {
+    background: var(--bg-card) !important;
+  }
+  .goal-progress-bg { background: #f0f2f5; }
+  .milestone-hint { background: var(--bg-hover) !important; }
+
+  /* === AssetAllocation.vue === */
+  .asset-page { background: var(--bg-body) !important; }
+  .asset-row { background: var(--bg-hover) !important; }
+  .alloc-bar-bg { background: #3a3a3a !important; }
+  .risk-warning { background: rgba(245, 108, 108, 0.15) !important; }
+  .risk-tip { background: rgba(79, 172, 254, 0.15) !important; }
+
+  /* === Dreams.vue === */
+  .dreams-page { background: var(--bg-body) !important; }
+  .dream-card { background: var(--bg-card) !important; }
+
+  /* === Dashboard.vue === */
+  .dashboard-page { background: var(--bg-body) !important; }
+  .chart-card { background: var(--bg-card) !important; }
+
+  /* === Transactions.vue === */
+  .transactions-page { background: var(--bg-body) !important; }
+  .transaction-item { background: var(--bg-card) !important; }
+
+  /* === IncomeActions.vue === */
+  .income-actions-page { background: var(--bg-body) !important; }
+  .action-detail { background: var(--bg-card) !important; }
+  .action-step { background: var(--bg-hover) !important; }
+  .action-note { background: rgba(79, 172, 254, 0.15) !important; }
+
+  /* === HealthScore.vue === */
+  .health-page { background: var(--bg-body) !important; }
+  .score-ring-bg { background: #3a3a3a !important; }
+  .suggestion-card { background: var(--bg-card) !important; }
+
+  /* === Investment.vue === */
+  .investment-page { background: var(--bg-body) !important; }
+  .alloc-track { background: #3a3a3a !important; }
+  .trade-row:hover { background: var(--bg-hover) !important; }
+
+  /* === IncomeGoals.vue === */
+  .income-goals-page { background: var(--bg-body) !important; }
+  .milestone-item { background: var(--bg-hover) !important; }
+
+  /* === Debts.vue === */
+  .debts-page { background: var(--bg-body) !important; }
+  .debt-item { background: var(--bg-card) !important; }
+  .debt-warning { background: rgba(245, 108, 108, 0.15) !important; }
+  .debt-tag { background: rgba(244, 244, 245, 0.15) !important; }
+
+  /* === Budget.vue === */
+  .budget-page { background: var(--bg-body) !important; }
+  .budget-item { background: var(--bg-card) !important; }
+  .progress-track { background: #3a3a3a !important; }
+  .budget-summary-bar { background: #3a3a3a !important; }
+
+  /* === Report.vue === */
+  .report-page { background: var(--bg-body) !important; }
+  .report-section { background: var(--bg-card) !important; }
+  .chart-placeholder { background: var(--bg-hover) !important; }
+  .bar-track { background: #3a3a3a !important; }
+  .summary-bar { background: #3a3a3a !important; }
+
+  /* === Settings.vue === */
+  .settings-page { background: var(--bg-body) !important; }
+  .settings-section { background: var(--bg-card) !important; }
+  .settings-item { background: var(--bg-hover) !important; }
+  .settings-hint { background: rgba(79, 172, 254, 0.15) !important; }
+
+  /* === Welcome.vue === */
+  .welcome-page { background: var(--bg-body) !important; }
+  .welcome-card { background: var(--bg-card) !important; }
+  .feature-card { background: var(--bg-hover) !important; }
+
+  /* === Calculator.vue === */
+  .calculator-page { background: var(--bg-body) !important; }
+  .calc-card { background: var(--bg-card) !important; }
+
+  /* === IncomeAnalysis.vue === */
+  .income-analysis-page { background: var(--bg-body) !important; }
+  .source-card { background: var(--bg-card) !important; }
+  .trend-card { background: var(--bg-card) !important; }
+  .insight-tip { background: rgba(79, 172, 254, 0.15) !important; }
+
+  /* === IncomeDashboard.vue === */
+  .income-dashboard-page { background: var(--bg-body) !important; }
+  .income-overview-card { background: var(--bg-card) !important; }
+  .income-trend-card { background: var(--bg-card) !important; }
+
+  /* === Accounts.vue === */
+  .accounts-page { background: var(--bg-body) !important; }
+  .account-list-item { background: var(--bg-card) !important; }
+
+  /* === IncomeStrategies.vue === */
+  .strategies-page { background: var(--bg-body) !important; }
+  .strategy-item { background: var(--bg-card) !important; }
+  .strategy-tip { background: rgba(79, 172, 254, 0.15) !important; }
+  .strategy-tag { background: rgba(244, 244, 245, 0.15) !important; }
+
+  /* === ScenarioSimulator / RetirementPlanner / PrepaymentCalculator / LargeExpensePlanner === */
+  .simulator-page,
+  .retirement-page,
+  .prepayment-page,
+  .expense-planner-page {
+    background: var(--bg-body) !important;
+  }
+  .sim-card,
+  .retirement-card,
+  .prepayment-card,
+  .expense-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* === 通用文字颜色修正（暗色模式确保可读性） === */
+  .card-title,
+  .section-title,
+  .stat-label,
+  .item-label {
+    color: var(--text-primary) !important;
+  }
+
+  .card-subtitle,
+  .stat-value,
+  .item-desc {
+    color: var(--text-regular) !important;
+  }
+
+  .helper-text,
+  .tip-text,
+  .note-text {
+    color: var(--text-secondary) !important;
+  }
+
+  /* === 通用边框 === */
+  .divider,
+  .separator {
+    border-color: var(--border-light) !important;
+  }
+
+  /* === 输入框/表单暗色 === */
+  input,
+  textarea,
+  select {
+    background: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-placeholder) !important;
+  }
+
+  /* === 空状态 === */
+  .empty-state {
+    color: var(--text-secondary) !important;
+  }
+}
