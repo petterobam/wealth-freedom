@@ -1,6 +1,6 @@
 {
   "name": "@wealth-freedom/desktop",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "private": true,
   "description": "财富自由之路 - 桌面应用",
   "main": "./out/main/index.js",
