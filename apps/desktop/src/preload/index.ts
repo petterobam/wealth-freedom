@@ -160,4 +160,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     checkLimit: (feature: string, count: number) => ipcRenderer.invoke('license:checkLimit', feature, count),
     machineId: () => ipcRenderer.invoke('license:machineId'),
   },
+
+  // 演示模式 (v1.1.0)
+  demo: {
+    status: () => ipcRenderer.invoke('demo:status'),
+    seed: () => ipcRenderer.invoke('demo:seed'),
+    clear: () => ipcRenderer.invoke('demo:clear'),
+  },
 })

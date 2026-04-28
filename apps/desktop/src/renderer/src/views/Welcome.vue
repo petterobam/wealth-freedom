@@ -127,6 +127,14 @@
         <el-button v-if="currentStep < 2" type="primary" @click="nextStep">下一步</el-button>
         <el-button v-if="currentStep === 2" type="primary" @click="handleComplete" :loading="loading">开始使用</el-button>
       </div>
+
+      <div class="demo-entry">
+        <el-divider>或者</el-divider>
+        <el-button type="warning" plain size="large" @click="handleDemoMode" :loading="demoLoading">
+          🎮 体验演示模式
+        </el-button>
+        <p class="demo-hint">加载示例数据，快速体验全部功能</p>
+      </div>
     </div>
   </div>
 </template>
@@ -148,6 +156,7 @@ const goalStore = useGoalStore()
 
 const currentStep = ref(0)
 const loading = ref(false)
+const demoLoading = ref(false)
 
 const form = ref({
   name: '',
@@ -254,6 +263,23 @@ const handleComplete = async () => {
     ElMessage.error('初始化失败，请检查输入信息后重试')
   } finally {
     loading.value = false
+  }
+}
+
+const handleDemoMode = async () => {
+  if (demoLoading.value) return
+  demoLoading.value = true
+  try {
+    const result = await (window as any).electronAPI.demo.seed()
+    if (result.success) {
+      ElMessage.success('演示数据已加载！正在进入...')
+      emit('complete')
+    }
+  } catch (error) {
+    console.error('演示模式加载失败:', error)
+    ElMessage.error('演示数据加载失败')
+  } finally {
+    demoLoading.value = false
   }
 }
 </script>
@@ -383,5 +409,16 @@ const handleComplete = async () => {
   justify-content: center;
   gap: 16px;
   margin-top: 30px;
+}
+
+.demo-entry {
+  text-align: center;
+  margin-top: 10px;
+
+  .demo-hint {
+    color: #909399;
+    font-size: 12px;
+    margin-top: 8px;
+  }
 }
 </style>

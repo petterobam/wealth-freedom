@@ -12,6 +12,7 @@ import { initBudgetHandlers } from './budgetHandlers';
 import { registerInvestmentHandlers } from './investmentHandlers';
 import { initReportHandlers } from './reportHandlers';
 import { initLicenseHandlers } from './licenseHandlers';
+import { initDemoHandlers } from './demoHandlers';
 import {
   calculateNetWorth,
   calculateCashFlow,
@@ -41,6 +42,9 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 
   // 初始化授权管理 IPC 处理程序 (v1.0.0)
   initLicenseHandlers();
+
+  // 初始化演示模式 IPC 处理程序 (v1.1.0)
+  initDemoHandlers(db);
 
   // ==================== 用户相关 ====================
   ipcMain.handle('user:get', handleUserGet);
