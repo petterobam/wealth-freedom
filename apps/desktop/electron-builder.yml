@@ -12,10 +12,10 @@ files:
 
 mac:
   category: public.app-category.finance
+  identity: null
   target:
     - target: dmg
       arch:
-        - x64
         - arm64
   icon: build/icon.icns
 
