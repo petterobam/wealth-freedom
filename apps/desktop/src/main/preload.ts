@@ -90,6 +90,17 @@ const api = {
     download: (url: string) => ipcRenderer.invoke('update:download', url),
   },
 
+  // 周期性交易 (v1.2.0)
+  recurring: {
+    list: (userId: string) => ipcRenderer.invoke('recurring:list', userId),
+    get: (ruleId: string) => ipcRenderer.invoke('recurring:get', ruleId),
+    create: (data: any) => ipcRenderer.invoke('recurring:create', data),
+    update: (ruleId: string, data: any) => ipcRenderer.invoke('recurring:update', ruleId, data),
+    delete: (ruleId: string) => ipcRenderer.invoke('recurring:delete', ruleId),
+    toggle: (ruleId: string) => ipcRenderer.invoke('recurring:toggle', ruleId),
+    executePending: (userId: string) => ipcRenderer.invoke('recurring:execute-pending', userId),
+  },
+
   // 数据库管理
   resetDatabase: () => ipcRenderer.invoke('database:reset'),
 };

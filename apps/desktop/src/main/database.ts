@@ -379,6 +379,33 @@ const createTables = (db: Database.Database): void => {
     )
   `);
 
+  // 周期性交易规则表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS recurring_rules (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      amount REAL NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('income','expense')),
+      account_id TEXT NOT NULL,
+      category TEXT,
+      frequency TEXT NOT NULL CHECK(frequency IN ('daily','weekly','monthly','yearly')),
+      interval_num INTEGER NOT NULL DEFAULT 1,
+      day_of_week INTEGER,
+      day_of_month INTEGER,
+      start_date TEXT NOT NULL,
+      end_date TEXT,
+      next_execution TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','paused')),
+      last_execution TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (account_id) REFERENCES accounts(id)
+    )
+  `);
+
   // 创建索引
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_transactions_user_date ON transactions(user_id, date);
@@ -403,6 +430,8 @@ const createTables = (db: Database.Database): void => {
     CREATE INDEX IF NOT EXISTS idx_holdings_symbol ON holdings(symbol);
     CREATE INDEX IF NOT EXISTS idx_investment_transactions_holding ON investment_transactions(holding_id);
     CREATE INDEX IF NOT EXISTS idx_investment_transactions_date ON investment_transactions(transaction_date);
+    CREATE INDEX IF NOT EXISTS idx_recurring_rules_user_status ON recurring_rules(user_id, status);
+    CREATE INDEX IF NOT EXISTS idx_recurring_rules_next_exec ON recurring_rules(next_execution);
   `);
 };
 

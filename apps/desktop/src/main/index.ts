@@ -8,6 +8,7 @@ import { initDatabase } from './database';
 import { initIPCHandlers } from './ipcHandlers';
 import { initBackupHandlers, startAutoBackup, stopAutoBackup } from './backupHandlers';
 import { initUpdateHandlers, startAutoUpdateCheck, stopAutoUpdateCheck } from './updateHandlers';
+import { registerRecurringHandlers } from './recurringHandlers';
 import { seedTestData } from './seed';
 
 let mainWindow: BrowserWindow | null = null;
@@ -23,6 +24,7 @@ const createWindow = async () => {
   startAutoBackup(db); // v0.10.0: 启动自动备份
   initUpdateHandlers(); // v1.1.0: 更新检查
   startAutoUpdateCheck();
+  registerRecurringHandlers(db); // v1.2.0: 周期性交易
 
   // 开发环境下初始化测试数据（已禁用，如需测试数据请取消注释）
   // if (process.env.NODE_ENV === 'development') {
