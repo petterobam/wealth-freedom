@@ -1,6 +1,11 @@
 <template>
   <div class="dashboard">
-    <h1 class="page-title">财务看板</h1>
+    <div class="page-header">
+      <h1 class="page-title">财务看板</h1>
+      <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
+        导出 PDF
+      </el-button>
+    </div>
 
     <!-- 核心指标卡片 -->
     <div class="metric-cards">
@@ -212,13 +217,28 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
-import { Plus, Flag, PictureFilled, Sunny } from '@element-plus/icons-vue'
+import { Plus, Flag, PictureFilled, Sunny, Download } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { useAccountStore } from '@/stores/accounts'
 import { useDebtStore } from '@/stores/debts'
 import { useTransactionStore } from '@/stores/transactions'
 import { useGoalStore } from '@/stores/goals'
 import dayjs from 'dayjs'
+import { ElMessage } from 'element-plus'
+import { exportToPDF } from '../utils/export'
+
+const pdfLoading = ref(false)
+
+async function handleExportPDF() {
+  pdfLoading.value = true
+  try {
+    await exportToPDF('财务看板')
+  } catch (e: any) {
+    ElMessage.error('PDF 导出失败: ' + e.message)
+  } finally {
+    pdfLoading.value = false
+  }
+}
 
 const accountStore = useAccountStore()
 const debtStore = useDebtStore()
@@ -484,10 +504,17 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .dashboard {
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
   .page-title {
     font-size: 24px;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin: 0;
   }
 
   .metric-cards {
@@ -624,5 +651,15 @@ onBeforeUnmount(() => {
       }
     }
   }
+}
+
+// PDF 打印优化
+@media print {
+  .page-header .el-button { display: none !important; }
+  .quick-actions { display: none !important; }
+  .daily-insight { break-inside: avoid; }
+  .chart-card { break-inside: avoid; }
+  .ratio-card { break-inside: avoid; }
+  .metric-card { break-inside: avoid; }
 }
 </style>
