@@ -1,4 +1,5 @@
 <template>
+  <FeatureGate feature="hasHealthScore" feature-name="健康评分" description="五维财务健康评分，发现财务盲点" required-tier="basic">
   <div class="health-score-page" v-loading="loading">
     <div v-if="!loading && !score" class="empty-state">
       <div class="empty-icon">🏥</div>
@@ -64,10 +65,12 @@
       </div>
     </template>
   </div>
+  </FeatureGate>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import FeatureGate from '@/components/FeatureGate.vue'
 
 interface Dimension {
   score: number

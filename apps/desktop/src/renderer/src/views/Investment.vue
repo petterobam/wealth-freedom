@@ -1,4 +1,5 @@
 <template>
+  <FeatureGate feature="hasInvestment" feature-name="投资追踪" description="追踪持仓、记录交易、分析资产配置，让钱为你工作" required-tier="basic">
   <div class="investment-page">
     <h1 class="page-title">投资追踪</h1>
     <p class="page-desc">让钱为你工作，用数据驱动投资决策</p>
@@ -381,12 +382,14 @@
       </template>
     </el-dialog>
   </div>
+  </FeatureGate>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { Plus, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import FeatureGate from '@/components/FeatureGate.vue'
 
 const api = (window as any).electronAPI
 

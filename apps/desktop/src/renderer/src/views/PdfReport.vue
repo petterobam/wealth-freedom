@@ -1,5 +1,5 @@
 <template>
-  <div class="pdf-report" v-loading="loading">
+  <div class="pdf-report" v-loading="loading" v-if="!isLocked">
     <!-- 浮动工具栏（打印时隐藏） -->
     <div class="toolbar-float">
       <el-button @click="$router.back()" :icon="ArrowLeft">返回</el-button>
@@ -196,6 +196,19 @@
       </footer>
     </div>
   </div>
+  <!-- 功能门控：免费版提示 -->
+  <div v-if="isLocked" class="feature-gate-overlay">
+    <div class="gate-card">
+      <div class="gate-icon">🔒</div>
+      <h3>综合报告</h3>
+      <p>一键生成 PDF 财务报告，全面掌握财务状况</p>
+      <div class="gate-badges">
+        <span class="badge badge-pro">旗舰版</span>
+        <span class="badge badge-trial">30天免费试用</span>
+      </div>
+      <el-button type="primary" @click="$router.push('/license')">立即升级</el-button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -203,6 +216,11 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Download, ArrowLeft } from '@element-plus/icons-vue'
 import { exportToPDF } from '../utils/export'
+import FeatureGate from '@/components/FeatureGate.vue'
+import { useLicense } from '@/composables/useLicense'
+
+const { features, status: licenseStatus } = useLicense()
+const isLocked = computed(() => licenseStatus.value.tier !== 'trial' && !features.value.hasPdfReport)
 
 const loading = ref(false)
 const pdfLoading = ref(false)
@@ -603,4 +621,4 @@ onMounted(loadAll)
   .section { page-break-inside: avoid; }
   .metrics-grid { grid-template-columns: repeat(4, 1fr); }
 }
-</style>
+</style>  

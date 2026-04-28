@@ -1,4 +1,5 @@
 <template>
+  <FeatureGate feature="hasBudget" feature-name="预算管理" description="设定每月预算目标，实时追踪支出进度，让每一分钱都有归处" required-tier="basic">
   <div class="budget-page">
     <h1 class="page-title">预算管理</h1>
     <p class="page-desc">每一分钱都有归处，掌控支出从预算开始</p>
@@ -204,12 +205,14 @@
       </div>
     </el-dialog>
   </div>
+  </FeatureGate>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, MoreFilled } from '@element-plus/icons-vue'
+import FeatureGate from '@/components/FeatureGate.vue'
 
 interface BudgetStatus {
   budget: any
