@@ -57,6 +57,10 @@
               <el-icon><DataAnalysis /></el-icon>
               <template #title>报表分析</template>
             </el-menu-item>
+            <el-menu-item index="/pdf-report">
+              <el-icon><Document /></el-icon>
+              <template #title>综合报告</template>
+            </el-menu-item>
           </el-sub-menu>
 
           <!-- 收入提升分组 -->
@@ -163,7 +167,8 @@ import {
   Trophy,
   Setting,
   Menu,
-  PieChart
+  PieChart,
+  Document
 } from '@element-plus/icons-vue'
 import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'

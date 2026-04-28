@@ -128,6 +128,12 @@ const router = createRouter({
       meta: { title: '报表分析' }
     },
     {
+      path: '/pdf-report',
+      name: 'PdfReport',
+      component: () => import('@/views/PdfReport.vue'),
+      meta: { title: '综合报告' }
+    },
+    {
       path: '/settings',
       name: 'Settings',
       component: () => import('@/views/Settings.vue'),
