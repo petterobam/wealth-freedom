@@ -128,6 +128,10 @@
             <el-icon><PictureFilled /></el-icon>
             <template #title>梦想图册</template>
           </el-menu-item>
+          <el-menu-item index="/license">
+            <el-icon><Key /></el-icon>
+            <template #title>授权管理</template>
+          </el-menu-item>
           <el-menu-item index="/settings">
             <el-icon><Setting /></el-icon>
             <template #title>设置</template>
@@ -168,7 +172,8 @@ import {
   Setting,
   Menu,
   PieChart,
-  Document
+  Document,
+  Key
 } from '@element-plus/icons-vue'
 import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'

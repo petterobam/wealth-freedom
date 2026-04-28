@@ -138,6 +138,12 @@ const router = createRouter({
       name: 'Settings',
       component: () => import('@/views/Settings.vue'),
       meta: { title: '设置' }
+    },
+    {
+      path: '/license',
+      name: 'License',
+      component: () => import('@/views/License.vue'),
+      meta: { title: '授权管理' }
     }
   ]
 })

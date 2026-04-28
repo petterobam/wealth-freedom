@@ -147,4 +147,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
   backupList: () => ipcRenderer.invoke('backup:list'),
   backupExportJSON: () => ipcRenderer.invoke('backup:exportJSON'),
   backupAutoStatus: () => ipcRenderer.invoke('backup:autoStatus'),
+
+  // 授权管理 (v1.0.0)
+  license: {
+    checkTrial: () => ipcRenderer.invoke('license:checkTrial'),
+    activate: (key: string) => ipcRenderer.invoke('license:activate', key),
+    status: () => ipcRenderer.invoke('license:status'),
+    renew: () => ipcRenderer.invoke('license:renew'),
+    deactivate: () => ipcRenderer.invoke('license:deactivate'),
+    features: () => ipcRenderer.invoke('license:features'),
+    hasFeature: (feature: string) => ipcRenderer.invoke('license:hasFeature', feature),
+    checkLimit: (feature: string, count: number) => ipcRenderer.invoke('license:checkLimit', feature, count),
+    machineId: () => ipcRenderer.invoke('license:machineId'),
+  },
 })

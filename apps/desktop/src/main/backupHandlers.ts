@@ -1,6 +1,6 @@
 /**
  * 数据备份与恢复处理程序
- * v0.9.0 - 财富自由之路
+ * v0.9.0 ~ v0.10.0 - 财富自由之路
  */
 
 import { ipcMain, dialog, app } from 'electron';
