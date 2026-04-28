@@ -161,6 +161,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     machineId: () => ipcRenderer.invoke('license:machineId'),
   },
 
+  // 周期性交易 (v1.2.0)
+  listRecurringRules: (userId: string) => ipcRenderer.invoke('recurring:list', userId),
+  getRecurringRule: (id: string) => ipcRenderer.invoke('recurring:get', id),
+  createRecurringRule: (data: any) => ipcRenderer.invoke('recurring:create', data),
+  updateRecurringRule: (id: string, data: any) => ipcRenderer.invoke('recurring:update', id, data),
+  deleteRecurringRule: (id: string) => ipcRenderer.invoke('recurring:delete', id),
+  toggleRecurringRule: (id: string) => ipcRenderer.invoke('recurring:toggle', id),
+  executePendingRecurring: (userId: string) => ipcRenderer.invoke('recurring:execute-pending', userId),
+
   // 演示模式 (v1.1.0)
   demo: {
     status: () => ipcRenderer.invoke('demo:status'),

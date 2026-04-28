@@ -49,6 +49,10 @@
               <el-icon><PieChart /></el-icon>
               <template #title>预算管理</template>
             </el-menu-item>
+            <el-menu-item index="/recurring">
+              <el-icon><Refresh /></el-icon>
+              <template #title>周期性交易</template>
+            </el-menu-item>
             <el-menu-item index="/investment">
               <el-icon><TrendCharts /></el-icon>
               <template #title>投资追踪</template>
@@ -179,7 +183,8 @@ import {
   Menu,
   PieChart,
   Document,
-  Key
+  Key,
+  Refresh
 } from '@element-plus/icons-vue'
 import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'

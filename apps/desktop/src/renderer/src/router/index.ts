@@ -122,6 +122,12 @@ const router = createRouter({
       meta: { title: '预算管理' }
     },
     {
+      path: '/recurring',
+      name: 'Recurring',
+      component: () => import('@/views/Recurring.vue'),
+      meta: { title: '周期性交易' }
+    },
+    {
       path: '/report',
       name: 'Report',
       component: () => import('@/views/Report.vue'),
