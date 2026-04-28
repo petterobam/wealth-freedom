@@ -60,7 +60,7 @@ export function initLicenseHandlers(): void {
   });
 
   // 检查数量限制
-  ipcMain.handle('license:checkLimit', (_event, feature: 'maxAccounts' | 'maxTransactions', currentCount: number) => {
+  ipcMain.handle('license:checkLimit', (_event, feature: 'maxAccounts' | 'maxTransactions' | 'maxRecurringRules', currentCount: number) => {
     return checkLimit(feature, currentCount);
   });
 

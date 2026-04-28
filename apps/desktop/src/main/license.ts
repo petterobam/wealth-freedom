@@ -44,12 +44,14 @@ export interface LicenseStatus {
 export interface FeatureMap {
   maxAccounts: number;
   maxTransactions: number;
+  maxRecurringRules: number;
   exportFormats: string[];
   hasBudget: boolean;
   hasInvestment: boolean;
   hasPdfReport: boolean;
   hasAutoBackup: boolean;
   hasHealthScore: boolean;
+  hasRecurring: boolean;
 }
 
 // ============================================================
@@ -86,42 +88,50 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
   free: {
     maxAccounts: 3,
     maxTransactions: 200,
+    maxRecurringRules: 3,
     exportFormats: ['csv'],
     hasBudget: false,
     hasInvestment: false,
     hasPdfReport: false,
     hasAutoBackup: false,
     hasHealthScore: false,
+    hasRecurring: true,
   },
   trial: {
     maxAccounts: Infinity,
     maxTransactions: Infinity,
+    maxRecurringRules: Infinity,
     exportFormats: ['csv', 'xlsx', 'pdf'],
     hasBudget: true,
     hasInvestment: true,
     hasPdfReport: true,
     hasAutoBackup: true,
     hasHealthScore: true,
+    hasRecurring: true,
   },
   basic: {
     maxAccounts: Infinity,
     maxTransactions: Infinity,
+    maxRecurringRules: Infinity,
     exportFormats: ['csv', 'xlsx'],
     hasBudget: true,
     hasInvestment: true,
     hasPdfReport: false,
     hasAutoBackup: true,
     hasHealthScore: true,
+    hasRecurring: true,
   },
   pro: {
     maxAccounts: Infinity,
     maxTransactions: Infinity,
+    maxRecurringRules: Infinity,
     exportFormats: ['csv', 'xlsx', 'pdf'],
     hasBudget: true,
     hasInvestment: true,
     hasPdfReport: true,
     hasAutoBackup: true,
     hasHealthScore: true,
+    hasRecurring: true,
   },
 };
 
@@ -496,16 +506,17 @@ export function hasFeature(feature: keyof FeatureMap): boolean {
 /**
  * 检查是否达到数量限制
  */
-export function checkLimit(feature: 'maxAccounts' | 'maxTransactions', currentCount: number): { allowed: boolean; limit: number; message?: string } {
+export function checkLimit(feature: 'maxAccounts' | 'maxTransactions' | 'maxRecurringRules', currentCount: number): { allowed: boolean; limit: number; message?: string } {
   const features = getCurrentFeatures();
   const limit = features[feature];
   if (currentCount >= limit) {
     const tierNames: Record<LicenseTier, string> = { free: '免费版', trial: '试用版', basic: '基础版', pro: '旗舰版' };
     const status = getLicenseStatus();
+    const featureNames: Record<string, string> = { maxAccounts: '账户', maxTransactions: '交易记录', maxRecurringRules: '周期规则' };
     return {
       allowed: false,
       limit,
-      message: `${tierNames[status.tier]}最多支持 ${limit === Infinity ? '无限' : limit} 个${feature === 'maxAccounts' ? '账户' : '交易记录'}，升级以解锁更多`,
+      message: `${tierNames[status.tier]}最多支持 ${limit === Infinity ? '无限' : limit} 个${featureNames[feature]}，升级以解锁更多`,
     };
   }
   return { allowed: true, limit };
