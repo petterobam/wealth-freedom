@@ -138,4 +138,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // 导出相关
   exportToPDF: (filename: string) => ipcRenderer.invoke('export:toPDF', filename),
+
+  // 备份与恢复 (v0.9.0)
+  backupInfo: () => ipcRenderer.invoke('backup:info'),
+  backupCreate: (options?: { filename?: string }) => ipcRenderer.invoke('backup:create', options),
+  backupRestore: () => ipcRenderer.invoke('backup:restore'),
+  backupAuto: () => ipcRenderer.invoke('backup:auto'),
+  backupList: () => ipcRenderer.invoke('backup:list'),
+  backupExportJSON: () => ipcRenderer.invoke('backup:exportJSON'),
 })

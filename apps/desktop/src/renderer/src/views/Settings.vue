@@ -303,6 +303,54 @@
       </el-descriptions>
     </el-card>
 
+    <!-- 数据备份与恢复 (v0.9.0) -->
+    <el-card class="settings-card" style="margin-top: 20px">
+      <template #header>
+        <div class="card-header">
+          <span class="card-title">💾 数据备份与恢复</span>
+        </div>
+      </template>
+
+      <!-- 数据库信息 -->
+      <div v-if="backupInfo" class="backup-info">
+        <el-descriptions :column="3" border size="small">
+          <el-descriptions-item label="数据库大小">{{ backupInfo.dbSizeFormatted }}</el-descriptions-item>
+          <el-descriptions-item label="总记录数">{{ backupInfo.totalRecords }}</el-descriptions-item>
+          <el-descriptions-item label="应用版本">v{{ backupInfo.version }}</el-descriptions-item>
+        </el-descriptions>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="backup-actions">
+        <el-button type="primary" @click="handleBackup" :loading="backupLoading">
+          📦 备份数据库
+        </el-button>
+        <el-button type="success" @click="handleAutoBackup" :loading="autoBackupLoading">
+          🔄 快速备份
+        </el-button>
+        <el-button type="warning" @click="handleRestore" :loading="restoreLoading">
+          📥 恢复数据库
+        </el-button>
+        <el-button @click="handleExportJSON" :loading="exportLoading">
+          📄 导出 JSON
+        </el-button>
+      </div>
+
+      <!-- 自动备份列表 -->
+      <div v-if="backupList.length > 0" class="backup-list">
+        <h4 class="backup-list-title">最近备份</h4>
+        <el-table :data="backupList" size="small" stripe>
+          <el-table-column prop="filename" label="文件名" min-width="200" />
+          <el-table-column prop="sizeFormatted" label="大小" width="100" />
+          <el-table-column label="时间" width="180">
+            <template #default="{ row }">
+              {{ formatDate(row.created) }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-card>
+
     <!-- 导入预览对话框 -->
     <el-dialog
       v-model="importPreviewVisible"
@@ -587,6 +635,103 @@ const loadStatistics = async () => {
 const showResetDialog = () => {
   confirmForm.value.text = ''
   resetDialogVisible.value = true
+}
+
+// ===== 备份与恢复 (v0.9.0) =====
+const backupInfo = ref<any>(null)
+const backupList = ref<any[]>([])
+const backupLoading = ref(false)
+const autoBackupLoading = ref(false)
+const restoreLoading = ref(false)
+const exportLoading = ref(false)
+
+const loadBackupInfo = async () => {
+  try {
+    const res = await window.electronAPI.backupInfo()
+    if (res.success) backupInfo.value = res.data
+  } catch { /* ignore */ }
+}
+
+const loadBackupList = async () => {
+  try {
+    const res = await window.electronAPI.backupList()
+    if (res.success) backupList.value = res.data
+  } catch { /* ignore */ }
+}
+
+const handleBackup = async () => {
+  backupLoading.value = true
+  try {
+    const res = await window.electronAPI.backupCreate()
+    if (res.success) {
+      ElMessage.success(`备份成功：${res.data.backupPath}`)
+      await loadBackupList()
+    } else if (res.error !== '用户取消') {
+      ElMessage.error(`备份失败：${res.error}`)
+    }
+  } catch (e: any) {
+    ElMessage.error(`备份失败：${e.message}`)
+  } finally {
+    backupLoading.value = false
+  }
+}
+
+const handleAutoBackup = async () => {
+  autoBackupLoading.value = true
+  try {
+    const res = await window.electronAPI.backupAuto()
+    if (res.success) {
+      ElMessage.success(`快速备份成功 (${res.data.totalBackups}个备份)`)
+      await loadBackupList()
+      await loadBackupInfo()
+    } else {
+      ElMessage.error(`备份失败：${res.error}`)
+    }
+  } catch (e: any) {
+    ElMessage.error(`备份失败：${e.message}`)
+  } finally {
+    autoBackupLoading.value = false
+  }
+}
+
+const handleRestore = async () => {
+  restoreLoading.value = true
+  try {
+    const res = await window.electronAPI.backupRestore()
+    if (res.success) {
+      ElMessageBox.alert(
+        `数据已从备份恢复，恢复前已自动创建备份：${res.data.preRestoreBackup}\n\n请重启应用以加载新数据。`,
+        '恢复成功',
+        { type: 'success' }
+      )
+    } else if (res.error !== '用户取消') {
+      ElMessage.error(`恢复失败：${res.error}`)
+    }
+  } catch (e: any) {
+    ElMessage.error(`恢复失败：${e.message}`)
+  } finally {
+    restoreLoading.value = false
+  }
+}
+
+const handleExportJSON = async () => {
+  exportLoading.value = true
+  try {
+    const res = await window.electronAPI.backupExportJSON()
+    if (res.success) {
+      ElMessage.success(`导出成功：${res.data.totalRecords}条记录`)
+    } else if (res.error !== '用户取消') {
+      ElMessage.error(`导出失败：${res.error}`)
+    }
+  } catch (e: any) {
+    ElMessage.error(`导出失败：${e.message}`)
+  } finally {
+    exportLoading.value = false
+  }
+}
+
+const formatDate = (iso: string) => {
+  return new Date(iso).toLocaleString('zh-CN')
 }
 
 // 执行重置
@@ -933,6 +1078,8 @@ const executeImport = async () => {
 onMounted(async () => {
   await loadBasicData()
   await loadStatistics()
+  await loadBackupInfo()
+  await loadBackupList()
 })
 </script>
 
@@ -1152,5 +1299,22 @@ onMounted(async () => {
       margin: 5px 0;
     }
   }
+}
+
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.backup-list {
+  margin-top: 16px;
+}
+
+.backup-list-title {
+  font-size: 14px;
+  color: #606266;
+  margin-bottom: 8px;
 }
 </style>

@@ -6,6 +6,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { initDatabase } from './database';
 import { initIPCHandlers } from './ipcHandlers';
+import { initBackupHandlers } from './backupHandlers';
 import { seedTestData } from './seed';
 
 let mainWindow: BrowserWindow | null = null;
@@ -17,6 +18,7 @@ const createWindow = async () => {
 
   // 初始化 IPC 处理程序
   initIPCHandlers(db);
+  initBackupHandlers(db);
 
   // 开发环境下初始化测试数据（已禁用，如需测试数据请取消注释）
   // if (process.env.NODE_ENV === 'development') {
