@@ -146,4 +146,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   backupAuto: () => ipcRenderer.invoke('backup:auto'),
   backupList: () => ipcRenderer.invoke('backup:list'),
   backupExportJSON: () => ipcRenderer.invoke('backup:exportJSON'),
+  backupAutoStatus: () => ipcRenderer.invoke('backup:autoStatus'),
 })

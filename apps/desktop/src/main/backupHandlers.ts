@@ -8,6 +8,10 @@ import Database from 'better-sqlite3';
 import fs from 'fs';
 import path from 'path';
 
+// 定时备份相关状态
+let autoBackupTimer: ReturnType<typeof setInterval> | null = null;
+let lastAutoBackupTime: string | null = null;
+
 export const initBackupHandlers = (db: Database.Database): void => {
   // 获取数据库信息
   ipcMain.handle('backup:info', async () => {
@@ -243,6 +247,18 @@ export const initBackupHandlers = (db: Database.Database): void => {
     }
   });
 
+  // 获取自动备份状态（v0.10.0 新增）
+  ipcMain.handle('backup:autoStatus', async () => {
+    return {
+      success: true,
+      data: {
+        enabled: autoBackupTimer !== null,
+        intervalHours: 6,
+        lastBackupTime: lastAutoBackupTime,
+      },
+    };
+  });
+
   // 导出为 JSON（完整数据导出）
   ipcMain.handle('backup:exportJSON', async () => {
     try {
@@ -335,6 +351,78 @@ function formatBytes(bytes: number): string {
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+/**
+ * 启动自动备份（应用启动时调用）
+ * v0.10.0 - 启动时备份 + 定时备份
+ */
+export const startAutoBackup = (db: Database.Database): void => {
+  // 1. 启动时立即执行一次自动备份（延迟5秒，避免影响启动速度）
+  setTimeout(async () => {
+    try {
+      const dataPath = app.getPath('userData');
+      const dbPath = path.join(dataPath, 'wealth-freedom', 'data.db');
+      if (fs.existsSync(dbPath)) {
+        const backupDir = path.join(dataPath, 'wealth-freedom', 'backups');
+        if (!fs.existsSync(backupDir)) {
+          fs.mkdirSync(backupDir, { recursive: true });
+        }
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        const backupPath = path.join(backupDir, `startup-backup-${timestamp}.db`);
+        await db.backup(backupPath);
+        lastAutoBackupTime = new Date().toISOString();
+        cleanupOldBackups(backupDir, 15); // 启动备份保留15份
+        console.log(`[AutoBackup] 启动备份完成: ${backupPath}`);
+      }
+    } catch (err) {
+      console.error('[AutoBackup] 启动备份失败:', err);
+    }
+  }, 5000);
+
+  // 2. 每6小时执行一次定时备份
+  const INTERVAL_MS = 6 * 60 * 60 * 1000;
+  autoBackupTimer = setInterval(async () => {
+    try {
+      const dataPath = app.getPath('userData');
+      const dbPath = path.join(dataPath, 'wealth-freedom', 'data.db');
+      if (fs.existsSync(dbPath)) {
+        const backupDir = path.join(dataPath, 'wealth-freedom', 'backups');
+        if (!fs.existsSync(backupDir)) {
+          fs.mkdirSync(backupDir, { recursive: true });
+        }
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        const backupPath = path.join(backupDir, `periodic-backup-${timestamp}.db`);
+        await db.backup(backupPath);
+        lastAutoBackupTime = new Date().toISOString();
+        cleanupOldBackups(backupDir, 10); // 定时备份保留10份
+        console.log(`[AutoBackup] 定时备份完成: ${backupPath}`);
+      }
+    } catch (err) {
+      console.error('[AutoBackup] 定时备份失败:', err);
+    }
+  }, INTERVAL_MS);
+};
+
+/** 停止定时备份（应用退出时调用） */
+export const stopAutoBackup = (): void => {
+  if (autoBackupTimer) {
+    clearInterval(autoBackupTimer);
+    autoBackupTimer = null;
+  }
+};
+
+/** 清理旧备份，保留最近 N 份（按前缀匹配） */
+function cleanupOldBackups(backupDir: string, keepCount: number): void {
+  const files = fs.readdirSync(backupDir)
+    .filter(f => f.endsWith('.db'))
+    .sort()
+    .reverse();
+  for (let i = keepCount; i < files.length; i++) {
+    try {
+      fs.unlinkSync(path.join(backupDir, files[i]));
+    } catch { /* ignore */ }
+  }
 }
 
 export default initBackupHandlers;

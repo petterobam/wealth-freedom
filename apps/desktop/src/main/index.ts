@@ -6,7 +6,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { initDatabase } from './database';
 import { initIPCHandlers } from './ipcHandlers';
-import { initBackupHandlers } from './backupHandlers';
+import { initBackupHandlers, startAutoBackup, stopAutoBackup } from './backupHandlers';
 import { seedTestData } from './seed';
 
 let mainWindow: BrowserWindow | null = null;
@@ -19,6 +19,7 @@ const createWindow = async () => {
   // 初始化 IPC 处理程序
   initIPCHandlers(db);
   initBackupHandlers(db);
+  startAutoBackup(db); // v0.10.0: 启动自动备份
 
   // 开发环境下初始化测试数据（已禁用，如需测试数据请取消注释）
   // if (process.env.NODE_ENV === 'development') {
@@ -70,8 +71,9 @@ app.on('activate', () => {
   }
 });
 
-// 应用退出前关闭数据库连接
+// 应用退出前关闭数据库连接和定时器
 app.on('will-quit', () => {
+  stopAutoBackup();
   if (db) {
     db.close();
   }

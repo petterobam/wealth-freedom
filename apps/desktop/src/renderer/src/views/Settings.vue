@@ -317,6 +317,14 @@
           <el-descriptions-item label="数据库大小">{{ backupInfo.dbSizeFormatted }}</el-descriptions-item>
           <el-descriptions-item label="总记录数">{{ backupInfo.totalRecords }}</el-descriptions-item>
           <el-descriptions-item label="应用版本">v{{ backupInfo.version }}</el-descriptions-item>
+          <el-descriptions-item v-if="autoBackupStatus" label="自动备份">
+            <el-tag :type="autoBackupStatus.enabled ? 'success' : 'danger'" size="small">
+              {{ autoBackupStatus.enabled ? '每6小时' : '未启用' }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="autoBackupStatus?.lastBackupTime" label="上次备份">
+            {{ formatDate(autoBackupStatus.lastBackupTime) }}
+          </el-descriptions-item>
         </el-descriptions>
       </div>
 
@@ -644,11 +652,16 @@ const backupLoading = ref(false)
 const autoBackupLoading = ref(false)
 const restoreLoading = ref(false)
 const exportLoading = ref(false)
+const autoBackupStatus = ref<any>(null) // v0.10.0
 
 const loadBackupInfo = async () => {
   try {
     const res = await window.electronAPI.backupInfo()
     if (res.success) backupInfo.value = res.data
+  } catch { /* ignore */ }
+  try {
+    const res = await window.electronAPI.backupAutoStatus()
+    if (res.success) autoBackupStatus.value = res.data
   } catch { /* ignore */ }
 }
 
