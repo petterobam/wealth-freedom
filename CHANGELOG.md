@@ -7,6 +7,25 @@
 
 ---
 
+## [1.0.0] - 2026-04-28
+
+### 新增
+- 🔑 **订阅授权系统**：完整的三级授权体系（免费/基础¥19/月/旗舰¥39/月）
+- 🔑 `license.ts` 核心模块：License Key 格式校验、AES-256-CBC 加密存储、机器指纹、RSA-2048 签名验证
+- 🔑 `licenseHandlers.ts`：8个 IPC 方法（激活/状态/续期/停用/验证等）+ preload 桥接 9个 API
+- 🔑 `License.vue` 授权管理页：三版对比卡片 + 密钥输入激活 + 续期操作
+- 🔒 `FeatureGate.vue` 组件：统一功能门控，支持升级提示弹窗
+- 🔒 `useLicense` composable：响应式授权状态管理
+- 🔒 免费版限制：3账户/200交易/无预算/无投资/无PDF/无备份
+- 🔑 密钥生成工具 `scripts/generate-key.mjs`：RSA-2048 密钥对管理 + 批量生成签名密钥
+
+### 变更
+- 🔧 Budget/Investment/HealthScore 页面集成 FeatureGate 门控
+- 🔧 PdfReport 页面集成 inline 门控（v-if/v-else）
+- 🔧 侧边栏新增授权管理入口（Key 图标）
+
+---
+
 ## [0.8.0] - 2026-04-28
 
 ### 新增
