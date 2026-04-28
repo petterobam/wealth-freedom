@@ -138,10 +138,16 @@
           </el-menu-item>
         </el-menu>
 
-        <!-- 主题切换 -->
-        <div class="theme-toggle" @click="toggleTheme">
-          <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
-          <span class="theme-label" v-show="sidebarVisible">{{ isDark ? '切换亮色' : '切换暗色' }}</span>
+        <!-- 主题切换 + 更新提示 -->
+        <div class="sidebar-bottom">
+          <div v-if="hasUpdate" class="update-badge" @click="openUpdateDownload">
+            <span class="update-icon">🔴</span>
+            <span class="update-text" v-show="sidebarVisible">新版本 v{{ updateInfo?.latestVersion }}</span>
+          </div>
+          <div class="theme-toggle" @click="toggleTheme">
+            <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
+            <span class="theme-label" v-show="sidebarVisible">{{ isDark ? '切换亮色' : '切换暗色' }}</span>
+          </div>
         </div>
       </el-aside>
 
@@ -178,6 +184,7 @@ import {
 import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'
 import { useTheme } from '@/composables/useTheme'
+import { useUpdate } from '@/composables/useUpdate'
 import {
   getCurrentBreakpoint,
   getSidebarWidth,
@@ -188,6 +195,11 @@ import {
 const route = useRoute()
 const userStore = useUserStore()
 const { isDark, toggleTheme } = useTheme()
+const { updateInfo, checkUpdate, openDownload } = useUpdate()
+const hasUpdate = computed(() => updateInfo.value?.hasUpdate ?? false)
+const openUpdateDownload = () => {
+  if (updateInfo.value?.downloadUrl) openDownload(updateInfo.value.downloadUrl)
+}
 
 const currentRoute = computed(() => route.path)
 const initialized = ref(false)
@@ -414,16 +426,46 @@ onMounted(() => {
   }
 }
 
+.sidebar-bottom {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// 更新提示徽章
+.update-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  color: #67c23a;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(103, 194, 58, 0.08);
+
+  &:hover {
+    background: rgba(103, 194, 58, 0.15);
+  }
+
+  .update-icon {
+    font-size: 10px;
+    width: 24px;
+    text-align: center;
+  }
+
+  .update-text {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
 // 主题切换按钮
 .theme-toggle {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  margin-top: auto;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s;
 
   &:hover {

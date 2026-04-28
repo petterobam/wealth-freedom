@@ -83,6 +83,13 @@ const api = {
       ipcRenderer.invoke('report:goal-progress', { userId }),
   },
 
+  // 应用更新检查 (v1.1.0)
+  update: {
+    check: () => ipcRenderer.invoke('update:check'),
+    lastResult: () => ipcRenderer.invoke('update:last-result'),
+    download: (url: string) => ipcRenderer.invoke('update:download', url),
+  },
+
   // 数据库管理
   resetDatabase: () => ipcRenderer.invoke('database:reset'),
 };

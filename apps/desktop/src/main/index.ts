@@ -7,6 +7,7 @@ import path from 'path';
 import { initDatabase } from './database';
 import { initIPCHandlers } from './ipcHandlers';
 import { initBackupHandlers, startAutoBackup, stopAutoBackup } from './backupHandlers';
+import { initUpdateHandlers, startAutoUpdateCheck, stopAutoUpdateCheck } from './updateHandlers';
 import { seedTestData } from './seed';
 
 let mainWindow: BrowserWindow | null = null;
@@ -20,6 +21,8 @@ const createWindow = async () => {
   initIPCHandlers(db);
   initBackupHandlers(db);
   startAutoBackup(db); // v0.10.0: 启动自动备份
+  initUpdateHandlers(); // v1.1.0: 更新检查
+  startAutoUpdateCheck();
 
   // 开发环境下初始化测试数据（已禁用，如需测试数据请取消注释）
   // if (process.env.NODE_ENV === 'development') {
@@ -74,6 +77,7 @@ app.on('activate', () => {
 // 应用退出前关闭数据库连接和定时器
 app.on('will-quit', () => {
   stopAutoBackup();
+  stopAutoUpdateCheck();
   if (db) {
     db.close();
   }
