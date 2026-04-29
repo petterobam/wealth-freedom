@@ -140,6 +140,12 @@ const router = createRouter({
       meta: { title: '综合报告' }
     },
     {
+      path: '/ai-advice',
+      name: 'AIAdvice',
+      component: () => import('@/views/AIAdvice.vue'),
+      meta: { title: 'AI 财务助手' }
+    },
+    {
       path: '/settings',
       name: 'Settings',
       component: () => import('@/views/Settings.vue'),

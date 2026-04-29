@@ -45,6 +45,7 @@ export interface FeatureMap {
   maxAccounts: number;
   maxTransactions: number;
   maxRecurringRules: number;
+  maxAiCalls: number; // v1.3.0: 每日 AI 调用次数，0=不可用，Infinity=无限制
   exportFormats: string[];
   hasBudget: boolean;
   hasInvestment: boolean;
@@ -52,6 +53,7 @@ export interface FeatureMap {
   hasAutoBackup: boolean;
   hasHealthScore: boolean;
   hasRecurring: boolean;
+  hasAI: boolean; // v1.3.0: 是否有 AI 功能
 }
 
 // ============================================================
@@ -89,6 +91,7 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     maxAccounts: 3,
     maxTransactions: 200,
     maxRecurringRules: 3,
+    maxAiCalls: 0,
     exportFormats: ['csv'],
     hasBudget: false,
     hasInvestment: false,
@@ -96,11 +99,13 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasAutoBackup: false,
     hasHealthScore: false,
     hasRecurring: true,
+    hasAI: false,
   },
   trial: {
     maxAccounts: Infinity,
     maxTransactions: Infinity,
     maxRecurringRules: Infinity,
+    maxAiCalls: 10,
     exportFormats: ['csv', 'xlsx', 'pdf'],
     hasBudget: true,
     hasInvestment: true,
@@ -108,11 +113,13 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasAutoBackup: true,
     hasHealthScore: true,
     hasRecurring: true,
+    hasAI: true,
   },
   basic: {
     maxAccounts: Infinity,
     maxTransactions: Infinity,
     maxRecurringRules: Infinity,
+    maxAiCalls: 20,
     exportFormats: ['csv', 'xlsx'],
     hasBudget: true,
     hasInvestment: true,
@@ -120,11 +127,13 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasAutoBackup: true,
     hasHealthScore: true,
     hasRecurring: true,
+    hasAI: true,
   },
   pro: {
     maxAccounts: Infinity,
     maxTransactions: Infinity,
     maxRecurringRules: Infinity,
+    maxAiCalls: Infinity,
     exportFormats: ['csv', 'xlsx', 'pdf'],
     hasBudget: true,
     hasInvestment: true,
@@ -132,6 +141,7 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasAutoBackup: true,
     hasHealthScore: true,
     hasRecurring: true,
+    hasAI: true,
   },
 };
 
@@ -506,13 +516,24 @@ export function hasFeature(feature: keyof FeatureMap): boolean {
 /**
  * 检查是否达到数量限制
  */
-export function checkLimit(feature: 'maxAccounts' | 'maxTransactions' | 'maxRecurringRules', currentCount: number): { allowed: boolean; limit: number; message?: string } {
+export function checkLimit(feature: 'maxAccounts' | 'maxTransactions' | 'maxRecurringRules' | 'aiCalls', currentCount?: number): { allowed: boolean; limit: number; message?: string } {
   const features = getCurrentFeatures();
+  
+  // AI 调用特殊处理
+  if (feature === 'aiCalls') {
+    const limit = features.maxAiCalls;
+    if (limit === 0) {
+      return { allowed: false, limit: 0, message: 'AI 功能需要升级到基础版或旗舰版' };
+    }
+    return { allowed: true, limit };
+  }
+  
   const limit = features[feature];
-  if (currentCount >= limit) {
+  const count = currentCount ?? 0;
+  if (count >= limit) {
     const tierNames: Record<LicenseTier, string> = { free: '免费版', trial: '试用版', basic: '基础版', pro: '旗舰版' };
     const status = getLicenseStatus();
-    const featureNames: Record<string, string> = { maxAccounts: '账户', maxTransactions: '交易记录', maxRecurringRules: '周期规则' };
+    const featureNames: Record<string, string> = { maxAccounts: '账户', maxTransactions: '交易记录', maxRecurringRules: '周期规则', aiCalls: 'AI 调用' };
     return {
       allowed: false,
       limit,

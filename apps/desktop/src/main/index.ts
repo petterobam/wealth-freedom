@@ -9,6 +9,7 @@ import { initIPCHandlers } from './ipcHandlers';
 import { initBackupHandlers, startAutoBackup, stopAutoBackup } from './backupHandlers';
 import { initUpdateHandlers, startAutoUpdateCheck, stopAutoUpdateCheck } from './updateHandlers';
 import { registerRecurringHandlers } from './recurringHandlers';
+import { initAIHandlers } from './aiHandlers';
 import { seedTestData } from './seed';
 
 let mainWindow: BrowserWindow | null = null;
@@ -25,6 +26,7 @@ const createWindow = async () => {
   initUpdateHandlers(); // v1.1.0: 更新检查
   startAutoUpdateCheck();
   registerRecurringHandlers(db); // v1.2.0: 周期性交易
+  initAIHandlers(db); // v1.3.0: AI 财务助手
 
   // 开发环境下初始化测试数据（已禁用，如需测试数据请取消注释）
   // if (process.env.NODE_ENV === 'development') {

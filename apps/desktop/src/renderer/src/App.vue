@@ -128,6 +128,10 @@
           </el-sub-menu>
 
           <!-- 其他功能 -->
+          <el-menu-item index="/ai-advice">
+            <el-icon><MagicStick /></el-icon>
+            <template #title>AI 助手</template>
+          </el-menu-item>
           <el-menu-item index="/dreams">
             <el-icon><PictureFilled /></el-icon>
             <template #title>梦想图册</template>
@@ -184,7 +188,8 @@ import {
   PieChart,
   Document,
   Key,
-  Refresh
+  Refresh,
+  MagicStick
 } from '@element-plus/icons-vue'
 import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'
