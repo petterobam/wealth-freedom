@@ -10,6 +10,7 @@ import { initBackupHandlers, startAutoBackup, stopAutoBackup } from './backupHan
 import { initUpdateHandlers, startAutoUpdateCheck, stopAutoUpdateCheck } from './updateHandlers';
 import { registerRecurringHandlers } from './recurringHandlers';
 import { initAIHandlers } from './aiHandlers';
+import { initInsightHandlers } from './insightHandlers';
 import { seedTestData } from './seed';
 
 let mainWindow: BrowserWindow | null = null;
@@ -27,6 +28,7 @@ const createWindow = async () => {
   startAutoUpdateCheck();
   registerRecurringHandlers(db); // v1.2.0: 周期性交易
   initAIHandlers(db); // v1.3.0: AI 财务助手
+  initInsightHandlers(db); // v1.4.0: 洞察与成就
 
   // 开发环境下初始化测试数据（已禁用，如需测试数据请取消注释）
   // if (process.env.NODE_ENV === 'development') {

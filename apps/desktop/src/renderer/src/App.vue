@@ -132,6 +132,10 @@
             <el-icon><MagicStick /></el-icon>
             <template #title>AI 助手</template>
           </el-menu-item>
+          <el-menu-item index="/insights">
+            <el-icon><TrendCharts /></el-icon>
+            <template #title>财务洞察</template>
+          </el-menu-item>
           <el-menu-item index="/dreams">
             <el-icon><PictureFilled /></el-icon>
             <template #title>梦想图册</template>

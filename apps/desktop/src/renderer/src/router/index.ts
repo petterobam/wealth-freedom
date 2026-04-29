@@ -146,6 +146,12 @@ const router = createRouter({
       meta: { title: 'AI 财务助手' }
     },
     {
+      path: '/insights',
+      name: 'Insights',
+      component: () => import('@/views/Insights.vue'),
+      meta: { title: '财务洞察' }
+    },
+    {
       path: '/settings',
       name: 'Settings',
       component: () => import('@/views/Settings.vue'),

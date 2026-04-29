@@ -176,4 +176,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     seed: () => ipcRenderer.invoke('demo:seed'),
     clear: () => ipcRenderer.invoke('demo:clear'),
   },
+
+  // 洞察与成就 (v1.4.0)
+  insight: {
+    benchmarks: () => ipcRenderer.invoke('insight:benchmarks'),
+    networthPercentile: (netWorth: number, age: number) => ipcRenderer.invoke('insight:networth-percentile', netWorth, age),
+    achievements: () => ipcRenderer.invoke('insight:achievements'),
+    summary: () => ipcRenderer.invoke('insight:summary'),
+  },
 })
