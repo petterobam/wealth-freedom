@@ -54,6 +54,7 @@ export interface FeatureMap {
   hasHealthScore: boolean;
   hasRecurring: boolean;
   hasAI: boolean; // v1.3.0: 是否有 AI 功能
+  hasInsights: boolean; // v1.4.0: 是否有财务洞察（基准对比+成就系统）
 }
 
 // ============================================================
@@ -100,6 +101,7 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasHealthScore: false,
     hasRecurring: true,
     hasAI: false,
+    hasInsights: false,
   },
   trial: {
     maxAccounts: Infinity,
@@ -114,6 +116,7 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasHealthScore: true,
     hasRecurring: true,
     hasAI: true,
+    hasInsights: true,
   },
   basic: {
     maxAccounts: Infinity,
@@ -128,6 +131,7 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasHealthScore: true,
     hasRecurring: true,
     hasAI: true,
+    hasInsights: true,
   },
   pro: {
     maxAccounts: Infinity,
@@ -142,6 +146,7 @@ export const FEATURE_MAP: Record<LicenseTier, FeatureMap> = {
     hasHealthScore: true,
     hasRecurring: true,
     hasAI: true,
+    hasInsights: true,
   },
 };
 

@@ -1,4 +1,5 @@
 <template>
+  <FeatureGate feature="hasInsights" featureName="财务洞察" description="基准对比与成就系统，升级以解锁">
   <div class="insight-page">
     <div class="page-header">
       <h2>财务洞察</h2>
@@ -132,11 +133,13 @@
       </el-tab-pane>
     </el-tabs>
   </div>
+  </FeatureGate>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Loading } from '@element-plus/icons-vue'
+import FeatureGate from '@/components/FeatureGate.vue'
 
 const activeTab = ref('benchmark')
 const loading = ref(false)
