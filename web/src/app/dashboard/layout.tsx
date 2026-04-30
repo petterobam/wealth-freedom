@@ -8,6 +8,7 @@ const navItems = [
   { href: "/dashboard/accounts", label: "账户", icon: "🏦" },
   { href: "/dashboard/transactions", label: "交易", icon: "💰" },
   { href: "/dashboard/goals", label: "目标", icon: "🎯" },
+  { href: "/dashboard/settings", label: "设置", icon: "⚙️" },
 ];
 
 export default function DashboardLayout({
