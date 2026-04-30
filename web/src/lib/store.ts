@@ -2,13 +2,16 @@ import {
   FinanceData,
   Transaction,
   Goal,
+  Account,
   DashboardStats,
   INCOME_CATEGORIES,
   EXPENSE_CATEGORIES,
+  ACCOUNT_TYPES,
+  ACCOUNT_ICONS,
 } from "./types";
 
 const STORAGE_KEY = "wealth-freedom-data";
-const VERSION = 1;
+const VERSION = 2;
 
 // ── 默认数据 ──────────────────────────────────────────
 
@@ -35,6 +38,14 @@ const DEFAULT_GOALS: Goal[] = [
   { id: "g5", name: "财务自由", target: 8000000, current: 1100000, icon: "🏝️", deadline: "2031-04", color: "from-emerald-400 to-teal-300", createdAt: "2026-01-01T00:00:00Z" },
 ];
 
+const DEFAULT_ACCOUNTS: Account[] = [
+  { id: "a1", name: "招商银行", type: "checking", balance: 45000, icon: "💳", color: "#e74c3c", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "a2", name: "支付宝余额", type: "savings", balance: 25000, icon: "🏦", color: "#3b82f6", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "a3", name: "基金投资", type: "investment", balance: 680000, icon: "📈", color: "#10b981", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "a4", name: "股票账户", type: "investment", balance: 320000, icon: "📈", color: "#f59e0b", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "a5", name: "现金", type: "cash", balance: 30000, icon: "💵", color: "#8b5cf6", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+];
+
 const DEFAULT_STATS: DashboardStats = {
   totalAssets: 1100000,
   monthlyIncome: 41700,
@@ -48,6 +59,7 @@ const DEFAULT_STATS: DashboardStats = {
 const DEFAULT_DATA: FinanceData = {
   transactions: DEFAULT_TRANSACTIONS,
   goals: DEFAULT_GOALS,
+  accounts: DEFAULT_ACCOUNTS,
   stats: DEFAULT_STATS,
   version: VERSION,
 };
@@ -58,7 +70,9 @@ function parse(raw: string | null): FinanceData {
   if (!raw) return DEFAULT_DATA;
   try {
     const data = JSON.parse(raw) as FinanceData;
-    if (data.version !== VERSION) return DEFAULT_DATA;
+    if (!data.transactions || !data.goals) return DEFAULT_DATA;
+    // migration: add accounts if missing
+    if (!data.accounts) data.accounts = DEFAULT_ACCOUNTS;
     return data;
   } catch {
     return DEFAULT_DATA;
@@ -147,6 +161,61 @@ export function deleteGoal(id: string): boolean {
   return true;
 }
 
+// ── Account CRUD ─────────────────────────────────────
+
+export function getAccounts(): Account[] {
+  return loadData().accounts;
+}
+
+export function addAccount(acct: Omit<Account, "id" | "createdAt" | "updatedAt">): Account {
+  const data = loadData();
+  const now = new Date().toISOString();
+  const newAcct: Account = {
+    ...acct,
+    id: "a_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+    createdAt: now,
+    updatedAt: now,
+  };
+  data.accounts = [...data.accounts, newAcct];
+  save(data);
+  return newAcct;
+}
+
+export function updateAccount(id: string, patch: Partial<Omit<Account, "id" | "createdAt">>): Account | null {
+  const data = loadData();
+  const idx = data.accounts.findIndex((a) => a.id === id);
+  if (idx === -1) return null;
+  data.accounts[idx] = { ...data.accounts[idx], ...patch, updatedAt: new Date().toISOString() };
+  save(data);
+  return data.accounts[idx];
+}
+
+export function deleteAccount(id: string): boolean {
+  const data = loadData();
+  const before = data.accounts.length;
+  data.accounts = data.accounts.filter((a) => a.id !== id);
+  if (data.accounts.length === before) return false;
+  save(data);
+  return true;
+}
+
+export function getTotalAssets(): number {
+  return loadData().accounts.reduce((sum, a) => sum + a.balance, 0);
+}
+
+export function getAssetsByType(): { type: string; label: string; value: number; color: string }[] {
+  const data = loadData();
+  const map: Record<string, number> = {};
+  data.accounts.forEach((a) => {
+    map[a.type] = (map[a.type] || 0) + a.balance;
+  });
+  const labels: Record<string, string> = { checking: "活期", savings: "储蓄", investment: "投资", credit: "信用卡", cash: "现金", other: "其他" };
+  const colors: Record<string, string> = { checking: "#e74c3c", savings: "#3b82f6", investment: "#10b981", credit: "#f59e0b", cash: "#8b5cf6", other: "#6b7280" };
+  return Object.entries(map)
+    .map(([type, value]) => ({ type, label: labels[type] || type, value: Math.round(value), color: colors[type] || "#6b7280" }))
+    .sort((a, b) => b.value - a.value);
+}
+
 // ── Stats ─────────────────────────────────────────────
 
 export function getStats(): DashboardStats {
@@ -170,6 +239,7 @@ export function importData(json: string): { ok: boolean; error?: string } {
   try {
     const data = JSON.parse(json) as FinanceData;
     if (!data.transactions || !data.goals) return { ok: false, error: "数据格式不正确" };
+    if (!data.accounts) data.accounts = DEFAULT_ACCOUNTS;
     data.version = VERSION;
     save(data);
     return { ok: true };
@@ -184,5 +254,5 @@ export function resetData(): void {
 
 // ── Helpers ───────────────────────────────────────────
 
-export { INCOME_CATEGORIES, EXPENSE_CATEGORIES };
-export type { FinanceData, Transaction, Goal, DashboardStats };
+export { INCOME_CATEGORIES, EXPENSE_CATEGORIES, ACCOUNT_TYPES, ACCOUNT_ICONS };
+export type { FinanceData, Transaction, Goal, Account, DashboardStats };
