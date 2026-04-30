@@ -1,96 +1,217 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
+import { getStats, getTransactions, getGoals } from "@/lib/store";
+import type { DashboardStats, Transaction, Goal } from "@/lib/types";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
+  LineChart, Line,
+} from "recharts";
 
 export default function DashboardPage() {
-  // TODO: 从 localStorage / API 读取真实数据
-  const stats = {
-    totalAssets: 285000,
-    monthlyIncome: 41700,
-    monthlyExpense: 12469,
-    savingsRate: 70.1,
-    investmentReturn: 4.09,
-  };
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [recentTx, setRecentTx] = useState<Transaction[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  const formatMoney = (n: number) =>
-    "¥" + n.toLocaleString("zh-CN", { minimumFractionDigits: 2 });
+  useEffect(() => {
+    setStats(getStats());
+    setRecentTx(getTransactions().slice(0, 5));
+    setGoals(getGoals());
+    setMounted(true);
+  }, []);
+
+  if (!mounted || !stats) return <div className="p-6 text-slate-500">加载中...</div>;
+
+  const fmt = (n: number) => "¥" + n.toLocaleString("zh-CN", { minimumFractionDigits: 2 });
+  const safetyGoal = goals.find((g) => g.name === "财务安全");
+  const safetyPct = safetyGoal ? Math.round((safetyGoal.current / safetyGoal.target) * 100) : 34.8;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      {/* 顶部导航 */}
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-        <h1 className="text-lg font-bold">📊 财务看板</h1>
-        <div className="flex gap-4 items-center">
-          <Link href="/" className="text-sm text-slate-400 hover:text-white">
-            首页
-          </Link>
-          <button className="text-sm text-slate-400 hover:text-white">
-            退出
-          </button>
-        </div>
-      </nav>
+    <div className="p-6 max-w-6xl">
+      <h2 className="text-xl font-bold mb-6">📊 财务看板</h2>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* 概览卡片 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: "总资产", value: formatMoney(stats.totalAssets), color: "text-blue-400" },
-            { label: "月收入", value: formatMoney(stats.monthlyIncome), color: "text-emerald-400" },
-            { label: "月支出", value: formatMoney(stats.monthlyExpense), color: "text-amber-400" },
-            { label: "储蓄率", value: stats.savingsRate + "%", color: "text-purple-400" },
-          ].map((card) => (
-            <div
-              key={card.label}
-              className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50"
-            >
-              <div className="text-sm text-slate-400 mb-1">{card.label}</div>
-              <div className={`text-2xl font-bold ${card.color}`}>
-                {card.value}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* 功能模块 */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
-          {[
-            { title: "预算管理", icon: "📊", desc: "设定月度预算，追踪支出", href: "#" },
-            { title: "投资追踪", icon: "📈", desc: "投资组合与收益率", href: "#" },
-            { title: "AI 助手", icon: "🤖", desc: "个性化理财建议", href: "#" },
-          ].map((mod) => (
-            <a
-              key={mod.title}
-              href={mod.href}
-              className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition block"
-            >
-              <div className="text-2xl mb-2">{mod.icon}</div>
-              <h3 className="font-bold mb-1">{mod.title}</h3>
-              <p className="text-sm text-slate-400">{mod.desc}</p>
-            </a>
-          ))}
-        </div>
-
-        {/* 财务安全进度 */}
-        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-          <h3 className="font-bold mb-4">🎯 财务安全进度</h3>
-          <div className="flex items-center gap-4">
-            <div className="flex-1 h-3 bg-slate-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full"
-                style={{ width: "35%" }}
-              />
-            </div>
-            <span className="text-emerald-400 font-semibold">35%</span>
+      {/* 概览卡片 */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {[
+          { label: "总资产", value: fmt(stats.totalAssets), color: "text-blue-400" },
+          { label: "月收入", value: fmt(stats.monthlyIncome), color: "text-emerald-400" },
+          { label: "月支出", value: fmt(stats.monthlyExpense), color: "text-amber-400" },
+          { label: "储蓄率", value: stats.savingsRate + "%", color: "text-purple-400" },
+        ].map((card) => (
+          <div key={card.label} className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
+            <div className="text-sm text-slate-400 mb-1">{card.label}</div>
+            <div className={`text-2xl font-bold ${card.color}`}>{card.value}</div>
           </div>
-          <p className="text-sm text-slate-400 mt-2">
-            预计 2030年11月 达成财务安全（58个月）
-          </p>
-        </div>
+        ))}
+      </div>
 
-        <p className="text-center text-slate-600 text-xs mt-12">
-          数据存储在本地 · 数据导入自桌面端 · v1.5.0-preview
+      {/* 功能模块 */}
+      <div className="grid md:grid-cols-3 gap-4 mb-8">
+        {[
+          { title: "交易记录", icon: "💰", desc: "查看收支明细", href: "/dashboard/transactions" },
+          { title: "目标追踪", icon: "🎯", desc: "财务自由进度", href: "/dashboard/goals" },
+          { title: "AI 助手", icon: "🤖", desc: "个性化理财建议", href: "#" },
+        ].map((mod) => (
+          <Link key={mod.title} href={mod.href} className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition block">
+            <div className="text-2xl mb-2">{mod.icon}</div>
+            <h3 className="font-bold mb-1">{mod.title}</h3>
+            <p className="text-sm text-slate-400">{mod.desc}</p>
+          </Link>
+        ))}
+      </div>
+
+      {/* 财务安全进度 */}
+      <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 mb-8">
+        <h3 className="font-bold mb-4">🛡️ 财务安全进度</h3>
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-3 bg-slate-700 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full transition-all" style={{ width: `${safetyPct}%` }} />
+          </div>
+          <span className="text-emerald-400 font-semibold">{safetyPct}%</span>
+        </div>
+        <p className="text-sm text-slate-400 mt-2">
+          {safetyGoal ? `¥${(safetyGoal.current / 10000).toFixed(0)}万 / ¥${(safetyGoal.target / 10000).toFixed(0)}万 · 截止 ${safetyGoal.deadline}` : "加载中..."}
         </p>
       </div>
+
+      {/* 图表区 */}
+      <div className="grid md:grid-cols-2 gap-4 mb-8">
+        {/* 收支柱状图 */}
+        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
+          <h3 className="font-bold mb-4">📈 近7日收支</h3>
+          <ChartContent transactions={recentTx.length > 0 ? (() => {
+            const all = getTransactions();
+            const days: Record<string, { income: number; expense: number }> = {};
+            const now = new Date();
+            for (let i = 6; i >= 0; i--) {
+              const d = new Date(now); d.setDate(d.getDate() - i);
+              const key = d.toISOString().slice(0, 10);
+              days[key] = { income: 0, expense: 0 };
+            }
+            all.forEach((t) => { if (days[t.date]) days[t.date][t.type] += t.amount; });
+            return Object.entries(days).map(([date, v]) => ({
+              name: date.slice(5),
+              收入: v.income,
+              支出: v.expense,
+            }));
+          })() : []} />
+        </div>
+
+        {/* 支出分类饼图 */}
+        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
+          <h3 className="font-bold mb-4">🍩 支出分类</h3>
+          <PieContent transactions={(() => {
+            const all = getTransactions().filter((t) => t.type === "expense");
+            const cats: Record<string, number> = {};
+            all.forEach((t) => { cats[t.category] = (cats[t.category] || 0) + t.amount; });
+            return Object.entries(cats).map(([name, value]) => ({ name, value: Math.round(value) })).sort((a, b) => b.value - a.value);
+          })()} />
+        </div>
+      </div>
+
+      {/* 净资产趋势折线图 */}
+      <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 mb-8">
+        <h3 className="font-bold mb-4">💹 净资产趋势（近6月）</h3>
+        <NetWorthChart transactions={(() => {
+          const all = getTransactions();
+          const months: Record<string, { income: number; expense: number }> = {};
+          const now = new Date();
+          for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            months[key] = { income: 0, expense: 0 };
+          }
+          all.forEach((t) => { if (months[t.date.slice(0, 7)]) months[t.date.slice(0, 7)][t.type] += t.amount; });
+          let cumulative = (stats?.netWorth ?? 1100000);
+          // back-calculate from current net worth
+          const entries = Object.entries(months);
+          const deltas = entries.map(([, v]) => v.income - v.expense);
+          cumulative -= deltas.reduce((a, b) => a + b, 0);
+          return entries.map(([month, v], i) => {
+            cumulative += deltas[i];
+            return { name: month.slice(5) + "月", 净资产: Math.round(cumulative) };
+          });
+        })()} />
+      </div>
+
+      {/* 最近交易 */}
+      <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold">📝 最近交易</h3>
+          <Link href="/dashboard/transactions" className="text-xs text-blue-400 hover:underline">查看全部 →</Link>
+        </div>
+        <div className="space-y-2">
+          {recentTx.map((t) => (
+            <div key={t.id} className="flex items-center justify-between py-2 border-b border-slate-800/50 last:border-0">
+              <div className="flex items-center gap-3">
+                <span className={`text-xs px-2 py-0.5 rounded-full ${t.type === "income" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                  {t.type === "income" ? "收" : "支"}
+                </span>
+                <span className="text-sm">{t.note || t.category}</span>
+                <span className="text-xs text-slate-500">{t.date}</span>
+              </div>
+              <span className={`text-sm font-mono font-semibold ${t.type === "income" ? "text-emerald-400" : "text-red-400"}`}>
+                {t.type === "income" ? "+" : "-"}¥{t.amount.toLocaleString("zh-CN")}
+              </span>
+            </div>
+          ))}
+          {recentTx.length === 0 && <p className="text-sm text-slate-500 text-center py-4">暂无交易记录</p>}
+        </div>
+      </div>
+
+      <p className="text-center text-slate-600 text-xs mt-12">数据存储在浏览器本地 · v1.5.0</p>
     </div>
+  );
+}
+
+/* ── Chart sub-components (avoid hydration mismatch with recharts) ── */
+
+function ChartContent({ transactions }: { transactions: { name: string; 收入: number; 支出: number }[] }) {
+  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无数据</p>;
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <BarChart data={transactions}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+        <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+        <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => `¥${v}`} />
+        <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+        <Bar dataKey="收入" fill="#34d399" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="支出" fill="#f87171" radius={[4, 4, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+const PIE_COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f97316", "#eab308", "#14b8a6", "#6366f1", "#ef4444", "#22c55e"];
+
+function PieContent({ transactions }: { transactions: { name: string; value: number }[] }) {
+  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无支出数据</p>;
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <PieChart>
+        <Pie data={transactions} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" nameKey="name" label={({ name, percent }: { name?: string; percent?: number }) => `${name ?? ""} ${((percent ?? 0) * 100).toFixed(0)}%`}>
+          {transactions.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+        </Pie>
+        <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+}
+
+function NetWorthChart({ transactions }: { transactions: { name: string; 净资产: number }[] }) {
+  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无数据</p>;
+  return (
+    <ResponsiveContainer width="100%" height={260}>
+      <LineChart data={transactions}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+        <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+        <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => `¥${(v / 10000).toFixed(0)}万`} />
+        <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+        <Line type="monotone" dataKey="净资产" stroke="#3b82f6" strokeWidth={2.5} dot={{ fill: "#3b82f6", r: 4 }} activeDot={{ r: 6 }} />
+      </LineChart>
+    </ResponsiveContainer>
   );
 }
