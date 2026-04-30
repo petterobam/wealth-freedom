@@ -27,11 +27,13 @@ export default function DashboardLayout({
     router.push("/login");
   };
 
+  const mobileNavItems = navItems.slice(0, 5);
+
   return (
     <div className="min-h-screen bg-slate-900 text-white flex">
-      {/* 侧边栏 */}
-      <aside className="w-16 md:w-48 border-r border-slate-800 flex flex-col py-4 shrink-0">
-        <div className="px-4 mb-6 hidden md:block">
+      {/* 侧边栏 - desktop only */}
+      <aside className="hidden md:flex w-48 border-r border-slate-800 flex-col py-4 shrink-0">
+        <div className="px-4 mb-6">
           <h1 className="text-sm font-bold text-slate-400">财富自由之路</h1>
         </div>
         <nav className="flex-1 flex flex-col gap-1 px-2">
@@ -72,7 +74,26 @@ export default function DashboardLayout({
       </aside>
 
       {/* 主内容 */}
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto pb-16 md:pb-0">{children}</main>
+
+      {/* 底部导航栏 - mobile only */}
+      <nav className="fixed bottom-0 inset-x-0 md:hidden bg-slate-900/95 backdrop-blur border-t border-slate-800 flex items-center justify-around py-2 z-50">
+        {mobileNavItems.map((item) => {
+          const active = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-xs transition ${
+                active ? "text-blue-400" : "text-slate-500 hover:text-slate-300"
+              }`}
+            >
+              <span className="text-lg">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }
