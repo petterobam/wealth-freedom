@@ -1,9 +1,5 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  turbopack: {
-    root: require('path').resolve(__dirname),
-  },
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;

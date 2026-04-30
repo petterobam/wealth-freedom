@@ -7,6 +7,7 @@ import type { DashboardStats, Transaction, Goal } from "@/lib/types";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
+  LineChart, Line,
 } from "recharts";
 
 export default function DashboardPage() {
@@ -111,6 +112,31 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* 净资产趋势折线图 */}
+      <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 mb-8">
+        <h3 className="font-bold mb-4">💹 净资产趋势（近6月）</h3>
+        <NetWorthChart transactions={(() => {
+          const all = getTransactions();
+          const months: Record<string, { income: number; expense: number }> = {};
+          const now = new Date();
+          for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            months[key] = { income: 0, expense: 0 };
+          }
+          all.forEach((t) => { if (months[t.date.slice(0, 7)]) months[t.date.slice(0, 7)][t.type] += t.amount; });
+          let cumulative = (stats?.netWorth ?? 1100000);
+          // back-calculate from current net worth
+          const entries = Object.entries(months);
+          const deltas = entries.map(([, v]) => v.income - v.expense);
+          cumulative -= deltas.reduce((a, b) => a + b, 0);
+          return entries.map(([month, v], i) => {
+            cumulative += deltas[i];
+            return { name: month.slice(5) + "月", 净资产: Math.round(cumulative) };
+          });
+        })()} />
+      </div>
+
       {/* 最近交易 */}
       <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
         <div className="flex items-center justify-between mb-4">
@@ -171,6 +197,21 @@ function PieContent({ transactions }: { transactions: { name: string; value: num
         </Pie>
         <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
       </PieChart>
+    </ResponsiveContainer>
+  );
+}
+
+function NetWorthChart({ transactions }: { transactions: { name: string; 净资产: number }[] }) {
+  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无数据</p>;
+  return (
+    <ResponsiveContainer width="100%" height={260}>
+      <LineChart data={transactions}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+        <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+        <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => `¥${(v / 10000).toFixed(0)}万`} />
+        <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+        <Line type="monotone" dataKey="净资产" stroke="#3b82f6" strokeWidth={2.5} dot={{ fill: "#3b82f6", r: 4 }} activeDot={{ r: 6 }} />
+      </LineChart>
     </ResponsiveContainer>
   );
 }
