@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 const navItems = [
   { href: "/dashboard", label: "看板", icon: "📊" },
@@ -17,6 +18,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/login");
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 text-white flex">
@@ -44,7 +51,7 @@ export default function DashboardLayout({
             );
           })}
         </nav>
-        <div className="px-3 py-2">
+        <div className="px-3 py-2 flex flex-col gap-1">
           <Link
             href="/"
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 transition"
@@ -52,6 +59,13 @@ export default function DashboardLayout({
             <span>🏠</span>
             <span className="hidden md:inline">首页</span>
           </Link>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-red-400 transition w-full text-left"
+          >
+            <span>🚪</span>
+            <span className="hidden md:inline">退出登录</span>
+          </button>
         </div>
       </aside>
 
