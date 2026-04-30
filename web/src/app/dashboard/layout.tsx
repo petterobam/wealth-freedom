@@ -9,6 +9,7 @@ const navItems = [
   { href: "/dashboard/accounts", label: "账户", icon: "🏦" },
   { href: "/dashboard/transactions", label: "交易", icon: "💰" },
   { href: "/dashboard/budgets", label: "预算", icon: "🎯" },
+  { href: "/dashboard/investments", label: "投资", icon: "📈" },
   { href: "/dashboard/goals", label: "目标", icon: "🏆" },
   { href: "/dashboard/settings", label: "设置", icon: "⚙️" },
 ];

@@ -4,15 +4,19 @@ import {
   Goal,
   Account,
   Budget,
+  InvestmentHolding,
+  InvestmentTrade,
   DashboardStats,
   INCOME_CATEGORIES,
   EXPENSE_CATEGORIES,
   ACCOUNT_TYPES,
   ACCOUNT_ICONS,
+  INVESTMENT_TYPES,
+  INVESTMENT_ICONS,
 } from "./types";
 
 const STORAGE_KEY = "wealth-freedom-data";
-const VERSION = 2;
+const VERSION = 3;
 
 // ── 默认数据 ──────────────────────────────────────────
 
@@ -65,11 +69,23 @@ const DEFAULT_BUDGETS: Budget[] = [
   { id: "b5", category: "房租", limit: 4500, period: "monthly", icon: "🏠", color: "#10b981", createdAt: "2026-01-01T00:00:00Z" },
 ];
 
+const DEFAULT_INVESTMENTS: InvestmentHolding[] = [
+  { id: "i1", name: "沪深300指数基金", type: "fund", amount: 380000, currentValue: 398000, buyDate: "2025-06-15", note: "定投核心仓位", createdAt: "2025-06-15T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "i2", name: "中证500指数", type: "fund", amount: 150000, currentValue: 162000, buyDate: "2025-09-01", note: "卫星仓位", createdAt: "2025-09-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "i3", name: "国债逆回购", type: "bond", amount: 150000, currentValue: 153200, buyDate: "2025-12-01", note: "现金管理", createdAt: "2025-12-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "i4", name: "腾讯控股", type: "stock", amount: 120000, currentValue: 136800, buyDate: "2025-08-20", note: "个股持仓", createdAt: "2025-08-20T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+  { id: "i5", name: "3年期定期", type: "deposit", amount: 100000, currentValue: 102500, buyDate: "2025-03-01", note: "安全垫", createdAt: "2025-03-01T00:00:00Z", updatedAt: "2026-04-28T00:00:00Z" },
+];
+
+const DEFAULT_INVESTMENT_TRADES: InvestmentTrade[] = [];
+
 const DEFAULT_DATA: FinanceData = {
   transactions: DEFAULT_TRANSACTIONS,
   goals: DEFAULT_GOALS,
   accounts: DEFAULT_ACCOUNTS,
   budgets: DEFAULT_BUDGETS,
+  investments: DEFAULT_INVESTMENTS,
+  investmentTrades: DEFAULT_INVESTMENT_TRADES,
   stats: DEFAULT_STATS,
   version: VERSION,
 };
@@ -83,6 +99,9 @@ function parse(raw: string | null): FinanceData {
     if (!data.transactions || !data.goals) return DEFAULT_DATA;
     // migration: add accounts if missing
     if (!data.accounts) data.accounts = DEFAULT_ACCOUNTS;
+    if (!data.budgets) data.budgets = DEFAULT_BUDGETS;
+    if (!data.investments) data.investments = DEFAULT_INVESTMENTS;
+    if (!data.investmentTrades) data.investmentTrades = DEFAULT_INVESTMENT_TRADES;
     if (!data.budgets) data.budgets = DEFAULT_BUDGETS;
     return data;
   } catch {
@@ -312,5 +331,47 @@ export function resetData(): void {
 
 // ── Helpers ───────────────────────────────────────────
 
-export { INCOME_CATEGORIES, EXPENSE_CATEGORIES, ACCOUNT_TYPES, ACCOUNT_ICONS };
-export type { FinanceData, Transaction, Goal, Account, DashboardStats };
+export { INCOME_CATEGORIES, EXPENSE_CATEGORIES, ACCOUNT_TYPES, ACCOUNT_ICONS, INVESTMENT_TYPES, INVESTMENT_ICONS };
+export type { FinanceData, Transaction, Goal, Account, DashboardStats, InvestmentHolding, InvestmentTrade };
+
+// ── Investment CRUD ───────────────────────────────────
+
+export function getInvestments(): InvestmentHolding[] {
+  return loadData().investments || [];
+}
+
+export function addInvestment(h: Omit<InvestmentHolding, "id" | "createdAt" | "updatedAt">): InvestmentHolding {
+  const data = loadData();
+  const now = new Date().toISOString();
+  const holding: InvestmentHolding = { ...h, id: crypto.randomUUID(), createdAt: now, updatedAt: now };
+  data.investments.push(holding);
+  save(data);
+  return holding;
+}
+
+export function updateInvestment(id: string, updates: Partial<Omit<InvestmentHolding, "id" | "createdAt">>): void {
+  const data = loadData();
+  const idx = data.investments.findIndex((h) => h.id === id);
+  if (idx === -1) return;
+  data.investments[idx] = { ...data.investments[idx], ...updates, updatedAt: new Date().toISOString() };
+  save(data);
+}
+
+export function deleteInvestment(id: string): void {
+  const data = loadData();
+  data.investments = data.investments.filter((h) => h.id !== id);
+  data.investmentTrades = data.investmentTrades.filter((t) => t.holdingId !== id);
+  save(data);
+}
+
+export function getInvestmentTrades(): InvestmentTrade[] {
+  return loadData().investmentTrades || [];
+}
+
+export function addTrade(t: Omit<InvestmentTrade, "id" | "createdAt">): InvestmentTrade {
+  const data = loadData();
+  const trade: InvestmentTrade = { ...t, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+  data.investmentTrades.push(trade);
+  save(data);
+  return trade;
+}

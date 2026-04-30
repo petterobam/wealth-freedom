@@ -47,6 +47,8 @@ export interface FinanceData {
   goals: Goal[];
   accounts: Account[];
   budgets: Budget[];
+  investments: InvestmentHolding[];
+  investmentTrades: InvestmentTrade[];
   stats: DashboardStats;
   version: number;
 }
@@ -79,6 +81,45 @@ export interface Budget {
   color: string;
   createdAt: string;
 }
+
+export interface InvestmentHolding {
+  id: string;
+  name: string;
+  type: "fund" | "stock" | "bond" | "deposit" | "other";
+  amount: number;      // 投入本金
+  currentValue: number; // 当前市值
+  buyDate: string;     // YYYY-MM-DD
+  note: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvestmentTrade {
+  id: string;
+  holdingId: string;
+  type: "buy" | "sell";
+  amount: number;
+  price: number;
+  date: string;
+  note: string;
+  createdAt: string;
+}
+
+export const INVESTMENT_TYPES: Record<InvestmentHolding["type"], string> = {
+  fund: "基金",
+  stock: "股票",
+  bond: "债券",
+  deposit: "定期存款",
+  other: "其他",
+};
+
+export const INVESTMENT_ICONS: Record<InvestmentHolding["type"], string> = {
+  fund: "📊",
+  stock: "📈",
+  bond: "📜",
+  deposit: "🏦",
+  other: "📂",
+};
 
 export const EXPENSE_CATEGORIES = [
   "餐饮", "交通", "房租", "购物", "通讯", "医疗", "娱乐", "教育", "其他支出",
