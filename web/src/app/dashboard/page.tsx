@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { getStats, getTransactions, getGoals } from "@/lib/store";
 import type { DashboardStats, Transaction, Goal } from "@/lib/types";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
+} from "recharts";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -72,6 +76,41 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {/* 图表区 */}
+      <div className="grid md:grid-cols-2 gap-4 mb-8">
+        {/* 收支柱状图 */}
+        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
+          <h3 className="font-bold mb-4">📈 近7日收支</h3>
+          <ChartContent transactions={recentTx.length > 0 ? (() => {
+            const all = getTransactions();
+            const days: Record<string, { income: number; expense: number }> = {};
+            const now = new Date();
+            for (let i = 6; i >= 0; i--) {
+              const d = new Date(now); d.setDate(d.getDate() - i);
+              const key = d.toISOString().slice(0, 10);
+              days[key] = { income: 0, expense: 0 };
+            }
+            all.forEach((t) => { if (days[t.date]) days[t.date][t.type] += t.amount; });
+            return Object.entries(days).map(([date, v]) => ({
+              name: date.slice(5),
+              收入: v.income,
+              支出: v.expense,
+            }));
+          })() : []} />
+        </div>
+
+        {/* 支出分类饼图 */}
+        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
+          <h3 className="font-bold mb-4">🍩 支出分类</h3>
+          <PieContent transactions={(() => {
+            const all = getTransactions().filter((t) => t.type === "expense");
+            const cats: Record<string, number> = {};
+            all.forEach((t) => { cats[t.category] = (cats[t.category] || 0) + t.amount; });
+            return Object.entries(cats).map(([name, value]) => ({ name, value: Math.round(value) })).sort((a, b) => b.value - a.value);
+          })()} />
+        </div>
+      </div>
+
       {/* 最近交易 */}
       <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
         <div className="flex items-center justify-between mb-4">
@@ -99,5 +138,39 @@ export default function DashboardPage() {
 
       <p className="text-center text-slate-600 text-xs mt-12">数据存储在浏览器本地 · v1.5.0</p>
     </div>
+  );
+}
+
+/* ── Chart sub-components (avoid hydration mismatch with recharts) ── */
+
+function ChartContent({ transactions }: { transactions: { name: string; 收入: number; 支出: number }[] }) {
+  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无数据</p>;
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <BarChart data={transactions}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+        <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+        <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => `¥${v}`} />
+        <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+        <Bar dataKey="收入" fill="#34d399" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="支出" fill="#f87171" radius={[4, 4, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+const PIE_COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f97316", "#eab308", "#14b8a6", "#6366f1", "#ef4444", "#22c55e"];
+
+function PieContent({ transactions }: { transactions: { name: string; value: number }[] }) {
+  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无支出数据</p>;
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <PieChart>
+        <Pie data={transactions} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" nameKey="name" label={({ name, percent }: { name?: string; percent?: number }) => `${name ?? ""} ${((percent ?? 0) * 100).toFixed(0)}%`}>
+          {transactions.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+        </Pie>
+        <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+      </PieChart>
+    </ResponsiveContainer>
   );
 }
