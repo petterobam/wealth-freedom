@@ -158,6 +158,30 @@ export function deleteBudget(id: string): Promise<{ ok: boolean }> {
   return request<{ ok: boolean }>("/api/budgets", { method: "DELETE", body: JSON.stringify({ id }) });
 }
 
+/* ── Settings (Import/Export/Reset) ─────── */
+
+export interface ExportData {
+  transactions: ApiTransaction[];
+  accounts: ApiAccount[];
+  budgets: ApiBudget[];
+  goals: ApiGoal[];
+  investments: ApiInvestment[];
+  stats: { totalAssets: number; monthlyIncome: number; monthlyExpense: number; savingsRate: number; netWorth: number };
+  version: number;
+}
+
+export function exportAllData(): Promise<ExportData> {
+  return request<ExportData>("/api/settings");
+}
+
+export function importAllData(data: any): Promise<{ ok: boolean; count: number }> {
+  return request<{ ok: boolean; count: number }>("/api/settings", { method: "POST", body: JSON.stringify(data) });
+}
+
+export function resetAllData(): Promise<{ ok: boolean }> {
+  return request<{ ok: boolean }>("/api/settings", { method: "DELETE" });
+}
+
 /* ── Investments ────────────────────────── */
 
 export function fetchInvestments(): Promise<ApiInvestment[]> {

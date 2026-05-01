@@ -1,25 +1,24 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { importData, exportData, resetData } from "@/lib/store";
+import { exportAllData, importAllData, resetAllData } from "@/lib/api";
 
 type ImportResult = { ok: boolean; error?: string; count?: number };
 
 export default function SettingsPage() {
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // 桌面端 JSON → 网页端格式转换
   function convertDesktopExport(raw: any): any {
-    if (!raw._meta && !raw.transactions) return null; // 不是桌面端格式
+    if (!raw._meta && !raw.transactions) return null;
     if (raw.transactions && Array.isArray(raw.transactions) && raw.transactions[0]?.type !== undefined && raw.transactions[0]?.category !== undefined) {
-      // 已经是网页端格式
       return raw;
     }
 
-    // 桌面端格式：表名作为 key
     const transactions = (raw.transactions || []).map((t: any) => ({
       id: t.id || "t_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
       date: t.date?.slice(0, 10) || new Date().toISOString().slice(0, 10),
@@ -69,11 +68,10 @@ export default function SettingsPage() {
     };
   }
 
-  function handleImport(json: string, fileName: string) {
+  async function handleImport(json: string, fileName: string) {
     try {
       let parsed = JSON.parse(json);
 
-      // 尝试桌面端格式转换
       if (parsed._meta) {
         parsed = convertDesktopExport(parsed);
         if (!parsed) {
@@ -82,11 +80,14 @@ export default function SettingsPage() {
         }
       }
 
-      const result = importData(JSON.stringify(parsed));
+      setLoading(true);
+      const result = await importAllData(parsed);
       const count = (parsed.transactions?.length || 0) + (parsed.accounts?.length || 0) + (parsed.goals?.length || 0);
-      setImportResult({ ...result, count: result.ok ? count : undefined });
-    } catch {
-      setImportResult({ ok: false, error: `${fileName} 不是有效的 JSON 文件` });
+      setImportResult({ ok: true, count });
+    } catch (err: any) {
+      setImportResult({ ok: false, error: err.message || `${fileName} 不是有效的 JSON 文件` });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -109,22 +110,36 @@ export default function SettingsPage() {
     reader.readAsText(file);
   }
 
-  function handleExport() {
-    const data = exportData();
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `wealth-freedom-web-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  async function handleExport() {
+    try {
+      setLoading(true);
+      const data = await exportAllData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `wealth-freedom-web-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      alert("导出失败：" + err.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleReset() {
-    resetData();
-    setShowResetConfirm(false);
-    setImportResult({ ok: true });
-    window.location.reload();
+  async function handleReset() {
+    try {
+      setLoading(true);
+      await resetAllData();
+      setShowResetConfirm(false);
+      setImportResult({ ok: true });
+      window.location.reload();
+    } catch (err: any) {
+      alert("重置失败：" + err.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -140,7 +155,7 @@ export default function SettingsPage() {
         <div
           className={`border-2 border-dashed rounded-lg p-8 text-center transition cursor-pointer ${
             dragOver ? "border-blue-500 bg-blue-500/10" : "border-slate-600 hover:border-slate-500"
-          }`}
+          } ${loading ? "opacity-50 pointer-events-none" : ""}`}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
@@ -148,7 +163,7 @@ export default function SettingsPage() {
         >
           <div className="text-3xl mb-2">📂</div>
           <p className="text-slate-400 text-sm">
-            拖拽 JSON 文件到这里，或 <span className="text-blue-400 underline">点击选择文件</span>
+            {loading ? "⏳ 正在导入..." : <>拖拽 JSON 文件到这里，或 <span className="text-blue-400 underline">点击选择文件</span></>}
           </p>
           <input ref={fileRef} type="file" accept=".json" onChange={handleFileChange} className="hidden" />
         </div>
@@ -171,9 +186,10 @@ export default function SettingsPage() {
         </p>
         <button
           onClick={handleExport}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition"
+          disabled={loading}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg text-sm transition"
         >
-          导出 JSON 文件
+          {loading ? "⏳ 导出中..." : "导出 JSON 文件"}
         </button>
       </section>
 
@@ -186,16 +202,17 @@ export default function SettingsPage() {
         {!showResetConfirm ? (
           <button
             onClick={() => setShowResetConfirm(true)}
-            className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg text-sm transition"
+            disabled={loading}
+            className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 disabled:opacity-50 rounded-lg text-sm transition"
           >
             重置所有数据
           </button>
         ) : (
           <div className="flex items-center gap-3">
-            <button onClick={handleReset} className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm">
-              确认重置
+            <button onClick={handleReset} disabled={loading} className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-sm">
+              {loading ? "⏳ 重置中..." : "确认重置"}
             </button>
-            <button onClick={() => setShowResetConfirm(false)} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm">
+            <button onClick={() => setShowResetConfirm(false)} disabled={loading} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm">
               取消
             </button>
           </div>
