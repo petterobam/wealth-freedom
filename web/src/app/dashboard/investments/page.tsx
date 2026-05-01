@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
-  getInvestments,
-  addInvestment,
-  updateInvestment,
-  deleteInvestment,
-  INVESTMENT_TYPES,
-  INVESTMENT_ICONS,
-} from "@/lib/store";
-import type { InvestmentHolding } from "@/lib/store";
+  fetchInvestments,
+  createInvestment,
+  updateInvestment as apiUpdateInvestment,
+  deleteInvestment as apiDeleteInvestment,
+} from "@/lib/api";
+import type { ApiInvestment } from "@/lib/api";
+import { INVESTMENT_TYPES, INVESTMENT_ICONS } from "@/lib/types";
 
 type Tab = "holdings" | "trades";
 
@@ -20,19 +19,29 @@ function formatMoney(n: number) {
 
 export default function InvestmentsPage() {
   const [tab, setTab] = useState<Tab>("holdings");
-  const [holdings, setHoldings] = useState<InvestmentHolding[]>(getInvestments);
+  const [holdings, setHoldings] = useState<ApiInvestment[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
-    type: "fund" as InvestmentHolding["type"],
+    type: "fund" as string,
     amount: 0,
     currentValue: 0,
     buyDate: new Date().toISOString().slice(0, 10),
     note: "",
   });
 
-  const reload = () => setHoldings(getInvestments());
+  const reload = useCallback(async () => {
+    try {
+      const data = await fetchInvestments();
+      setHoldings(data);
+    } catch (e) {
+      console.error("Failed to fetch investments:", e);
+    }
+  }, []);
+
+  useEffect(() => { reload().finally(() => setLoading(false)); }, [reload]);
 
   // Summary
   const totalInvested = useMemo(() => holdings.reduce((s, h) => s + h.amount, 0), [holdings]);
@@ -57,27 +66,35 @@ export default function InvestmentsPage() {
     setShowForm(true);
   }
 
-  function openEdit(h: InvestmentHolding) {
-    setForm({ name: h.name, type: h.type, amount: h.amount, currentValue: h.currentValue, buyDate: h.buyDate, note: h.note });
+  function openEdit(h: ApiInvestment) {
+    setForm({ name: h.name, type: h.type, amount: h.amount, currentValue: h.currentValue, buyDate: h.buyDate, note: h.note || "" });
     setEditId(h.id);
     setShowForm(true);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (editId) {
-      updateInvestment(editId, form);
-    } else {
-      addInvestment(form);
+    try {
+      if (editId) {
+        await apiUpdateInvestment(editId, { ...form, note: form.note || null });
+      } else {
+        await createInvestment({ ...form, note: form.note || null });
+      }
+      setShowForm(false);
+      await reload();
+    } catch (e) {
+      console.error("Failed to save investment:", e);
     }
-    setShowForm(false);
-    reload();
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     if (!confirm("确认删除该持仓？")) return;
-    deleteInvestment(id);
-    reload();
+    try {
+      await apiDeleteInvestment(id);
+      await reload();
+    } catch (e) {
+      console.error("Failed to delete investment:", e);
+    }
   }
 
   return (
@@ -160,10 +177,10 @@ export default function InvestmentsPage() {
             return (
               <div key={h.id} className="bg-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center gap-3">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <span className="text-2xl">{INVESTMENT_ICONS[h.type]}</span>
+                  <span className="text-2xl">{(INVESTMENT_ICONS as Record<string, string>)[h.type]}</span>
                   <div className="min-w-0">
                     <div className="font-medium truncate">{h.name}</div>
-                    <div className="text-xs text-slate-400">{INVESTMENT_TYPES[h.type]} · 买入 {h.buyDate}</div>
+                    <div className="text-xs text-slate-400">{(INVESTMENT_TYPES as Record<string, string>)[h.type]} · 买入 {h.buyDate}</div>
                     {h.note && <div className="text-xs text-slate-500 mt-0.5 truncate">{h.note}</div>}
                   </div>
                 </div>
@@ -213,7 +230,7 @@ export default function InvestmentsPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs text-slate-400">类型</label>
-                  <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as InvestmentHolding["type"] })} className="w-full mt-1 bg-slate-700 rounded-lg px-3 py-2 text-sm outline-none">
+                  <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full mt-1 bg-slate-700 rounded-lg px-3 py-2 text-sm outline-none">
                     {(Object.entries(INVESTMENT_TYPES) as [string, string][]).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>

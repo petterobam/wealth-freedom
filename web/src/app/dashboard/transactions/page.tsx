@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { getTransactions, addTransaction, deleteTransaction } from "@/lib/store";
-import type { Transaction } from "@/lib/types";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { fetchTransactions, createTransaction, deleteTransaction as apiDeleteTransaction } from "@/lib/api";
+import type { ApiTransaction } from "@/lib/api";
 import { INCOME_CATEGORIES, EXPENSE_CATEGORIES } from "@/lib/types";
 
 type SortKey = "date" | "amount";
@@ -15,8 +15,8 @@ const CATEGORIES = {
 };
 
 export default function TransactionsPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const [transactions, setTransactions] = useState<ApiTransaction[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
@@ -30,26 +30,38 @@ export default function TransactionsPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ date: new Date().toISOString().slice(0, 10), type: "expense" as "income" | "expense", category: "餐饮", amount: "", note: "" });
 
-  useEffect(() => {
-    setTransactions(getTransactions());
-    setMounted(true);
+  const refresh = useCallback(async () => {
+    try {
+      const data = await fetchTransactions();
+      setTransactions(data);
+    } catch (e) {
+      console.error("Failed to fetch transactions:", e);
+    }
   }, []);
 
-  const refresh = () => setTransactions(getTransactions());
+  useEffect(() => { refresh().finally(() => setLoading(false)); }, [refresh]);
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const amount = parseFloat(form.amount);
     if (!amount || !form.date) return;
-    addTransaction({ date: form.date, type: form.type, category: form.category, amount, note: form.note });
-    refresh();
-    setShowAdd(false);
-    setForm({ date: new Date().toISOString().slice(0, 10), type: "expense", category: "餐饮", amount: "", note: "" });
+    try {
+      await createTransaction({ date: form.date, type: form.type, category: form.category, amount, note: form.note || null });
+      await refresh();
+      setShowAdd(false);
+      setForm({ date: new Date().toISOString().slice(0, 10), type: "expense", category: "餐饮", amount: "", note: "" });
+    } catch (e) {
+      console.error("Failed to create transaction:", e);
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("确认删除这条记录？")) {
-      deleteTransaction(id);
-      refresh();
+      try {
+        await apiDeleteTransaction(id);
+        await refresh();
+      } catch (e) {
+        console.error("Failed to delete transaction:", e);
+      }
     }
   };
 
@@ -59,7 +71,7 @@ export default function TransactionsPage() {
     if (categoryFilter) list = list.filter((t) => t.category === categoryFilter);
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter((t) => t.note.toLowerCase().includes(q) || t.category.toLowerCase().includes(q) || t.amount.toString().includes(q));
+      list = list.filter((t) => (t.note || "").toLowerCase().includes(q) || t.category.toLowerCase().includes(q) || t.amount.toString().includes(q));
     }
     list.sort((a, b) => {
       const diff = sortKey === "date" ? a.date.localeCompare(b.date) : a.amount - b.amount;
@@ -81,7 +93,7 @@ export default function TransactionsPage() {
   };
   const allCategories = typeFilter === "all" ? [...CATEGORIES.income, ...CATEGORIES.expense] : CATEGORIES[typeFilter];
 
-  if (!mounted) return <div className="p-6 text-slate-500">加载中...</div>;
+  if (loading) return <div className="p-6 text-slate-500">加载中...</div>;
 
   return (
     <div className="p-6 max-w-5xl">
@@ -187,7 +199,7 @@ export default function TransactionsPage() {
         </div>
       )}
 
-      <p className="text-center text-slate-600 text-xs mt-8">数据存储在浏览器本地 · v1.5.0</p>
+      <p className="text-center text-slate-600 text-xs mt-8">数据通过 API 实时同步 · v1.5.0</p>
     </div>
   );
 }

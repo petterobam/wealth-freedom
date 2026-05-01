@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getGoals, addGoal, updateGoal, deleteGoal } from "@/lib/store";
-import type { Goal } from "@/lib/types";
+import { useState, useEffect, useCallback } from "react";
+import { fetchGoals, createGoal, updateGoal as apiUpdateGoal, deleteGoal as apiDeleteGoal } from "@/lib/api";
+import type { ApiGoal } from "@/lib/api";
 
 function fmt(n: number) {
   if (n >= 10000) return "¥" + (n / 10000).toFixed(1) + "万";
@@ -26,42 +26,58 @@ const COLORS = [
 ];
 
 export default function GoalsPage() {
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const [goals, setGoals] = useState<ApiGoal[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: "", target: "", current: "", deadline: "", icon: "🎯", color: "from-blue-500 to-emerald-500" });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editCurrent, setEditCurrent] = useState("");
 
-  useEffect(() => {
-    setGoals(getGoals());
-    setMounted(true);
+  const refresh = useCallback(async () => {
+    try {
+      const data = await fetchGoals();
+      setGoals(data);
+    } catch (e) {
+      console.error("Failed to fetch goals:", e);
+    }
   }, []);
 
-  const refresh = () => setGoals(getGoals());
+  useEffect(() => { refresh().finally(() => setLoading(false)); }, [refresh]);
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const target = parseFloat(form.target);
     const current = parseFloat(form.current) || 0;
     if (!form.name || !target || !form.deadline) return;
-    addGoal({ name: form.name, target, current, icon: form.icon, deadline: form.deadline, color: form.color });
-    refresh();
-    setShowAdd(false);
-    setForm({ name: "", target: "", current: "", deadline: "", icon: "🎯", color: "from-blue-500 to-emerald-500" });
+    try {
+      await createGoal({ name: form.name, target, current, icon: form.icon, deadline: form.deadline || null, color: form.color });
+      await refresh();
+      setShowAdd(false);
+      setForm({ name: "", target: "", current: "", deadline: "", icon: "🎯", color: "from-blue-500 to-emerald-500" });
+    } catch (e) {
+      console.error("Failed to create goal:", e);
+    }
   };
 
-  const handleUpdateProgress = (id: string) => {
+  const handleUpdateProgress = async (id: string) => {
     const val = parseFloat(editCurrent);
     if (isNaN(val)) return;
-    updateGoal(id, { current: val });
-    setEditingId(null);
-    refresh();
+    try {
+      await apiUpdateGoal(id, { current: val });
+      setEditingId(null);
+      await refresh();
+    } catch (e) {
+      console.error("Failed to update goal:", e);
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("确认删除此目标？")) {
-      deleteGoal(id);
-      refresh();
+      try {
+        await apiDeleteGoal(id);
+        await refresh();
+      } catch (e) {
+        console.error("Failed to delete goal:", e);
+      }
     }
   };
 
@@ -69,7 +85,7 @@ export default function GoalsPage() {
   const totalCurrent = goals.reduce((s, g) => s + g.current, 0);
   const overallPct = totalTarget > 0 ? Math.round((totalCurrent / totalTarget) * 100) : 0;
 
-  if (!mounted) return <div className="p-6 text-slate-500">加载中...</div>;
+  if (loading) return <div className="p-6 text-slate-500">加载中...</div>;
 
   return (
     <div className="p-6 max-w-5xl">
@@ -115,7 +131,7 @@ export default function GoalsPage() {
       <div className="grid md:grid-cols-2 gap-4">
         {goals.map((goal) => {
           const pct = Math.min(100, Math.round((goal.current / goal.target) * 100));
-          const days = daysUntil(goal.deadline);
+          const days = daysUntil(goal.deadline || "2099-12");
           const isOverdue = days < 0;
           const isUrgent = days >= 0 && days < 90;
 
@@ -157,7 +173,7 @@ export default function GoalsPage() {
         })}
       </div>
 
-      <p className="text-center text-slate-600 text-xs mt-8">数据存储在浏览器本地 · v1.5.0</p>
+      <p className="text-center text-slate-600 text-xs mt-8">数据通过 API 实时同步 · v1.5.0</p>
     </div>
   );
 }

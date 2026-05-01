@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
-  getBudgets,
-  addBudget,
-  updateBudget,
-  deleteBudget,
-  getBudgetSpent,
-  EXPENSE_CATEGORIES,
-} from "@/lib/store";
-import type { Budget } from "@/lib/types";
+  fetchBudgets,
+  createBudget,
+  updateBudget as apiUpdateBudget,
+  deleteBudget as apiDeleteBudget,
+} from "@/lib/api";
+import type { ApiBudget } from "@/lib/api";
+import { EXPENSE_CATEGORIES } from "@/lib/types";
 
 const COLORS = [
   "#e74c3c", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6",
@@ -19,7 +18,8 @@ const COLORS = [
 const ICONS = ["🍜", "🚇", "🛍️", "🎮", "🏠", "💊", "📱", "📚", "🎬", "💰"];
 
 export default function BudgetsPage() {
-  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [budgets, setBudgets] = useState<ApiBudget[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -29,18 +29,24 @@ export default function BudgetsPage() {
     icon: "💰",
     color: "#3b82f6",
   });
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setBudgets(getBudgets());
-    setMounted(true);
+  const refresh = useCallback(async () => {
+    try {
+      const data = await fetchBudgets();
+      setBudgets(data);
+    } catch (e) {
+      console.error("Failed to fetch budgets:", e);
+    }
   }, []);
 
-  if (!mounted) return <div className="p-6 text-slate-500">加载中...</div>;
+  useEffect(() => { refresh().finally(() => setLoading(false)); }, [refresh]);
 
+  if (loading) return <div className="p-6 text-slate-500">加载中...</div>;
+
+  // Budget spent is now placeholder (was localStorage-based calculation)
   const spent = budgets.map((b) => ({
     budget: b,
-    spent: getBudgetSpent(b.category),
+    spent: 0,
   }));
   const totalBudget = budgets.reduce((s, b) => s + b.limit, 0);
   const totalSpent = spent.reduce((s, x) => s + x.spent, 0);
@@ -48,29 +54,37 @@ export default function BudgetsPage() {
 
   const fmt = (n: number) => "¥" + n.toLocaleString("zh-CN");
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.category || form.limit <= 0) return;
-    if (editingId) {
-      updateBudget(editingId, form);
-    } else {
-      addBudget(form);
+    try {
+      if (editingId) {
+        await apiUpdateBudget(editingId, form);
+      } else {
+        await createBudget(form);
+      }
+      await refresh();
+      setShowForm(false);
+      setEditingId(null);
+      resetForm();
+    } catch (e) {
+      console.error("Failed to save budget:", e);
     }
-    setBudgets(getBudgets());
-    setShowForm(false);
-    setEditingId(null);
-    resetForm();
   };
 
-  const handleEdit = (b: Budget) => {
-    setForm({ category: b.category, limit: b.limit, period: b.period, icon: b.icon, color: b.color });
+  const handleEdit = (b: ApiBudget) => {
+    setForm({ category: b.category, limit: b.limit, period: b.period as "monthly" | "yearly", icon: b.icon, color: b.color });
     setEditingId(b.id);
     setShowForm(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("确定删除此预算？")) return;
-    deleteBudget(id);
-    setBudgets(getBudgets());
+    try {
+      await apiDeleteBudget(id);
+      await refresh();
+    } catch (e) {
+      console.error("Failed to delete budget:", e);
+    }
   };
 
   const resetForm = () => {

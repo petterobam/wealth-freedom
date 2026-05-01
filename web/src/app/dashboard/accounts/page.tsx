@@ -1,21 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
-  getAccounts,
-  addAccount,
-  updateAccount,
-  deleteAccount,
-  getTotalAssets,
-  getAssetsByType,
-} from "@/lib/store";
+  fetchAccounts,
+  createAccount,
+  updateAccount as apiUpdateAccount,
+  deleteAccount as apiDeleteAccount,
+} from "@/lib/api";
+import type { ApiAccount } from "@/lib/api";
 import { ACCOUNT_TYPES, ACCOUNT_ICONS } from "@/lib/types";
-import type { Account } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-type AccountType = Account["type"];
+type AccountType = ApiAccount["type"];
 
-const TYPE_COLORS: Record<AccountType, string> = {
+const TYPE_COLORS: Record<string, string> = {
   checking: "#e74c3c",
   savings: "#3b82f6",
   investment: "#10b981",
@@ -25,26 +23,32 @@ const TYPE_COLORS: Record<AccountType, string> = {
 };
 
 export default function AccountsPage() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accounts, setAccounts] = useState<ApiAccount[]>([]);
   const [totalAssets, setTotalAssets] = useState(0);
   const [assetsByType, setAssetsByType] = useState<{ type: string; label: string; value: number; color: string }[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", type: "checking" as AccountType, balance: 0 });
-  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    refresh();
-    setMounted(true);
+  const refresh = useCallback(async () => {
+    try {
+      const data = await fetchAccounts();
+      setAccounts(data);
+      const total = data.reduce((s, a) => s + a.balance, 0);
+      setTotalAssets(total);
+      const byType = Object.entries(
+        data.reduce((acc, a) => { acc[a.type] = (acc[a.type] || 0) + a.balance; return acc; }, {} as Record<string, number>)
+      ).map(([type, value]) => ({ type, label: (ACCOUNT_TYPES as Record<string, string>)[type] || type, value, color: (TYPE_COLORS as Record<string, string>)[type] || "#6b7280" }));
+      setAssetsByType(byType);
+    } catch (e) {
+      console.error("Failed to fetch accounts:", e);
+    }
   }, []);
 
-  function refresh() {
-    setAccounts(getAccounts());
-    setTotalAssets(getTotalAssets());
-    setAssetsByType(getAssetsByType());
-  }
+  useEffect(() => { refresh().finally(() => setLoading(false)); }, [refresh]);
 
-  if (!mounted) return <div className="p-6 text-slate-500">加载中...</div>;
+  if (loading) return <div className="p-6 text-slate-500">加载中...</div>;
 
   const fmt = (n: number) => "¥" + n.toLocaleString("zh-CN", { minimumFractionDigits: 2 });
 
@@ -54,39 +58,47 @@ export default function AccountsPage() {
     setShowModal(true);
   }
 
-  function openEdit(acct: Account) {
+  function openEdit(acct: ApiAccount) {
     setEditId(acct.id);
     setForm({ name: acct.name, type: acct.type, balance: acct.balance });
     setShowModal(true);
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!form.name.trim()) return;
-    if (editId) {
-      updateAccount(editId, {
-        name: form.name,
-        type: form.type,
-        balance: form.balance,
-        icon: ACCOUNT_ICONS[form.type],
-        color: TYPE_COLORS[form.type],
-      });
-    } else {
-      addAccount({
-        name: form.name,
-        type: form.type,
-        balance: form.balance,
-        icon: ACCOUNT_ICONS[form.type],
-        color: TYPE_COLORS[form.type],
-      });
+    try {
+      if (editId) {
+        await apiUpdateAccount(editId, {
+          name: form.name,
+          type: form.type,
+          balance: form.balance,
+          icon: (ACCOUNT_ICONS as Record<string, string>)[form.type],
+          color: TYPE_COLORS[form.type],
+        });
+      } else {
+        await createAccount({
+          name: form.name,
+          type: form.type,
+          balance: form.balance,
+          icon: (ACCOUNT_ICONS as Record<string, string>)[form.type],
+          color: TYPE_COLORS[form.type],
+        });
+      }
+      setShowModal(false);
+      await refresh();
+    } catch (e) {
+      console.error("Failed to save account:", e);
     }
-    setShowModal(false);
-    refresh();
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     if (!confirm("确定删除该账户？")) return;
-    deleteAccount(id);
-    refresh();
+    try {
+      await apiDeleteAccount(id);
+      await refresh();
+    } catch (e) {
+      console.error("Failed to delete account:", e);
+    }
   }
 
   return (
@@ -139,7 +151,7 @@ export default function AccountsPage() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-medium">{acct.name}</div>
-              <div className="text-xs text-slate-400">{ACCOUNT_TYPES[acct.type]}</div>
+              <div className="text-xs text-slate-400">{(ACCOUNT_TYPES as Record<string, string>)[acct.type]}</div>
             </div>
             <div className={`text-lg font-mono font-semibold ${acct.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
               {fmt(acct.balance)}
