@@ -11,6 +11,7 @@ const navItems = [
   { href: "/dashboard/budgets", label: "预算", icon: "🎯" },
   { href: "/dashboard/investments", label: "投资", icon: "📈" },
   { href: "/dashboard/goals", label: "目标", icon: "🏆" },
+  { href: "/dashboard/health", label: "健康度", icon: "💓" },
   { href: "/dashboard/reports", label: "报告", icon: "📋" },
   { href: "/dashboard/settings", label: "设置", icon: "⚙️" },
 ];
