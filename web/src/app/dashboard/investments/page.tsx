@@ -9,6 +9,10 @@ import {
 } from "@/lib/api";
 import type { ApiInvestment } from "@/lib/api";
 import { INVESTMENT_TYPES, INVESTMENT_ICONS } from "@/lib/types";
+import {
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend,
+} from "recharts";
 
 type Tab = "holdings" | "trades";
 
@@ -146,15 +150,50 @@ export default function InvestmentsPage() {
             );
           })}
         </div>
-        {/* Bar */}
-        <div className="mt-3 h-3 bg-slate-700 rounded-full overflow-hidden flex">
-          {Object.entries(byType).map(([type, data]) => {
-            const pct = totalValue > 0 ? (data.value / totalValue) * 100 : 0;
-            const colors: Record<string, string> = { fund: "bg-blue-500", stock: "bg-amber-500", bond: "bg-green-500", deposit: "bg-purple-500", other: "bg-slate-500" };
-            return <div key={type} className={`${colors[type] || "bg-slate-500"} transition-all`} style={{ width: `${pct}%` }} />;
-          })}
+        {/* Asset Allocation Pie Chart */}
+        <div className="mt-4 flex flex-col lg:flex-row items-center gap-4">
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie
+                data={Object.entries(byType).map(([type, data]) => ({
+                  name: (INVESTMENT_TYPES as Record<string,string>)[type] || type,
+                  value: Math.round(data.value),
+                }))}
+                cx="50%" cy="50%" innerRadius={45} outerRadius={80}
+                paddingAngle={2} dataKey="value"
+                label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+              >
+                {Object.entries(byType).map((_, i) => (
+                  <Cell key={i} fill={["#3b82f6","#f59e0b","#10b981","#8b5cf6","#ec4899","#6366f1"][i % 6]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(v: any) => formatMoney(Number(v))} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Gains Chart */}
+      {holdings.length > 0 && (
+        <div className="bg-slate-800 rounded-xl p-4">
+          <h3 className="text-sm font-medium text-slate-400 mb-3">📊 收益对比</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={holdings.map(h => ({
+              name: h.name.length > 6 ? h.name.slice(0,6)+"…" : h.name,
+              投入: h.amount,
+              市值: h.currentValue,
+            }))}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 11 }} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickFormatter={(v: number) => v >= 10000 ? (v/10000).toFixed(0)+"万" : String(v)} />
+              <Tooltip formatter={(v: any) => formatMoney(Number(v))} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+              <Legend />
+              <Bar dataKey="投入" fill="#3b82f6" radius={[4,4,0,0]} />
+              <Bar dataKey="市值" fill="#10b981" radius={[4,4,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 bg-slate-800 rounded-lg p-1">
