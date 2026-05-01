@@ -3,6 +3,17 @@
 import { useState, useRef } from "react";
 import { exportAllData, importAllData, resetAllData } from "@/lib/api";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+
+async function syncPush(data: any, strategy: "merge" | "overwrite") {
+  const res = await fetch(`${API_BASE}/api/sync`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data, strategy }) });
+  return res.json();
+}
+async function syncPull() {
+  const res = await fetch(`${API_BASE}/api/sync`);
+  return res.json();
+}
+
 type ImportResult = { ok: boolean; error?: string; count?: number };
 
 export default function SettingsPage() {
@@ -191,6 +202,56 @@ export default function SettingsPage() {
         >
           {loading ? "⏳ 导出中..." : "导出 JSON 文件"}
         </button>
+      </section>
+
+      {/* 数据同步 */}
+      <section className="mb-8 bg-slate-800 rounded-xl p-5">
+        <h2 className="text-lg font-semibold mb-3">🔄 数据同步</h2>
+        <p className="text-sm text-slate-400 mb-4">
+          从桌面端同步数据到网页端。合并模式保留已有数据，覆盖模式替换全部。
+        </p>
+        <div className="flex items-center gap-3 mb-4">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="radio" name="syncStrategy" value="merge" defaultChecked className="accent-blue-500" />
+            合并（推荐）
+          </label>
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="radio" name="syncStrategy" value="overwrite" className="accent-red-500" />
+            覆盖
+          </label>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={async () => {
+              const file = fileRef.current?.files?.[0];
+              if (!file) { fileRef.current?.click(); return; }
+            }}
+            disabled={loading}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 rounded-lg text-sm transition"
+          >
+            📤 推送桌面端数据
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                setLoading(true);
+                const data = await syncPull();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `wealth-sync-pull-${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+              } catch (err: any) { alert("拉取失败：" + err.message); }
+              finally { setLoading(false); }
+            }}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg text-sm transition"
+          >
+            📥 拉取到桌面端
+          </button>
+        </div>
       </section>
 
       {/* 数据重置 */}

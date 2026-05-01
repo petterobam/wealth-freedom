@@ -199,3 +199,21 @@ export function updateInvestment(id: string, data: Partial<Omit<ApiInvestment, "
 export function deleteInvestment(id: string): Promise<{ ok: boolean }> {
   return request<{ ok: boolean }>("/api/investments", { method: "DELETE", body: JSON.stringify({ id }) });
 }
+
+/* ── Sync (Merge/Pull) ─────────────────── */
+
+export interface SyncResult {
+  ok: boolean;
+  strategy: "merge" | "overwrite";
+  merged?: Record<string, number>;
+  total?: number;
+  count?: number;
+}
+
+export function syncPush(data: any, strategy: "merge" | "overwrite" = "merge"): Promise<SyncResult> {
+  return request<SyncResult>("/api/sync", { method: "POST", body: JSON.stringify({ data, strategy }) });
+}
+
+export function syncPull(): Promise<any> {
+  return request<any>("/api/sync");
+}
