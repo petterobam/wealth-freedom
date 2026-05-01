@@ -198,7 +198,7 @@ export default function AccountsPage() {
                           : "border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-600"
                       }`}
                     >
-                      {ACCOUNT_ICONS[key]} {label}
+                      {ACCOUNT_ICONS[key as keyof typeof ACCOUNT_ICONS]} {label}
                     </button>
                   ))}
                 </div>
