@@ -1,33 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
-import { getStats, getTransactions, getGoals } from "@/lib/store";
-import type { DashboardStats, Transaction, Goal } from "@/lib/types";
+import { useState, useEffect } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  PieChart, Pie, Cell,
   LineChart, Line,
 } from "recharts";
 
+interface DashboardData {
+  user: { id: string; name: string; currency: string };
+  summary: {
+    totalAssets: number;
+    totalDebt: number;
+    netWorth: number;
+    monthlyIncome: number;
+    monthlyExpense: number;
+    monthlyBalance: number;
+    investTotal: number;
+    savingsRate: number;
+  };
+  accounts: any[];
+  transactions: any[];
+  goals: any[];
+  charts: {
+    months: { month: string; income: number; expense: number }[];
+    expenseByCategory: { name: string; value: number }[];
+  };
+}
+
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [recentTx, setRecentTx] = useState<Transaction[]>([]);
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setStats(getStats());
-    setRecentTx(getTransactions().slice(0, 5));
-    setGoals(getGoals());
-    setMounted(true);
+    fetch("/api/dashboard")
+      .then((r) => {
+        if (!r.ok) throw new Error(`API ${r.status}`);
+        return r.json();
+      })
+      .then((d) => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError(e.message);
+        setLoading(false);
+      });
   }, []);
 
-  if (!mounted || !stats) return <div className="p-6 text-slate-500">加载中...</div>;
+  if (loading) return <div className="p-6 text-slate-500">加载数据中...</div>;
+  if (error) return <div className="p-6 text-red-400">加载失败: {error}</div>;
+  if (!data) return null;
 
+  const s = data.summary;
   const fmt = (n: number) => "¥" + n.toLocaleString("zh-CN", { minimumFractionDigits: 2 });
-  const safetyGoal = goals.find((g) => g.name === "财务安全");
-  const safetyPct = safetyGoal ? Math.round((safetyGoal.current / safetyGoal.target) * 100) : 34.8;
+  const fmtWan = (n: number) => `¥${(n / 10000).toFixed(1)}万`;
+
+  // Safety goal progress
+  const safetyGoal = data.goals.find((g: any) => g.stage === "security");
+  const safetyPct = safetyGoal ? Math.round((safetyGoal.currentAmount / safetyGoal.targetAmount) * 100) : 0;
 
   return (
     <div className="p-6 max-w-6xl">
@@ -36,29 +69,34 @@ export default function DashboardPage() {
       {/* 概览卡片 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "总资产", value: fmt(stats.totalAssets), color: "text-blue-400" },
-          { label: "月收入", value: fmt(stats.monthlyIncome), color: "text-emerald-400" },
-          { label: "月支出", value: fmt(stats.monthlyExpense), color: "text-amber-400" },
-          { label: "储蓄率", value: stats.savingsRate + "%", color: "text-purple-400" },
+          { label: "总资产", value: fmt(s.totalAssets), color: "text-blue-400" },
+          { label: "净资产", value: fmt(s.netWorth), color: "text-emerald-400" },
+          { label: "月收入", value: fmt(s.monthlyIncome), color: "text-emerald-400" },
+          { label: "月支出", value: fmt(s.monthlyExpense), color: "text-amber-400" },
+          { label: "月结余", value: fmt(s.monthlyBalance), color: "text-cyan-400" },
+          { label: "储蓄率", value: s.savingsRate + "%", color: "text-purple-400" },
+          { label: "投资总额", value: fmt(s.investTotal), color: "text-indigo-400" },
+          { label: "总负债", value: fmt(s.totalDebt), color: "text-red-400" },
         ].map((card) => (
           <div key={card.label} className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
             <div className="text-sm text-slate-400 mb-1">{card.label}</div>
-            <div className={`text-2xl font-bold ${card.color}`}>{card.value}</div>
+            <div className={`text-xl font-bold ${card.color}`}>{card.value}</div>
           </div>
         ))}
       </div>
 
       {/* 功能模块 */}
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { title: "交易记录", icon: "💰", desc: "查看收支明细", href: "/dashboard/transactions" },
-          { title: "目标追踪", icon: "🎯", desc: "财务自由进度", href: "/dashboard/goals" },
-          { title: "AI 助手", icon: "🤖", desc: "个性化理财建议", href: "#" },
+          { title: "交易记录", icon: "💰", desc: "收支明细", href: "/dashboard/transactions" },
+          { title: "账户管理", icon: "🏦", desc: "资产总览", href: "/dashboard/accounts" },
+          { title: "目标追踪", icon: "🎯", desc: "财务自由", href: "/dashboard/goals" },
+          { title: "预算管理", icon: "📊", desc: "支出控制", href: "/dashboard/budgets" },
         ].map((mod) => (
-          <Link key={mod.title} href={mod.href} className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition block">
+          <Link key={mod.title} href={mod.href} className="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50 hover:border-blue-500/50 transition block">
             <div className="text-2xl mb-2">{mod.icon}</div>
-            <h3 className="font-bold mb-1">{mod.title}</h3>
-            <p className="text-sm text-slate-400">{mod.desc}</p>
+            <h3 className="font-bold text-sm mb-1">{mod.title}</h3>
+            <p className="text-xs text-slate-400">{mod.desc}</p>
           </Link>
         ))}
       </div>
@@ -73,7 +111,9 @@ export default function DashboardPage() {
           <span className="text-emerald-400 font-semibold">{safetyPct}%</span>
         </div>
         <p className="text-sm text-slate-400 mt-2">
-          {safetyGoal ? `¥${(safetyGoal.current / 10000).toFixed(0)}万 / ¥${(safetyGoal.target / 10000).toFixed(0)}万 · 截止 ${safetyGoal.deadline}` : "加载中..."}
+          {safetyGoal
+            ? `${fmtWan(safetyGoal.currentAmount)} / ${fmtWan(safetyGoal.targetAmount)} · 截止 ${safetyGoal.targetDate ? new Date(safetyGoal.targetDate).toLocaleDateString("zh-CN") : "未设定"}`
+            : "尚未设定财务安全目标"}
         </p>
       </div>
 
@@ -81,60 +121,15 @@ export default function DashboardPage() {
       <div className="grid md:grid-cols-2 gap-4 mb-8">
         {/* 收支柱状图 */}
         <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-          <h3 className="font-bold mb-4">📈 近7日收支</h3>
-          <ChartContent transactions={recentTx.length > 0 ? (() => {
-            const all = getTransactions();
-            const days: Record<string, { income: number; expense: number }> = {};
-            const now = new Date();
-            for (let i = 6; i >= 0; i--) {
-              const d = new Date(now); d.setDate(d.getDate() - i);
-              const key = d.toISOString().slice(0, 10);
-              days[key] = { income: 0, expense: 0 };
-            }
-            all.forEach((t) => { if (days[t.date]) days[t.date][t.type] += t.amount; });
-            return Object.entries(days).map(([date, v]) => ({
-              name: date.slice(5),
-              收入: v.income,
-              支出: v.expense,
-            }));
-          })() : []} />
+          <h3 className="font-bold mb-4">📈 近6月收支</h3>
+          <ChartContent data={data.charts.months} />
         </div>
 
         {/* 支出分类饼图 */}
         <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
           <h3 className="font-bold mb-4">🍩 支出分类</h3>
-          <PieContent transactions={(() => {
-            const all = getTransactions().filter((t) => t.type === "expense");
-            const cats: Record<string, number> = {};
-            all.forEach((t) => { cats[t.category] = (cats[t.category] || 0) + t.amount; });
-            return Object.entries(cats).map(([name, value]) => ({ name, value: Math.round(value) })).sort((a, b) => b.value - a.value);
-          })()} />
+          <PieContent data={data.charts.expenseByCategory} />
         </div>
-      </div>
-
-      {/* 净资产趋势折线图 */}
-      <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 mb-8">
-        <h3 className="font-bold mb-4">💹 净资产趋势（近6月）</h3>
-        <NetWorthChart transactions={(() => {
-          const all = getTransactions();
-          const months: Record<string, { income: number; expense: number }> = {};
-          const now = new Date();
-          for (let i = 5; i >= 0; i--) {
-            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-            months[key] = { income: 0, expense: 0 };
-          }
-          all.forEach((t) => { if (months[t.date.slice(0, 7)]) months[t.date.slice(0, 7)][t.type] += t.amount; });
-          let cumulative = (stats?.netWorth ?? 1100000);
-          // back-calculate from current net worth
-          const entries = Object.entries(months);
-          const deltas = entries.map(([, v]) => v.income - v.expense);
-          cumulative -= deltas.reduce((a, b) => a + b, 0);
-          return entries.map(([month, v], i) => {
-            cumulative += deltas[i];
-            return { name: month.slice(5) + "月", 净资产: Math.round(cumulative) };
-          });
-        })()} />
       </div>
 
       {/* 最近交易 */}
@@ -144,74 +139,59 @@ export default function DashboardPage() {
           <Link href="/dashboard/transactions" className="text-xs text-blue-400 hover:underline">查看全部 →</Link>
         </div>
         <div className="space-y-2">
-          {recentTx.map((t) => (
+          {data.transactions.slice(0, 10).map((t: any) => (
             <div key={t.id} className="flex items-center justify-between py-2 border-b border-slate-800/50 last:border-0">
               <div className="flex items-center gap-3">
                 <span className={`text-xs px-2 py-0.5 rounded-full ${t.type === "income" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
                   {t.type === "income" ? "收" : "支"}
                 </span>
-                <span className="text-sm">{t.note || t.category}</span>
-                <span className="text-xs text-slate-500">{t.date}</span>
+                <span className="text-sm">{t.category}</span>
+                <span className="text-xs text-slate-500">{new Date(t.date).toLocaleDateString("zh-CN")}</span>
               </div>
               <span className={`text-sm font-mono font-semibold ${t.type === "income" ? "text-emerald-400" : "text-red-400"}`}>
                 {t.type === "income" ? "+" : "-"}¥{t.amount.toLocaleString("zh-CN")}
               </span>
             </div>
           ))}
-          {recentTx.length === 0 && <p className="text-sm text-slate-500 text-center py-4">暂无交易记录</p>}
+          {data.transactions.length === 0 && <p className="text-sm text-slate-500 text-center py-4">暂无交易记录</p>}
         </div>
       </div>
 
-      <p className="text-center text-slate-600 text-xs mt-12">数据存储在浏览器本地 · v1.5.0</p>
+      <p className="text-center text-slate-600 text-xs mt-12">SQLite 数据库驱动 · v1.5.0</p>
     </div>
   );
 }
 
-/* ── Chart sub-components (avoid hydration mismatch with recharts) ── */
+/* ── Chart sub-components ── */
 
-function ChartContent({ transactions }: { transactions: { name: string; 收入: number; 支出: number }[] }) {
-  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无数据</p>;
+function ChartContent({ data }: { data: { month: string; income: number; expense: number }[] }) {
+  if (!data || data.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无数据</p>;
   return (
     <ResponsiveContainer width="100%" height={220}>
-      <BarChart data={transactions}>
+      <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-        <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+        <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 12 }} />
         <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => `¥${v}`} />
         <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
-        <Bar dataKey="收入" fill="#34d399" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="支出" fill="#f87171" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="income" name="收入" fill="#34d399" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="expense" name="支出" fill="#f87171" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
-const PIE_COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f97316", "#eab308", "#14b8a6", "#6366f1", "#ef4444", "#22c55e"];
+const PIE_COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f97316", "#eab308", "#14b8a6", "#6366f1", "#ef4444"];
 
-function PieContent({ transactions }: { transactions: { name: string; value: number }[] }) {
-  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无支出数据</p>;
+function PieContent({ data }: { data: { name: string; value: number }[] }) {
+  if (!data || data.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无支出数据</p>;
   return (
     <ResponsiveContainer width="100%" height={220}>
       <PieChart>
-        <Pie data={transactions} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" nameKey="name" label={({ name, percent }: { name?: string; percent?: number }) => `${name ?? ""} ${((percent ?? 0) * 100).toFixed(0)}%`}>
-          {transactions.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+        <Pie data={data} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" nameKey="name" label={({ name, percent }: { name?: string; percent?: number }) => `${name ?? ""} ${((percent ?? 0) * 100).toFixed(0)}%`}>
+          {data.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
         </Pie>
         <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
       </PieChart>
-    </ResponsiveContainer>
-  );
-}
-
-function NetWorthChart({ transactions }: { transactions: { name: string; 净资产: number }[] }) {
-  if (transactions.length === 0) return <p className="text-sm text-slate-500 text-center py-8">暂无数据</p>;
-  return (
-    <ResponsiveContainer width="100%" height={260}>
-      <LineChart data={transactions}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-        <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-        <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => `¥${(v / 10000).toFixed(0)}万`} />
-        <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
-        <Line type="monotone" dataKey="净资产" stroke="#3b82f6" strokeWidth={2.5} dot={{ fill: "#3b82f6", r: 4 }} activeDot={{ r: 6 }} />
-      </LineChart>
     </ResponsiveContainer>
   );
 }

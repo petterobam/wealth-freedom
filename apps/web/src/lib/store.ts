@@ -71,6 +71,7 @@ const DEFAULT_DATA: FinanceData = {
   accounts: DEFAULT_ACCOUNTS,
   budgets: DEFAULT_BUDGETS,
   stats: DEFAULT_STATS,
+  version: 1,
 };
 
 // ── 读取/写入 ─────────────────────────────────────────

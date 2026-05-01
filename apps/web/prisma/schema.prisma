@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  name              String
+  email             String?  @unique
+  avatar            String?
+  currency          String   @default("CNY")
+  guaranteeMonths   Int      @default(6)
+  expectedReturnRate Float   @default(8.0)
+  settings          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  accounts            Account[]
+  debts               Debt[]
+  transactions        Transaction[]
+  goals               Goal[]
+  budgets             Budget[]
+  investmentAccounts  InvestmentAccount[]
+  recurringRules      RecurringRule[]
+}
+
+model Account {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  type            String
+  icon            String?
+  color           String?
+  balance         Float    @default(0)
+  currency        String   @default("CNY")
+  institution     String?
+  notes           String?
+  isReserved      Boolean  @default(false)
+  includeInNetWorth Boolean @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+  recurringRules RecurringRule[]
+
+  @@index([userId])
+}
+
+model Debt {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  type            String
+  totalAmount     Float
+  paidAmount      Float    @default(0)
+  remainingAmount Float
+  monthlyPayment  Float?
+  interestRate    Float?
+  priority        Int      @default(3)
+  dueDate         DateTime?
+  notes           String?
+  isPaidOff       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  accountId   String
+  type        String
+  category    String
+  amount      Float
+  date        DateTime
+  note        String?
+  description String?
+  tags        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  account Account @relation(fields: [accountId], references: [id])
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([date])
+}
+
+model Goal {
+  id            String   @id @default(cuid())
+  userId        String
+  stage         String
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  targetDate    DateTime?
+  notes         String?
+  status        String   @default("in_progress")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Budget {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  category  String?
+  amount    Float
+  period    String   @default("monthly")
+  startDate String
+  isActive  Boolean  @default(true)
+  icon      String?
+  color     String?
+  rollover  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model InvestmentAccount {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  platform  String
+  type      String   @default("stock")
+  notes     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id])
+  portfolios Portfolio[]
+
+  @@index([userId])
+}
+
+model Portfolio {
+  id          String   @id @default(cuid())
+  accountId   String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  investmentAccount InvestmentAccount @relation(fields: [accountId], references: [id])
+  holdings          Holding[]
+
+  @@index([accountId])
+}
+
+model Holding {
+  id            String   @id @default(cuid())
+  portfolioId   String
+  symbol        String
+  name          String?
+  type          String   @default("stock")
+  quantity      Float    @default(0)
+  avgCost       Float    @default(0)
+  currentPrice  Float    @default(0)
+  marketValue   Float    @default(0)
+  profitLoss    Float    @default(0)
+  profitLossPct Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+
+  @@index([portfolioId])
+}
+
+model RecurringRule {
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  amount         Float
+  type           String
+  accountId      String
+  category       String?
+  frequency      String
+  intervalNum    Int      @default(1)
+  dayOfWeek      Int?
+  dayOfMonth     Int?
+  startDate      String
+  endDate        String?
+  nextExecution  String
+  status         String   @default("active")
+  lastExecution  String?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  account Account @relation(fields: [accountId], references: [id])
+
+  @@index([userId])
+}
