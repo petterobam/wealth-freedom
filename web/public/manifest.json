@@ -1,0 +1,40 @@
+{
+  "name": "财富自由之路 - 个人财务管理",
+  "short_name": "财富自由",
+  "description": "系统化管理个人财务，从财务保障到财务安全再到财务自由",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "lang": "zh-CN",
+  "shortcuts": [
+    {
+      "name": "记一笔",
+      "short_name": "记账",
+      "url": "/dashboard/transactions",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "看板",
+      "short_name": "看板",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

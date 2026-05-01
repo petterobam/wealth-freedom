@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 
 export const metadata: Metadata = {
   title: "财富自由之路 - 个人财务管理软件",
@@ -35,8 +36,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#3b82f6" />
+        <link rel="apple-touch-icon" href="/icon-192.svg" />
+      </head>
       <body className="antialiased">
         <AuthProvider>{children}</AuthProvider>
+        <PwaInstallPrompt />
       </body>
     </html>
   );
