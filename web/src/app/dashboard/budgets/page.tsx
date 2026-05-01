@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   fetchBudgets,
   createBudget,
@@ -9,6 +9,10 @@ import {
 } from "@/lib/api";
 import type { ApiBudget } from "@/lib/api";
 import { EXPENSE_CATEGORIES } from "@/lib/types";
+import {
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+} from "recharts";
 
 const COLORS = [
   "#e74c3c", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6",
@@ -141,6 +145,49 @@ export default function BudgetsPage() {
           <div className={`h-full rounded-full transition-all ${pctBarColor(totalPct)}`} style={{ width: `${Math.min(100, totalPct)}%` }} />
         </div>
       </div>
+
+      {/* 图表区域 */}
+      {budgets.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+          {/* 预算分配饼图 */}
+          <div className="bg-slate-800 rounded-xl p-4">
+            <h3 className="text-sm font-semibold text-slate-300 mb-3">📊 预算分配</h3>
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  data={budgets.map((b) => ({ name: `${b.icon} ${b.category}`, value: b.limit }))}
+                  cx="50%" cy="50%" innerRadius={50} outerRadius={85}
+                  paddingAngle={2} dataKey="value"
+                >
+                  {budgets.map((b, i) => (
+                    <Cell key={b.id} fill={b.color || COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(v: unknown) => `¥${Number(v).toLocaleString()}`} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 预算 vs 支出柱状图 */}
+          <div className="bg-slate-800 rounded-xl p-4">
+            <h3 className="text-sm font-semibold text-slate-300 mb-3">📈 预算 vs 已花费</h3>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={spent.map(({ budget: b, spent: s }) => ({
+                name: b.category.length > 4 ? b.category.slice(0, 4) : b.category,
+                预算: b.limit,
+                已花费: s,
+              }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => v >= 10000 ? `${(v / 10000).toFixed(0)}万` : `¥${v}`} />
+                <Tooltip formatter={(v: unknown) => `¥${Number(v).toLocaleString()}`} />
+                <Bar dataKey="预算" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="已花费" fill="#10b981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       {/* 新建/编辑表单 */}
       {showForm && (
