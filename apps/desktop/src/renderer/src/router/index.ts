@@ -152,6 +152,12 @@ const router = createRouter({
       meta: { title: '财务洞察' }
     },
     {
+      path: '/bigscreen',
+      name: 'BigScreen',
+      component: () => import('@/views/BigScreen.vue'),
+      meta: { title: '数据大屏' }
+    },
+    {
       path: '/settings',
       name: 'Settings',
       component: () => import('@/views/Settings.vue'),

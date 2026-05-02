@@ -144,6 +144,10 @@
             <el-icon><Key /></el-icon>
             <template #title>授权管理</template>
           </el-menu-item>
+          <el-menu-item index="/bigscreen">
+            <el-icon><Monitor /></el-icon>
+            <template #title>数据大屏</template>
+          </el-menu-item>
           <el-menu-item index="/settings">
             <el-icon><Setting /></el-icon>
             <template #title>设置</template>
@@ -193,7 +197,8 @@ import {
   Document,
   Key,
   Refresh,
-  MagicStick
+  MagicStick,
+  Monitor
 } from '@element-plus/icons-vue'
 import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'
