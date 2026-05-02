@@ -303,6 +303,53 @@
       </el-descriptions>
     </el-card>
 
+    <!-- 多币种设置 (v1.9.0) -->
+    <el-card class="settings-card" style="margin-top: 20px">
+      <template #header>
+        <div class="card-header">
+          <span class="card-title">🌍 多币种设置</span>
+          <el-button type="primary" size="small" @click="saveCurrencySettings" :loading="currencySaving">
+            保存
+          </el-button>
+        </div>
+      </template>
+
+      <el-form label-width="120px">
+        <el-form-item label="基准货币">
+          <el-select v-model="baseCurrency" placeholder="选择基准货币" style="width: 240px" @change="onBaseCurrencyChange">
+            <el-option v-for="c in supportedCurrencies" :key="c.code" :label="`${c.flag} ${c.code} - ${c.name}`" :value="c.code" />
+          </el-select>
+          <span class="currency-hint" style="margin-left: 12px; color: #909399; font-size: 13px">
+            所有金额将换算为此货币显示
+          </span>
+        </el-form-item>
+
+        <el-form-item label="汇率缓存">
+          <div v-if="cacheStatus" class="currency-cache-info">
+            <el-tag size="small" type="success">{{ cacheStatus.entryCount }} 条汇率</el-tag>
+            <el-tag size="small" :type="cacheStatus.isExpired ? 'danger' : 'info'" style="margin-left: 8px">
+              {{ cacheStatus.isExpired ? '已过期，待刷新' : `有效期至 ${new Date(cacheStatus.expiresAt).toLocaleTimeString()}` }}
+            </el-tag>
+            <el-button size="small" style="margin-left: 12px" @click="clearCurrencyCache">清除缓存</el-button>
+            <el-button size="small" @click="refreshRates" :loading="ratesLoading">刷新汇率</el-button>
+          </div>
+          <span v-else style="color: #909399; font-size: 13px">点击"刷新汇率"获取最新数据</span>
+        </el-form-item>
+
+        <div v-if="exchangeRates.length > 0" class="exchange-rates-preview">
+          <h4 style="margin-bottom: 8px; color: #606266">汇率预览 (1 {{ baseCurrency }} =)</h4>
+          <el-row :gutter="12">
+            <el-col :span="6" v-for="rate in exchangeRates.slice(0, 8)" :key="rate.currency">
+              <div class="rate-item">
+                <span class="rate-currency">{{ rate.currency }}</span>
+                <span class="rate-value">{{ rate.rate.toFixed(4) }}</span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+    </el-card>
+
     <!-- 数据备份与恢复 (v0.9.0) -->
     <el-card class="settings-card" style="margin-top: 20px">
       <template #header>
@@ -1088,11 +1135,79 @@ const executeImport = async () => {
   }
 }
 
+// ===== 多币种设置 (v1.9.0) =====
+const currencySaving = ref(false)
+const ratesLoading = ref(false)
+const baseCurrency = ref('CNY')
+const supportedCurrencies = ref<Array<{code: string; name: string; flag: string}>>([])
+const cacheStatus = ref<any>(null)
+const exchangeRates = ref<Array<{currency: string; rate: number}>>([])
+
+const loadCurrencySettings = async () => {
+  try {
+    const currencies = await window.electronAPI.currency.getSupported()
+    supportedCurrencies.value = currencies || []
+  } catch { /* ignore */ }
+  try {
+    const userId = userStore.user?.id || 'default'
+    const base = await window.electronAPI.currency.getBaseCurrency(userId)
+    if (base && base.currency) baseCurrency.value = base.currency
+  } catch { /* ignore */ }
+  try {
+    const status = await window.electronAPI.currency.getCacheStatus()
+    cacheStatus.value = status
+  } catch { /* ignore */ }
+}
+
+const onBaseCurrencyChange = () => {
+  // preview rates for new base
+}
+
+const saveCurrencySettings = async () => {
+  currencySaving.value = true
+  try {
+    const userId = userStore.user?.id || 'default'
+    await window.electronAPI.currency.setBaseCurrency(userId, baseCurrency.value)
+    ElMessage.success('基准货币已更新为 ' + baseCurrency.value)
+    await refreshRates()
+  } catch (e: any) {
+    ElMessage.error('保存失败: ' + (e.message || '未知错误'))
+  } finally {
+    currencySaving.value = false
+  }
+}
+
+const refreshRates = async () => {
+  ratesLoading.value = true
+  try {
+    const others = supportedCurrencies.value.filter(c => c.code !== baseCurrency.value).map(c => c.code)
+    const rates = await window.electronAPI.currency.getRatesForBase(baseCurrency.value, others)
+    exchangeRates.value = rates || []
+    const status = await window.electronAPI.currency.getCacheStatus()
+    cacheStatus.value = status
+    ElMessage.success(`已获取 ${exchangeRates.value.length} 条汇率`)
+  } catch (e: any) {
+    ElMessage.error('获取汇率失败: ' + (e.message || '网络错误'))
+  } finally {
+    ratesLoading.value = false
+  }
+}
+
+const clearCurrencyCache = async () => {
+  try {
+    await window.electronAPI.currency.clearCache()
+    cacheStatus.value = null
+    exchangeRates.value = []
+    ElMessage.success('汇率缓存已清除')
+  } catch { /* ignore */ }
+}
+
 onMounted(async () => {
   await loadBasicData()
   await loadStatistics()
   await loadBackupInfo()
   await loadBackupList()
+  await loadCurrencySettings()
 })
 </script>
 
@@ -1329,5 +1444,27 @@ onMounted(async () => {
   font-size: 14px;
   color: #606266;
   margin-bottom: 8px;
+}
+
+.rate-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #f5f7fa;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.rate-currency {
+  font-weight: 600;
+  color: #303133;
+}
+.rate-value {
+  color: #67c23a;
+  font-family: 'Monaco', monospace;
+}
+.currency-cache-info {
+  display: flex;
+  align-items: center;
 }
 </style>
