@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <div class="page-header">
-      <h1 class="page-title">财务看板</h1>
+      <h1 class="page-title">财务看板 <span v-if="currency.loaded.value" class="base-currency-badge">{{ currency.baseCurrency.value }}</span></h1>
       <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
         导出 PDF
       </el-button>
@@ -226,6 +226,7 @@ import { useGoalStore } from '@/stores/goals'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { exportToPDF } from '../utils/export'
+import { useCurrency } from '@/composables/useCurrency'
 
 const pdfLoading = ref(false)
 
@@ -244,6 +245,7 @@ const accountStore = useAccountStore()
 const debtStore = useDebtStore()
 const transactionStore = useTransactionStore()
 const goalStore = useGoalStore()
+const currency = useCurrency()
 
 const showAddTransaction = ref(false)
 const transactionForm = ref({
@@ -318,12 +320,11 @@ const ratios = computed(() => {
   }
 })
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('zh-CN', {
-    style: 'currency',
-    currency: 'CNY',
-    maximumFractionDigits: 0
-  }).format(value)
+const formatCurrency = (value: number, fromCurrency?: string) => {
+  if (fromCurrency && fromCurrency !== currency.baseCurrency.value) {
+    return currency.formatConverted(value, fromCurrency)
+  }
+  return currency.formatMoney(value)
 }
 
 const categoryLabels: Record<string, string> = {
@@ -489,6 +490,12 @@ onMounted(async () => {
     transactionStore.fetchTransactions(),
     goalStore.fetchGoals()
   ])
+  // v1.9.0 多币种初始化
+  try {
+    const userStore = await import('@/stores/user').then(m => m.useUserStore())
+    const user = userStore().user
+    if (user) await currency.init(user.id)
+  } catch { /* 单币种回退 */ }
   initCharts()
   window.addEventListener('resize', handleResize)
 })
@@ -515,6 +522,18 @@ onBeforeUnmount(() => {
     font-size: 24px;
     font-weight: 600;
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .base-currency-badge {
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--el-color-primary-light-9, #ecf5ff);
+    color: var(--el-color-primary, #409eff);
+    padding: 2px 8px;
+    border-radius: 10px;
   }
 
   .metric-cards {
