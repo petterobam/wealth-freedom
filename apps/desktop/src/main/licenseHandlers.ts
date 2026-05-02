@@ -8,14 +8,18 @@
 import { ipcMain } from 'electron';
 import {
   activateLicense,
+  activateLicenseOnline,
   getLicenseStatus,
   renewLicense,
+  renewLicenseOnline,
   deactivateLicense,
   getCurrentFeatures,
   hasFeature,
   checkLimit,
   checkFirstRunTrial,
   getMachineId,
+  performOnlineCheck,
+  needsOnlineCheck,
   type LicenseStatus,
   type FeatureMap,
 } from './license';
@@ -67,5 +71,39 @@ export function initLicenseHandlers(): void {
   // 获取机器ID（用于问题排查）
   ipcMain.handle('license:machineId', () => {
     return getMachineId();
+  });
+
+  // ============================================================
+  // v1.8.0 在线验证 IPC
+  // ============================================================
+
+  // 在线激活（优先在线，失败回退本地）
+  ipcMain.handle('license:activateOnline', async (_event, key: string) => {
+    try {
+      return await activateLicenseOnline(key);
+    } catch {
+      // 网络异常，回退到本地激活
+      return activateLicense(key);
+    }
+  });
+
+  // 在线续期（优先在线，失败回退本地）
+  ipcMain.handle('license:renewOnline', async () => {
+    try {
+      return await renewLicenseOnline();
+    } catch {
+      // 网络异常，回退到本地续期
+      return renewLicense();
+    }
+  });
+
+  // 定期联网检查
+  ipcMain.handle('license:onlineCheck', async () => {
+    return await performOnlineCheck();
+  });
+
+  // 检查是否需要联网验证（UI 提示用）
+  ipcMain.handle('license:needsOnlineCheck', () => {
+    return needsOnlineCheck();
   });
 }

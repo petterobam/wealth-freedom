@@ -1,12 +1,13 @@
 /**
- * v1.0.0 订阅授权核心模块
+ * v1.8.0 订阅授权核心模块（在线验证版）
  * 
  * 功能：
  * - License Key 格式校验与解析
  * - 本地加密存储 (AES-256-CBC)
  * - 机器指纹生成
  * - 授权状态管理（免费/试用/基础/旗舰）
- * - 自动续期（7天周期，14天宽限）
+ * - 在线验证（激活/续期/定期检查）
+ * - 离线宽限期（7天警告，14天降级）
  * - 功能门控（Feature Gates）
  */
 
@@ -14,6 +15,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { app } from 'electron';
+import https from 'https';
+import http from 'http';
 
 // ============================================================
 // 类型定义
@@ -30,6 +33,8 @@ export interface LicenseInfo {
   signature: string;
   lastRenewAt: string;
   renewGraceUntil: string;
+  lastOnlineCheck?: string; // v1.8.0: 上次联网验证时间
+  serverSignature?: string; // v1.8.0: 服务端签名
 }
 
 export interface LicenseStatus {
@@ -604,6 +609,246 @@ function generateTrialKey(): string {
   }
 
   return `WF-TRI-${segments.join('-')}`;
+}
+
+// ============================================================
+// v1.8.0 在线验证模块
+// ============================================================
+
+/** 在线验证 API 地址 */
+const VERIFY_API_BASE = 'https://license.wealthfreedom.app';
+
+/** 定期联网检查间隔（天） */
+const ONLINE_CHECK_INTERVAL_DAYS = 7;
+
+/** 离线最大天数（超过此天数降级为免费版） */
+const OFFLINE_MAX_DAYS = 14;
+
+/** API 错误码映射 */
+const ERROR_MESSAGES: Record<string, string> = {
+  INVALID_KEY: '密钥格式错误',
+  LICENSE_NOT_FOUND: '密钥不存在',
+  LICENSE_EXPIRED: '密钥已过期',
+  LICENSE_REVOKED: '密钥已被撤销',
+  LICENSE_ALREADY_USED: '密钥已在其他设备上激活',
+  MACHINE_MISMATCH: '设备不匹配，请联系客服',
+  RATE_LIMITED: '请求过于频繁，请稍后再试',
+  SERVER_ERROR: '服务器错误，请稍后再试',
+};
+
+/**
+ * 发起 HTTP POST 请求（不依赖 fetch，兼容 Electron 主进程）
+ */
+function postJSON(url: string, body: object): Promise<{ ok: boolean; data?: any; error?: string }> {
+  return new Promise((resolve) => {
+    const parsed = new URL(url);
+    const lib = parsed.protocol === 'https:' ? https : http;
+    const payload = JSON.stringify(body);
+
+    const req = lib.request(
+      {
+        hostname: parsed.hostname,
+        port: parsed.port || (parsed.protocol === 'https:' ? 443 : 80),
+        path: parsed.pathname,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+          'User-Agent': `WealthFreedom/${app.getVersion()}`,
+        },
+        timeout: 10000,
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk: Buffer) => (data += chunk));
+        res.on('end', () => {
+          try {
+            resolve({ ok: res.statusCode! >= 200 && res.statusCode! < 300, data: JSON.parse(data) });
+          } catch {
+            resolve({ ok: false, error: 'SERVER_ERROR' });
+          }
+        });
+      },
+    );
+
+    req.on('error', () => resolve({ ok: false, error: 'NETWORK_ERROR' }));
+    req.on('timeout', () => { req.destroy(); resolve({ ok: false, error: 'NETWORK_ERROR' }); });
+    req.write(payload);
+    req.end();
+  });
+}
+
+/**
+ * 在线激活 License（v1.8.0）
+ * 替代纯本地 activateLicense，需联网
+ */
+export async function activateLicenseOnline(key: string): Promise<{ success: boolean; tier?: LicenseTier; expiresAt?: string; message: string }> {
+  // 1. 本地格式校验（快速失败）
+  const validation = validateKeyFormat(key);
+  if (!validation.valid) {
+    return { success: false, message: validation.error! };
+  }
+
+  // 2. 调用在线验证 API
+  const machineId = getMachineId();
+  const result = await postJSON(`${VERIFY_API_BASE}/api/v1/license/activate`, {
+    key: key.trim().toUpperCase(),
+    machineId,
+    appName: 'wealth-freedom',
+    version: app.getVersion(),
+  });
+
+  if (!result.ok || !result.data?.ok) {
+    const errorCode = result.data?.error || result.error || 'SERVER_ERROR';
+    return { success: false, message: ERROR_MESSAGES[errorCode] || `激活失败：${errorCode}` };
+  }
+
+  const { tier, expiresAt, signature: serverSignature } = result.data;
+  const now = new Date();
+
+  // 3. 保存在线签发的授权信息
+  const licenseInfo: LicenseInfo = {
+    key: key.trim().toUpperCase(),
+    tier,
+    activatedAt: now.toISOString(),
+    expiresAt,
+    machineId,
+    signature: '', // 本地签名
+    lastRenewAt: now.toISOString(),
+    renewGraceUntil: new Date(new Date(expiresAt).getTime() + RENEW_GRACE_DAYS * 24 * 60 * 60 * 1000).toISOString(),
+    lastOnlineCheck: now.toISOString(),
+    serverSignature,
+  };
+
+  // 生成本地签名（双重验证）
+  const signPayload = `${licenseInfo.key}:${licenseInfo.tier}:${licenseInfo.expiresAt}:${licenseInfo.machineId}`;
+  licenseInfo.signature = generateSignature(signPayload);
+
+  const saved = saveLicense(licenseInfo);
+  if (!saved) {
+    return { success: false, message: '保存授权信息失败' };
+  }
+
+  const tierNames: Record<string, string> = { trial: '试用版', basic: '基础版', pro: '旗舰版' };
+  return {
+    success: true,
+    tier,
+    expiresAt,
+    message: `${tierNames[tier] || tier}已激活`,
+  };
+}
+
+/**
+ * 在线续期（v1.8.0）
+ */
+export async function renewLicenseOnline(): Promise<{ success: boolean; message: string; expiresAt?: string }> {
+  const license = readLicense();
+  if (!license) {
+    return { success: false, message: '未找到授权信息' };
+  }
+
+  const result = await postJSON(`${VERIFY_API_BASE}/api/v1/license/renew`, {
+    key: license.key,
+    machineId: getMachineId(),
+  });
+
+  if (!result.ok || !result.data?.ok) {
+    const errorCode = result.data?.error || result.error || 'SERVER_ERROR';
+    return { success: false, message: ERROR_MESSAGES[errorCode] || `续期失败：${errorCode}` };
+  }
+
+  const now = new Date();
+  const newExpiresAt = result.data.expiresAt;
+
+  // 更新本地信息
+  license.expiresAt = newExpiresAt;
+  license.lastRenewAt = now.toISOString();
+  license.lastOnlineCheck = now.toISOString();
+  license.serverSignature = result.data.signature;
+  license.renewGraceUntil = new Date(new Date(newExpiresAt).getTime() + RENEW_GRACE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
+  const signPayload = `${license.key}:${license.tier}:${license.expiresAt}:${license.machineId}`;
+  license.signature = generateSignature(signPayload);
+
+  saveLicense(license);
+
+  return {
+    success: true,
+    expiresAt: newExpiresAt,
+    message: `续期成功，新到期日：${new Date(newExpiresAt).toLocaleDateString('zh-CN')}`,
+  };
+}
+
+/**
+ * 定期联网检查（v1.8.0）
+ * 每7天检查一次，14天未联网则降级
+ */
+export async function performOnlineCheck(): Promise<{ checked: boolean; revoked: boolean; message?: string }> {
+  const license = readLicense();
+  if (!license) return { checked: false, revoked: false };
+
+  const now = new Date();
+
+  // 检查离线天数
+  if (license.lastOnlineCheck) {
+    const offlineDays = Math.floor((now.getTime() - new Date(license.lastOnlineCheck).getTime()) / (24 * 60 * 60 * 1000));
+
+    // 不到检查间隔，跳过
+    if (offlineDays < ONLINE_CHECK_INTERVAL_DAYS) {
+      return { checked: false, revoked: false };
+    }
+
+    // 超过离线最大天数
+    if (offlineDays >= OFFLINE_MAX_DAYS) {
+      deactivateLicense();
+      return { checked: true, revoked: true, message: `已离线 ${offlineDays} 天，授权已失效，请联网后重新激活` };
+    }
+  }
+
+  // 联网检查
+  try {
+    const result = await postJSON(`${VERIFY_API_BASE}/api/v1/license/check`, {
+      key: license.key,
+      machineId: getMachineId(),
+    });
+
+    if (result.ok && result.data?.ok) {
+      // 更新检查时间
+      license.lastOnlineCheck = now.toISOString();
+      if (result.data.expiresAt) license.expiresAt = result.data.expiresAt;
+      saveLicense(license);
+      return { checked: true, revoked: false };
+    }
+
+    // 被撤销
+    if (result.data?.error === 'LICENSE_REVOKED') {
+      deactivateLicense();
+      return { checked: true, revoked: true, message: '授权已被撤销' };
+    }
+
+    // 其他错误（网络问题等），不降级，仅更新检查时间
+    license.lastOnlineCheck = now.toISOString();
+    saveLicense(license);
+    return { checked: true, revoked: false };
+  } catch {
+    return { checked: false, revoked: false };
+  }
+}
+
+/**
+ * 判断是否需要联网验证（用于 UI 提示）
+ */
+export function needsOnlineCheck(): { needed: boolean; daysSince: number; urgency: 'none' | 'low' | 'high' } {
+  const license = readLicense();
+  if (!license || !license.lastOnlineCheck) {
+    return { needed: false, daysSince: 0, urgency: 'none' };
+  }
+
+  const daysSince = Math.floor((Date.now() - new Date(license.lastOnlineCheck).getTime()) / (24 * 60 * 60 * 1000));
+
+  if (daysSince >= OFFLINE_MAX_DAYS) return { needed: true, daysSince, urgency: 'high' };
+  if (daysSince >= ONLINE_CHECK_INTERVAL_DAYS) return { needed: true, daysSince, urgency: 'low' };
+  return { needed: false, daysSince, urgency: 'none' };
 }
 
 // ============================================================
