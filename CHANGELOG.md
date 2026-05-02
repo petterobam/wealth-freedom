@@ -7,6 +7,51 @@
 
 ---
 
+## [1.6.0] - 2026-05-02
+
+### 新增
+- 🔗 **数据同步 API**：merge/overwrite 两种同步模式，桌面端↔云端数据对齐
+- 📊 **Recharts 图表库深化**：6 个页面全面升级为交互式 Recharts 图表
+  - `investments`：资产配置环形饼图 + 收益对比柱状图
+  - `budgets`：预算分配饼图 + 预算 vs 实际支出柱状图
+  - `transactions`：近 6 月月度收支趋势柱状图
+  - `goals`：各目标完成/剩余水平堆叠柱状图
+  - `health`：5 维财务健康度评分 + 三阶段进度 + 改善建议
+  - `dashboard`：近 7 日收支柱状图 + 支出分类饼图 + 净资产趋势折线图
+- 🚀 **Landing Page 升级**：版本 badge + 数据亮点卡片 + 技术栈展示 + CTA + 6 大功能介绍 + 三步之路增强
+- 📦 **Seed 数据扩展**：6 个月 330 条真实感交易，储蓄率 73.7%
+- 🌐 **Web 端 Prisma + SQLite 后端**：6 模型 schema + 10 个 API 路由 + NextAuth 认证
+- 📱 **PWA 支持**：manifest + service worker + 安装到手机桌面
+- 📱 **移动端底部导航栏**：5 项快捷导航
+
+### 变更
+- 🔧 设置页新增同步 UI（同步模式选择 + 状态显示）
+- 🔧 Web 端所有页面从 localStorage 迁移到统一 API 客户端
+- 🔧 清理过时 `apps/web` 目录，统一到 `web/` 顶层目录
+
+## [1.5.0] - 2026-05-01
+
+### 新增
+- 🌐 **网页端完整实现**：Next.js 16 + Tailwind 4 + Prisma + SQLite
+- 📡 **10 个 API 路由**：dashboard/transactions/accounts/budgets/goals/investments/reports/settings/auth/health
+- 🔑 **NextAuth 认证**：凭证登录 + bcrypt 密码哈希
+- 📊 **10 个页面**：Landing + 登录 + Dashboard + 交易 + 账户 + 目标 + 预算 + 投资 + 报告 + 设置
+- 🔧 **统一 API 客户端**：lib/api.ts + lib/hooks.ts（React hooks + 轻量 SWR）
+
+### 变更
+- 🔧 Prisma schema 6 模型（User/Account/Transaction/Budget/Goal/Investment）
+- 🔧 Seed 脚本生成真实感测试数据
+
+## [1.4.0] - 2026-04-29
+
+### 新增
+- 📊 **财务洞察系统**：基准对比（同龄人/同收入段/同城市）+ 历史趋势
+- 🏆 **成就系统**：储蓄率达标/连续记账/资产里程碑/投资收益/财务健康度 5 大类别
+- `Insights.vue`：洞察概览 + 成就墙 + 数据解读
+- 功能门控：`hasInsights`（免费版禁用）
+
+---
+
 ## [1.3.0] - 2026-04-29
 
 ### 新增
