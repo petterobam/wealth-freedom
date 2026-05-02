@@ -21,6 +21,22 @@
       <p class="status-message">{{ licenseStatus.message }}</p>
     </el-card>
 
+    <!-- 在线验证状态 -->
+    <el-card v-if="licenseStatus.tier !== 'free'" class="online-status-card" shadow="hover">
+      <div class="online-status-header">
+        <span>🌐 在线验证</span>
+        <el-tag :type="onlineCheckNeeded ? 'warning' : 'success'" size="small">
+          {{ onlineCheckNeeded ? '需要联网验证' : '验证正常' }}
+        </el-tag>
+      </div>
+      <p class="online-status-desc">
+        {{ onlineCheckNeeded ? '已超过7天未联网验证，请点击按钮进行在线验证' : '许可证在线验证状态正常' }}
+      </p>
+      <el-button v-if="onlineCheckNeeded" type="primary" size="small" :loading="checkingOnline" @click="handleOnlineCheck">
+        立即验证
+      </el-button>
+    </el-card>
+
     <!-- 版本对比 -->
     <div class="plans">
       <el-card v-for="plan in plans" :key="plan.key" 
@@ -117,6 +133,8 @@ const licenseStatus = ref<LicenseStatus>({
 const licenseKey = ref('')
 const activating = ref(false)
 const renewing = ref(false)
+const onlineCheckNeeded = ref(false)
+const checkingOnline = ref(false)
 
 const plans = [
   {
@@ -173,8 +191,33 @@ async function refreshStatus() {
   try {
     const status = await window.electronAPI.license.status()
     licenseStatus.value = status
+    // 检查是否需要在线验证
+    if (status.tier !== 'free' && status.tier !== 'trial') {
+      try {
+        onlineCheckNeeded.value = await window.electronAPI.license.needsOnlineCheck()
+      } catch {
+        onlineCheckNeeded.value = false
+      }
+    }
   } catch (e) {
     console.error('获取授权状态失败:', e)
+  }
+}
+
+async function handleOnlineCheck() {
+  checkingOnline.value = true
+  try {
+    const result = await window.electronAPI.license.onlineCheck()
+    if (result.revoked) {
+      ElMessage.error('许可证已被撤销，已降级为免费版')
+    } else {
+      ElMessage.success('在线验证成功')
+    }
+    await refreshStatus()
+  } catch (e: any) {
+    ElMessage.error('在线验证失败：' + e.message)
+  } finally {
+    checkingOnline.value = false
   }
 }
 
@@ -185,7 +228,14 @@ async function handleActivate() {
   }
   activating.value = true
   try {
-    const result = await window.electronAPI.license.activate(licenseKey.value.trim())
+    // 优先在线激活（v1.8.0）
+    let result
+    try {
+      result = await window.electronAPI.license.activateOnline(licenseKey.value.trim())
+    } catch {
+      // 网络失败，回退本地激活
+      result = await window.electronAPI.license.activate(licenseKey.value.trim())
+    }
     if (result.success) {
       ElMessage.success(result.message)
       licenseKey.value = ''
@@ -256,6 +306,23 @@ onMounted(() => {
 
 .status-card {
   margin-bottom: 24px;
+}
+
+.online-status-card {
+  margin-bottom: 24px;
+}
+
+.online-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.online-status-desc {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 8px;
 }
 
 .status-header {

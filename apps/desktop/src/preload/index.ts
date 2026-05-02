@@ -159,6 +159,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     hasFeature: (feature: string) => ipcRenderer.invoke('license:hasFeature', feature),
     checkLimit: (feature: string, count: number) => ipcRenderer.invoke('license:checkLimit', feature, count),
     machineId: () => ipcRenderer.invoke('license:machineId'),
+
+    // 在线验证 (v1.8.0)
+    activateOnline: (key: string) => ipcRenderer.invoke('license:activateOnline', key),
+    renewOnline: () => ipcRenderer.invoke('license:renewOnline'),
+    onlineCheck: () => ipcRenderer.invoke('license:onlineCheck'),
+    needsOnlineCheck: () => ipcRenderer.invoke('license:needsOnlineCheck'),
   },
 
   // 周期性交易 (v1.2.0)
