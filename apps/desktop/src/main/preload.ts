@@ -114,6 +114,20 @@ const api = {
     clearCache: () => ipcRenderer.invoke('ai:clearCache'),
   },
 
+  // 多币种支持 (v1.9.0)
+  currency: {
+    getSupported: () => ipcRenderer.invoke('currency:getSupported'),
+    getRate: (from: string, to: string) => ipcRenderer.invoke('currency:getRate', { from, to }),
+    convert: (amount: number, from: string, to: string) => ipcRenderer.invoke('currency:convert', { amount, from, to }),
+    convertBatch: (items: Array<{ amount: number; currency: string }>, baseCurrency: string) => ipcRenderer.invoke('currency:convertBatch', { items, baseCurrency }),
+    getRatesForBase: (baseCurrency: string, currencies: string[]) => ipcRenderer.invoke('currency:getRatesForBase', { baseCurrency, currencies }),
+    getBaseCurrency: (userId: string) => ipcRenderer.invoke('currency:getBaseCurrency', { userId }),
+    setBaseCurrency: (userId: string, currency: string) => ipcRenderer.invoke('currency:setBaseCurrency', { userId, currency }),
+    getCacheStatus: () => ipcRenderer.invoke('currency:getCacheStatus'),
+    clearCache: () => ipcRenderer.invoke('currency:clearCache'),
+    formatAmount: (amount: number, currency: string) => ipcRenderer.invoke('currency:formatAmount', { amount, currency }),
+  },
+
   // 数据库管理
   resetDatabase: () => ipcRenderer.invoke('database:reset'),
 };

@@ -14,6 +14,7 @@ import { initReportHandlers } from './reportHandlers';
 import { initLicenseHandlers } from './licenseHandlers';
 import { initDemoHandlers } from './demoHandlers';
 import { registerImportHandlers } from './importHandlers';
+import { initCurrencyHandlers } from './currencyHandlers';
 import {
   calculateNetWorth,
   calculateCashFlow,
@@ -49,6 +50,9 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 
   // 初始化 CSV 导入 IPC 处理程序 (v1.8.0)
   registerImportHandlers();
+
+  // 初始化多币种支持 (v1.9.0)
+  initCurrencyHandlers(db);
 
   // ==================== 用户相关 ====================
   ipcMain.handle('user:get', handleUserGet);
