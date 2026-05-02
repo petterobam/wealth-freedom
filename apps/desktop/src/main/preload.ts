@@ -128,6 +128,21 @@ const api = {
     formatAmount: (amount: number, currency: string) => ipcRenderer.invoke('currency:formatAmount', { amount, currency }),
   },
 
+  // 数据加密 (v1.9.0)
+  encryption: {
+    setup: (password: string) => ipcRenderer.invoke('encryption:setup', { password }),
+    unlock: (password: string) => ipcRenderer.invoke('encryption:unlock', { password }),
+    lock: () => ipcRenderer.invoke('encryption:lock'),
+    isUnlocked: () => ipcRenderer.invoke('encryption:isUnlocked'),
+    encrypt: (plaintext: string) => ipcRenderer.invoke('encryption:encrypt', { plaintext }),
+    decrypt: (ciphertext: string) => ipcRenderer.invoke('encryption:decrypt', { ciphertext }),
+    encryptBatch: (values: string[]) => ipcRenderer.invoke('encryption:encryptBatch', { values }),
+    decryptBatch: (values: string[]) => ipcRenderer.invoke('encryption:decryptBatch', { values }),
+    getStatus: () => ipcRenderer.invoke('encryption:getStatus'),
+    isEnabled: () => ipcRenderer.invoke('encryption:isEnabled'),
+    migrateData: () => ipcRenderer.invoke('encryption:migrateData'),
+  },
+
   // 数据库管理
   resetDatabase: () => ipcRenderer.invoke('database:reset'),
 };

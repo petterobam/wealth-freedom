@@ -15,6 +15,7 @@ import { initLicenseHandlers } from './licenseHandlers';
 import { initDemoHandlers } from './demoHandlers';
 import { registerImportHandlers } from './importHandlers';
 import { initCurrencyHandlers } from './currencyHandlers';
+import { initEncryptionHandlers } from './encryptionHandlers';
 import {
   calculateNetWorth,
   calculateCashFlow,
@@ -53,6 +54,9 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 
   // 初始化多币种支持 (v1.9.0)
   initCurrencyHandlers(db);
+
+  // 初始化数据加密 (v1.9.0)
+  initEncryptionHandlers(db);
 
   // ==================== 用户相关 ====================
   ipcMain.handle('user:get', handleUserGet);
