@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
 import { fetchGoals, createGoal, updateGoal as apiUpdateGoal, deleteGoal as apiDeleteGoal } from "@/lib/api";
 import type { ApiGoal } from "@/lib/api";
 
@@ -127,6 +128,27 @@ export default function GoalsPage() {
         <p className="text-sm text-slate-400 mt-2">已完成 {fmt(totalCurrent)} / 目标 {fmt(totalTarget)}</p>
       </div>
 
+      {/* v1.6.0 目标进度柱状图 */}
+      {goals.length > 0 && (
+        <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-6 mb-6">
+          <h3 className="font-semibold mb-4">📊 各目标完成进度</h3>
+          <ResponsiveContainer width="100%" height={Math.max(200, goals.length * 50)}>
+            <BarChart data={goals.map((g) => ({ name: g.icon + " " + g.name, progress: Math.min(100, Math.round((g.current / g.target) * 100)), remaining: Math.max(0, Math.round(((g.target - g.current) / g.target) * 100)) }))} layout="vertical" margin={{ left: 20, right: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis type="number" domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} stroke="#64748b" fontSize={12} />
+              <YAxis type="category" dataKey="name" width={120} stroke="#94a3b8" fontSize={12} />
+              <Tooltip formatter={(v: unknown, name: unknown) => [`${v}%`, name === "progress" ? "已完成" : "剩余"]} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8, color: "#e2e8f0" }} />
+              <Bar dataKey="progress" stackId="a" radius={[4, 0, 0, 4]}>
+                {goals.map((_, i) => (
+                  <Cell key={i} fill={["#3b82f6", "#8b5cf6", "#f59e0b", "#06b6d4", "#10b981", "#ef4444"][i % 6]} />
+                ))}
+              </Bar>
+              <Bar dataKey="remaining" stackId="a" fill="#334155" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
       {/* 目标卡片 */}
       <div className="grid md:grid-cols-2 gap-4">
         {goals.map((goal) => {
@@ -173,7 +195,7 @@ export default function GoalsPage() {
         })}
       </div>
 
-      <p className="text-center text-slate-600 text-xs mt-8">数据通过 API 实时同步 · v1.5.0</p>
+      <p className="text-center text-slate-600 text-xs mt-8">数据通过 API 实时同步 · v1.6.0</p>
     </div>
   );
 }
