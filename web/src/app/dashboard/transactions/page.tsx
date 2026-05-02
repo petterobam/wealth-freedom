@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { fetchTransactions, createTransaction, deleteTransaction as apiDeleteTransaction } from "@/lib/api";
 import type { ApiTransaction } from "@/lib/api";
 import { INCOME_CATEGORIES, EXPENSE_CATEGORIES } from "@/lib/types";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 type SortKey = "date" | "amount";
 type SortDir = "asc" | "desc";
@@ -86,6 +87,30 @@ export default function TransactionsPage() {
   const totalIncome = transactions.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const totalExpense = transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
 
+  // 月度收支趋势（近6月）
+  const monthlyTrend = useMemo(() => {
+    const months: Record<string, { income: number; expense: number }> = {};
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      months[key] = { income: 0, expense: 0 };
+    }
+    transactions.forEach((t) => {
+      const mk = t.date.slice(0, 7);
+      if (months[mk]) {
+        if (t.type === "income") months[mk].income += t.amount;
+        else months[mk].expense += t.amount;
+      }
+    });
+    return Object.entries(months).map(([month, v]) => ({
+      name: month.slice(5) + "月",
+      收入: Math.round(v.income),
+      支出: Math.round(v.expense),
+      结余: Math.round(v.income - v.expense),
+    }));
+  }, [transactions]);
+
   const fmt = (n: number) => "¥" + n.toLocaleString("zh-CN");
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -140,6 +165,23 @@ export default function TransactionsPage() {
           <div className="text-lg font-bold text-blue-400">{fmt(totalIncome - totalExpense)}</div>
         </div>
       </div>
+
+      {/* 月度收支趋势图 */}
+      {monthlyTrend.length > 0 && (
+        <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-6 mb-6">
+          <h3 className="font-bold mb-4">📈 月度收支趋势</h3>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={monthlyTrend}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => `¥${v}`} />
+              <Tooltip formatter={(v) => `¥${Number(v).toLocaleString()}`} contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+              <Bar dataKey="收入" fill="#34d399" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="支出" fill="#f87171" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* 筛选栏 */}
       <div className="flex flex-wrap gap-3 mb-4 items-center">
@@ -199,7 +241,7 @@ export default function TransactionsPage() {
         </div>
       )}
 
-      <p className="text-center text-slate-600 text-xs mt-8">数据通过 API 实时同步 · v1.5.0</p>
+      <p className="text-center text-slate-600 text-xs mt-8">数据通过 API 实时同步 · v1.6.0</p>
     </div>
   );
 }
