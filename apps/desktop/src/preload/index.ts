@@ -190,4 +190,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     achievements: () => ipcRenderer.invoke('insight:achievements'),
     summary: () => ipcRenderer.invoke('insight:summary'),
   },
+
+  // CSV 导入 (v1.8.0)
+  import: {
+    selectFile: () => ipcRenderer.invoke('import:selectFile'),
+    preview: (filePath: string) => ipcRenderer.invoke('import:preview', filePath),
+    execute: (filePath: string, accountId: string) => ipcRenderer.invoke('import:execute', filePath, accountId),
+  },
 })
