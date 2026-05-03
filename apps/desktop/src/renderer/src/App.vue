@@ -10,7 +10,7 @@
       <el-aside :width="sidebarWidth + 'px'" class="app-aside" :class="{ 'sidebar-collapsed': !sidebarVisible }">
         <div class="logo">
           <span class="logo-icon">💰</span>
-          <span class="logo-text" v-show="sidebarVisible">财富自由之路</span>
+          <span class="logo-text" v-show="sidebarVisible">{{ t('app.name') }}</span>
         </div>
         <el-menu
           :default-active="currentRoute"
@@ -23,47 +23,47 @@
           <el-sub-menu index="finance">
             <template #title>
               <el-icon><Wallet /></el-icon>
-              <span>财务管理</span>
+              <span>{{ t('sidebar.finance') }}</span>
             </template>
             <el-menu-item index="/dashboard">
               <el-icon><DataBoard /></el-icon>
-              <template #title>财务看板</template>
+              <template #title>{{ t('sidebar.dashboard') }}</template>
             </el-menu-item>
             <el-menu-item index="/goals">
               <el-icon><Flag /></el-icon>
-              <template #title>目标追踪</template>
+              <template #title>{{ t('sidebar.goals') }}</template>
             </el-menu-item>
             <el-menu-item index="/transactions">
               <el-icon><List /></el-icon>
-              <template #title>收支记录</template>
+              <template #title>{{ t('sidebar.transactions') }}</template>
             </el-menu-item>
             <el-menu-item index="/accounts">
               <el-icon><Wallet /></el-icon>
-              <template #title>账户管理</template>
+              <template #title>{{ t('sidebar.accounts') }}</template>
             </el-menu-item>
             <el-menu-item index="/debts">
               <el-icon><CreditCard /></el-icon>
-              <template #title>负债管理</template>
+              <template #title>{{ t('sidebar.debts') }}</template>
             </el-menu-item>
             <el-menu-item index="/budget">
               <el-icon><PieChart /></el-icon>
-              <template #title>预算管理</template>
+              <template #title>{{ t('sidebar.budget') }}</template>
             </el-menu-item>
             <el-menu-item index="/recurring">
               <el-icon><Refresh /></el-icon>
-              <template #title>周期性交易</template>
+              <template #title>{{ t('sidebar.recurring') }}</template>
             </el-menu-item>
             <el-menu-item index="/investment">
               <el-icon><TrendCharts /></el-icon>
-              <template #title>投资追踪</template>
+              <template #title>{{ t('sidebar.investment') }}</template>
             </el-menu-item>
             <el-menu-item index="/report">
               <el-icon><DataAnalysis /></el-icon>
-              <template #title>报表分析</template>
+              <template #title>{{ t('sidebar.report') }}</template>
             </el-menu-item>
             <el-menu-item index="/pdf-report">
               <el-icon><Document /></el-icon>
-              <template #title>综合报告</template>
+              <template #title>{{ t('sidebar.pdfReport') }}</template>
             </el-menu-item>
           </el-sub-menu>
 
@@ -71,27 +71,27 @@
           <el-sub-menu index="income">
             <template #title>
               <el-icon><TrendCharts /></el-icon>
-              <span>收入提升</span>
+              <span>{{ t('sidebar.income') }}</span>
             </template>
             <el-menu-item index="/income-dashboard">
               <el-icon><DataBoard /></el-icon>
-              <template #title>收入看板</template>
+              <template #title>{{ t('sidebar.incomeDashboard') }}</template>
             </el-menu-item>
             <el-menu-item index="/income-goals">
               <el-icon><Flag /></el-icon>
-              <template #title>收入目标</template>
+              <template #title>{{ t('sidebar.incomeGoals') }}</template>
             </el-menu-item>
             <el-menu-item index="/income-analysis">
               <el-icon><DataAnalysis /></el-icon>
-              <template #title>收入分析</template>
+              <template #title>{{ t('sidebar.incomeAnalysis') }}</template>
             </el-menu-item>
             <el-menu-item index="/income-strategies">
               <el-icon><Trophy /></el-icon>
-              <template #title>收入策略</template>
+              <template #title>{{ t('sidebar.incomeStrategies') }}</template>
             </el-menu-item>
             <el-menu-item index="/income-actions">
               <el-icon><List /></el-icon>
-              <template #title>行动计划</template>
+              <template #title>{{ t('sidebar.incomeActions') }}</template>
             </el-menu-item>
           </el-sub-menu>
 
@@ -99,70 +99,75 @@
           <el-sub-menu index="planning">
             <template #title>
               <el-icon><DataAnalysis /></el-icon>
-              <span>规划工具</span>
+              <span>{{ t('sidebar.planning') }}</span>
             </template>
             <el-menu-item index="/calculator">
               <el-icon><TrendCharts /></el-icon>
-              <template #title>复利计算器</template>
+              <template #title>{{ t('sidebar.calculator') }}</template>
             </el-menu-item>
             <el-menu-item index="/prepayment-calculator">
               <el-icon><CreditCard /></el-icon>
-              <template #title>提前还款计算器</template>
+              <template #title>{{ t('sidebar.prepaymentCalc') }}</template>
             </el-menu-item>
             <el-menu-item index="/retirement-planner">
               <el-icon><Flag /></el-icon>
-              <template #title>退休规划</template>
+              <template #title>{{ t('sidebar.retirement') }}</template>
             </el-menu-item>
             <el-menu-item index="/large-expense-planner">
               <el-icon><Wallet /></el-icon>
-              <template #title>大额支出规划</template>
+              <template #title>{{ t('sidebar.largeExpense') }}</template>
             </el-menu-item>
             <el-menu-item index="/scenario-simulator">
               <el-icon><DataAnalysis /></el-icon>
-              <template #title>情景模拟</template>
+              <template #title>{{ t('sidebar.scenario') }}</template>
             </el-menu-item>
             <el-menu-item index="/asset-allocation">
               <el-icon><PieChart /></el-icon>
-              <template #title>资产配置</template>
+              <template #title>{{ t('sidebar.assetAllocation') }}</template>
             </el-menu-item>
           </el-sub-menu>
 
           <!-- 其他功能 -->
           <el-menu-item index="/ai-advice">
             <el-icon><MagicStick /></el-icon>
-            <template #title>AI 助手</template>
+            <template #title>{{ t('sidebar.aiAdvice') }}</template>
           </el-menu-item>
           <el-menu-item index="/insights">
             <el-icon><TrendCharts /></el-icon>
-            <template #title>财务洞察</template>
+            <template #title>{{ t('sidebar.insights') }}</template>
           </el-menu-item>
           <el-menu-item index="/dreams">
             <el-icon><PictureFilled /></el-icon>
-            <template #title>梦想图册</template>
+            <template #title>{{ t('sidebar.dreams') }}</template>
           </el-menu-item>
           <el-menu-item index="/license">
             <el-icon><Key /></el-icon>
-            <template #title>授权管理</template>
+            <template #title>{{ t('sidebar.license') }}</template>
           </el-menu-item>
           <el-menu-item index="/bigscreen">
             <el-icon><Monitor /></el-icon>
-            <template #title>数据大屏</template>
+            <template #title>{{ t('sidebar.bigscreen') }}</template>
           </el-menu-item>
           <el-menu-item index="/settings">
             <el-icon><Setting /></el-icon>
-            <template #title>设置</template>
+            <template #title>{{ t('sidebar.settings') }}</template>
           </el-menu-item>
         </el-menu>
 
         <!-- 主题切换 + 更新提示 -->
         <div class="sidebar-bottom">
+          <!-- 语言切换 -->
+          <div class="lang-toggle" @click="setLocale(locale === 'zh-CN' ? 'en' : 'zh-CN')">
+            <span class="lang-icon">🌐</span>
+            <span class="lang-label" v-show="sidebarVisible">{{ locale === 'zh-CN' ? 'English' : '中文' }}</span>
+          </div>
           <div v-if="hasUpdate" class="update-badge" @click="openUpdateDownload">
             <span class="update-icon">🔴</span>
-            <span class="update-text" v-show="sidebarVisible">新版本 v{{ updateInfo?.latestVersion }}</span>
+            <span class="update-text" v-show="sidebarVisible">{{ t('app.newVersion') }} v{{ updateInfo?.latestVersion }}</span>
           </div>
           <div class="theme-toggle" @click="toggleTheme">
             <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
-            <span class="theme-label" v-show="sidebarVisible">{{ isDark ? '切换亮色' : '切换暗色' }}</span>
+            <span class="theme-label" v-show="sidebarVisible">{{ isDark ? t('app.switchLight') : t('app.switchDark') }}</span>
           </div>
         </div>
       </el-aside>
@@ -204,6 +209,7 @@ import Welcome from '@/views/Welcome.vue'
 import { useUserStore } from '@/stores/user'
 import { useTheme } from '@/composables/useTheme'
 import { useUpdate } from '@/composables/useUpdate'
+import { useI18n } from '@/i18n'
 import {
   getCurrentBreakpoint,
   getSidebarWidth,
@@ -215,6 +221,7 @@ const route = useRoute()
 const userStore = useUserStore()
 const { isDark, toggleTheme } = useTheme()
 const { updateInfo, checkUpdate, openDownload } = useUpdate()
+const { t, locale, setLocale } = useI18n()
 const hasUpdate = computed(() => updateInfo.value?.hasUpdate ?? false)
 const openUpdateDownload = () => {
   if (updateInfo.value?.downloadUrl) openDownload(updateInfo.value.downloadUrl)
@@ -474,6 +481,32 @@ onMounted(() => {
   .update-text {
     font-size: 13px;
     font-weight: 500;
+  }
+}
+
+// 语言切换按钮
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .lang-icon {
+    font-size: 16px;
+    width: 24px;
+    text-align: center;
+  }
+
+  .lang-label {
+    font-size: 13px;
   }
 }
 

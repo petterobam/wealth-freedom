@@ -9,11 +9,17 @@ import router from './router'
 import './styles/theme.css'
 import './styles/dark-override.css'
 import './styles/global.scss'
+import { createI18n, i18nKey } from './i18n'
+import en from 'element-plus/es/locale/lang/en'
+
+const i18n = createI18n()
+const elLocale = i18n.locale.value === 'en' ? en : zhCn
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(ElementPlus, { locale: zhCn })
+app.provide(i18nKey, i18n)
+app.use(ElementPlus, { locale: elLocale })
 
 app.mount('#app')
