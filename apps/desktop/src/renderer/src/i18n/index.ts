@@ -48,6 +48,8 @@ export function createI18n() {
 
 export type I18nInstance = ReturnType<typeof createI18n>
 
+export default useI18n
+
 export function useI18n(): I18nInstance {
   const i18n = inject(i18nKey)
   if (!i18n) throw new Error('i18n not provided. Call app.provide(i18nKey, createI18n()) in main.ts')

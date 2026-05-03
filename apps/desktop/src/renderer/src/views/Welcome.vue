@@ -185,6 +185,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { AccountType, DebtType, GoalType, GoalStatus, DEFAULT_USER_SETTINGS } from '@wealth-freedom/shared'
 import { ElMessage } from 'element-plus'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
@@ -301,9 +302,13 @@ const handleComplete = async () => {
       await accountStore.createAccount({
         userId: user.id,
         name: t('welcome.accounts.cash'),
-        type: 'cash',
+        type: AccountType.CASH,
         balance: form.value.cashAssets,
-        icon: '💵'
+        icon: '💵',
+        color: '#67C23A',
+        currency: 'CNY',
+        isReserved: false,
+        includeInNetWorth: true
       })
     }
 
@@ -311,9 +316,13 @@ const handleComplete = async () => {
       await accountStore.createAccount({
         userId: user.id,
         name: t('welcome.accounts.investment'),
-        type: 'investment',
+        type: AccountType.INVESTMENT,
         balance: form.value.investmentAssets,
-        icon: '📈'
+        icon: '📈',
+        color: '#409EFF',
+        currency: 'CNY',
+        isReserved: false,
+        includeInNetWorth: true
       })
     }
 
@@ -321,26 +330,29 @@ const handleComplete = async () => {
       await debtStore.createDebt({
         userId: user.id,
         name: t('welcome.accounts.debt'),
-        type: 'other',
+        type: DebtType.OTHER,
         totalAmount: form.value.totalDebt,
         remainingAmount: form.value.totalDebt,
         monthlyPayment: 0,
-        interestRate: 0
+        interestRate: 0,
+        isPaidOff: false
       })
     }
 
     const stages = [
-      { stage: 'security' as const, targetAmount: form.value.monthlyExpense * 6 },
-      { stage: 'safety' as const, targetAmount: form.value.monthlyExpense * 150 },
-      { stage: 'freedom' as const, targetAmount: form.value.monthlyExpense * 300 }
+      { type: GoalType.GUARANTEE, targetAmount: form.value.monthlyExpense * 6 },
+      { type: GoalType.SECURITY, targetAmount: form.value.monthlyExpense * 150 },
+      { type: GoalType.FREEDOM, targetAmount: form.value.monthlyExpense * 300 }
     ]
 
     for (const goal of stages) {
       await goalStore.createGoal({
         userId: user.id,
-        ...goal,
+        type: goal.type,
+        targetAmount: goal.targetAmount,
         currentAmount: netWorth.value > 0 ? netWorth.value : 0,
-        targetDate: ''
+        monthlyExpense: form.value.monthlyExpense,
+        status: GoalStatus.IN_PROGRESS
       })
     }
 
@@ -375,7 +387,8 @@ const handleSkip = async () => {
   try {
     await userStore.createUser({
       name: t('welcome.defaultUser'),
-      settings: JSON.stringify({ monthlyIncome: 0, monthlyExpense: 0 })
+      currency: 'CNY',
+      settings: { ...DEFAULT_USER_SETTINGS } as any
     })
     ElMessage.success(t('welcome.skipped'))
     emit('complete')
