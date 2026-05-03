@@ -1,10 +1,10 @@
 <template>
   <div class="transactions-page">
     <div class="page-header">
-      <h1 class="page-title">收支记录</h1>
+      <h1 class="page-title">{{ t('transactions.title') }}</h1>
       <el-button type="primary" @click="showAddDialog = true">
         <el-icon><Plus /></el-icon>
-        记一笔
+        {{ t('transactions.addBtn') }}
       </el-button>
     </div>
 
@@ -13,38 +13,32 @@
       <el-date-picker
         v-model="dateRange"
         type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
+        range-separator="-"
+        :start-placeholder="t('transactions.startDate')"
+        :end-placeholder="t('transactions.endDate')"
         @change="handleDateChange"
       />
-      <el-select v-model="filterType" placeholder="类型" clearable @change="handleFilterChange">
-        <el-option label="收入" value="income" />
-        <el-option label="支出" value="expense" />
+      <el-select v-model="filterType" :placeholder="t('transactions.typeFilter')" clearable @change="handleFilterChange">
+        <el-option :label="t('common.income')" value="income" />
+        <el-option :label="t('common.expense')" value="expense" />
       </el-select>
-      <el-select v-model="filterCategory" placeholder="分类" clearable>
-        <el-option label="餐饮" value="food" />
-        <el-option label="交通" value="transport" />
-        <el-option label="购物" value="shopping" />
-        <el-option label="娱乐" value="entertainment" />
-        <el-option label="工资" value="salary" />
-        <el-option label="投资收益" value="investment" />
-        <el-option label="其他" value="other" />
+      <el-select v-model="filterCategory" :placeholder="t('transactions.categoryFilter')" clearable>
+        <el-option v-for="(label, key) in categoryOptions" :key="key" :label="label" :value="key" />
       </el-select>
     </div>
 
     <!-- 统计卡片 -->
     <div class="stats-cards">
       <div class="stat-card income">
-        <div class="stat-label">本期收入</div>
+        <div class="stat-label">{{ t('transactions.periodIncome') }}</div>
         <div class="stat-value">{{ formatCurrency(periodIncome) }}</div>
       </div>
       <div class="stat-card expense">
-        <div class="stat-label">本期支出</div>
+        <div class="stat-label">{{ t('transactions.periodExpense') }}</div>
         <div class="stat-value">{{ formatCurrency(periodExpense) }}</div>
       </div>
       <div class="stat-card balance">
-        <div class="stat-label">本期结余</div>
+        <div class="stat-label">{{ t('transactions.periodBalance') }}</div>
         <div class="stat-value" :class="periodBalance >= 0 ? 'positive' : 'negative'">
           {{ formatCurrency(periodBalance) }}
         </div>
@@ -54,31 +48,31 @@
     <!-- 交易列表 -->
     <div class="transaction-list">
       <el-table :data="filteredTransactions" stripe>
-        <el-table-column label="日期" prop="date" width="120" />
-        <el-table-column label="类型" width="80">
+        <el-table-column :label="t('common.date')" prop="date" width="120" />
+        <el-table-column :label="t('common.type')" width="80">
           <template #default="{ row }">
             <el-tag :type="row.type === 'income' ? 'success' : 'danger'" size="small">
-              {{ row.type === 'income' ? '收入' : '支出' }}
+              {{ row.type === 'income' ? t('common.income') : t('common.expense') }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="分类" prop="category" width="100">
+        <el-table-column :label="t('common.category')" prop="category" width="100">
           <template #default="{ row }">
-            {{ categoryMap[row.category] || row.category }}
+            {{ t('transactions.categories.' + row.category) || row.category }}
           </template>
         </el-table-column>
-        <el-table-column label="金额" width="120">
+        <el-table-column :label="t('common.amount')" width="120">
           <template #default="{ row }">
             <span :class="row.type === 'income' ? 'income-amount' : 'expense-amount'">
               {{ row.type === 'income' ? '+' : '-' }}{{ formatCurrency(row.amount) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="备注" prop="note" />
-        <el-table-column label="操作" width="100">
+        <el-table-column :label="t('common.note')" prop="note" />
+        <el-table-column :label="t('transactions.operation')" width="100">
           <template #default="{ row }">
             <el-button type="danger" text size="small" @click="handleDelete(row.id)">
-              删除
+              {{ t('common.delete') }}
             </el-button>
           </template>
         </el-table-column>
@@ -86,54 +80,42 @@
     </div>
 
     <!-- 添加交易弹窗 -->
-    <el-dialog v-model="showAddDialog" title="记一笔" width="450px">
+    <el-dialog v-model="showAddDialog" :title="t('transactions.addBtn')" width="450px">
       <el-form :model="transactionForm" label-width="80px">
-        <el-form-item label="类型">
+        <el-form-item :label="t('common.type')">
           <el-radio-group v-model="transactionForm.type">
-            <el-radio value="expense">支出</el-radio>
-            <el-radio value="income">收入</el-radio>
+            <el-radio value="expense">{{ t('common.expense') }}</el-radio>
+            <el-radio value="income">{{ t('common.income') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="金额">
+        <el-form-item :label="t('common.amount')">
           <el-input-number v-model="transactionForm.amount" :min="0" :precision="2" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="分类">
-          <el-select v-model="transactionForm.category" placeholder="选择分类" style="width: 100%">
+        <el-form-item :label="t('common.category')">
+          <el-select v-model="transactionForm.category" :placeholder="t('transactions.selectCategory')" style="width: 100%">
             <template v-if="transactionForm.type === 'expense'">
-              <el-option label="餐饮" value="food" />
-              <el-option label="交通" value="transport" />
-              <el-option label="购物" value="shopping" />
-              <el-option label="娱乐" value="entertainment" />
-              <el-option label="其他" value="other" />
+              <el-option v-for="cat in expenseCategories" :key="cat.value" :label="cat.label" :value="cat.value" />
             </template>
             <template v-else>
-              <el-option-group label="主动收入">
-                <el-option label="工资" value="salary" />
-                <el-option label="兼职" value="parttime" />
-                <el-option label="其他" value="other" />
+              <el-option-group :label="t('transactions.activeIncome')">
+                <el-option v-for="cat in activeIncomeCategories" :key="cat.value" :label="cat.label" :value="cat.value" />
               </el-option-group>
-              <el-option-group label="被动收入">
-                <el-option label="投资收益" value="investment" />
-                <el-option label="分红" value="dividend" />
-                <el-option label="利息" value="interest" />
-                <el-option label="产品收入" value="product" />
-                <el-option label="租金" value="rental" />
-                <el-option label="版税" value="royalty" />
-                <el-option label="其他被动收入" value="passive" />
+              <el-option-group :label="t('transactions.passiveIncome')">
+                <el-option v-for="cat in passiveIncomeCategories" :key="cat.value" :label="cat.label" :value="cat.value" />
               </el-option-group>
             </template>
           </el-select>
         </el-form-item>
-        <el-form-item label="日期">
-          <el-date-picker v-model="transactionForm.date" type="date" placeholder="选择日期" style="width: 100%" />
+        <el-form-item :label="t('common.date')">
+          <el-date-picker v-model="transactionForm.date" type="date" :placeholder="t('transactions.selectDate')" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="transactionForm.note" placeholder="可选备注" />
+        <el-form-item :label="t('common.note')">
+          <el-input v-model="transactionForm.note" :placeholder="t('transactions.optionalNote')" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleAddTransaction">保存</el-button>
+        <el-button @click="showAddDialog = false">{{ t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="handleAddTransaction">{{ t('common.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -144,7 +126,10 @@ import { ref, computed, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useTransactionStore } from '@/stores/transactions'
 import { useUserStore } from '@/stores/user'
+import { useI18n } from '@/i18n'
 import dayjs from 'dayjs'
+
+const { t } = useI18n()
 
 const transactionStore = useTransactionStore()
 const userStore = useUserStore()
@@ -162,22 +147,36 @@ const transactionForm = ref({
   note: ''
 })
 
-const categoryMap: Record<string, string> = {
-  food: '餐饮',
-  transport: '交通',
-  shopping: '购物',
-  entertainment: '娱乐',
-  salary: '工资',
-  parttime: '兼职',
-  investment: '投资收益',
-  dividend: '分红',
-  interest: '利息',
-  product: '产品收入',
-  rental: '租金',
-  royalty: '版税',
-  passive: '其他被动收入',
-  other: '其他'
-}
+const categoryOptions = computed(() => {
+  const keys = ['food', 'transport', 'shopping', 'entertainment', 'salary', 'parttime', 'investment', 'dividend', 'interest', 'product', 'rental', 'royalty', 'passive', 'other']
+  const map: Record<string, string> = {}
+  keys.forEach(k => { map[k] = t('transactions.categories.' + k) })
+  return map
+})
+
+const expenseCategories = computed(() => [
+  { value: 'food', label: t('transactions.categories.food') },
+  { value: 'transport', label: t('transactions.categories.transport') },
+  { value: 'shopping', label: t('transactions.categories.shopping') },
+  { value: 'entertainment', label: t('transactions.categories.entertainment') },
+  { value: 'other', label: t('transactions.categories.other') },
+])
+
+const activeIncomeCategories = computed(() => [
+  { value: 'salary', label: t('transactions.categories.salary') },
+  { value: 'parttime', label: t('transactions.categories.parttime') },
+  { value: 'other', label: t('transactions.categories.other') },
+])
+
+const passiveIncomeCategories = computed(() => [
+  { value: 'investment', label: t('transactions.categories.investment') },
+  { value: 'dividend', label: t('transactions.categories.dividend') },
+  { value: 'interest', label: t('transactions.categories.interest') },
+  { value: 'product', label: t('transactions.categories.product') },
+  { value: 'rental', label: t('transactions.categories.rental') },
+  { value: 'royalty', label: t('transactions.categories.royalty') },
+  { value: 'passive', label: t('transactions.categories.passiveOther') },
+])
 
 const filteredTransactions = computed(() => {
   let result = transactionStore.transactions

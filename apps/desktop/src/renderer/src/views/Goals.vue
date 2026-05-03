@@ -1,7 +1,7 @@
 <template>
   <div class="goals-page">
-    <h1 class="page-title">目标追踪</h1>
-    <p class="page-desc">财务自由三阶段：保障 → 安全 → 自由</p>
+    <h1 class="page-title">{{ t('goals.title') }}</h1>
+    <p class="page-desc">{{ t('goals.subtitle') }}</p>
 
     <div class="goals-container">
       <!-- 财务保障 -->
@@ -9,8 +9,8 @@
         <div class="goal-header">
           <div class="goal-icon">🛡️</div>
           <div class="goal-info">
-            <h2>财务保障</h2>
-            <p>拥有 6-12 个月的生活储备金，不被意外击倒</p>
+            <h2>{{ t('goals.security') }}</h2>
+            <p>{{ t('goals.securityDesc') }}</p>
           </div>
         </div>
         <div class="goal-progress">
@@ -56,8 +56,8 @@
         <div class="goal-header">
           <div class="goal-icon">🔒</div>
           <div class="goal-info">
-            <h2>财务安全</h2>
-            <p>靠投资利息覆盖日常支出，不再被迫工作</p>
+            <h2>{{ t('goals.safety') }}</h2>
+            <p>{{ t('goals.safetyDesc') }}</p>
           </div>
         </div>
         <div class="goal-progress">
@@ -256,6 +256,9 @@ import { useDebtStore } from '@/stores/debts'
 import { useTransactionStore } from '@/stores/transactions'
 // import { calculateFreedomTimeline, FreedomTimelineOutput, FreedomTimelineInput } from '@wealth-freedom/shared/calculators/freedom-timeline'
 import dayjs from 'dayjs'
+import { useI18n } from '@/i18n'
+
+const { t } = useI18n()
 
 // 临时定义类型（避免导入错误）
 interface FreedomTimelineOutput {

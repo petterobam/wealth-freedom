@@ -1,15 +1,15 @@
 <template>
   <div class="settings-page">
-    <h1 class="page-title">设置</h1>
-    <p class="page-desc">管理你的财务基础数据，调整后目标会自动重新计算</p>
+    <h1 class="page-title">{{ t('settings.title') }}</h1>
+    <p class="page-desc">{{ t('settings.subtitle') }}</p>
 
     <!-- 财务基础数据 -->
     <el-card class="settings-card">
       <template #header>
         <div class="card-header">
-          <span class="card-title">💰 财务基础数据</span>
+          <span class="card-title">{{ t('settings.basicData') }}</span>
           <el-button type="primary" size="small" @click="saveBasicData" :loading="saving">
-            保存更改
+            {{ t('settings.saveChanges') }}
           </el-button>
         </div>
       </template>
@@ -490,6 +490,9 @@ import { useAccountStore } from '@/stores/accounts'
 import { useDebtStore } from '@/stores/debts'
 import { useTransactionStore } from '@/stores/transactions'
 import { useGoalStore } from '@/stores/goals'
+import { useI18n } from '@/i18n'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const userStore = useUserStore()

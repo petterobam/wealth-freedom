@@ -1,16 +1,16 @@
 <template>
   <div class="accounts-page">
     <div class="page-header">
-      <h1 class="page-title">账户管理</h1>
+      <h1 class="page-title">{{ t('accounts.title') }}</h1>
       <el-button type="primary" @click="showAddDialog = true">
         <el-icon><Plus /></el-icon>
-        添加账户
+        {{ t('accounts.addBtn') }}
       </el-button>
     </div>
 
     <!-- 总资产卡片 -->
     <div class="total-card">
-      <div class="total-label">总资产</div>
+      <div class="total-label">{{ t('accounts.totalAssets') }}</div>
       <div class="total-value">{{ formatCurrency(accountStore.totalAssets) }}</div>
     </div>
 
@@ -70,7 +70,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showAddDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleSave">保存</el-button>
+        <el-button type="primary" @click="handleSave">{{ t('common.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -81,10 +81,12 @@ import { ref, computed, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useAccountStore } from '@/stores/accounts'
 import { useUserStore } from '@/stores/user'
+import { useI18n } from '@/i18n'
 import type { Account } from '@wealth-freedom/shared'
 
 const accountStore = useAccountStore()
 const userStore = useUserStore()
+const { t } = useI18n()
 
 const showAddDialog = ref(false)
 const editingAccount = ref<Account | null>(null)
@@ -98,11 +100,11 @@ const accountForm = ref({
 
 const accountGroups = computed(() => {
   const groups = [
-    { type: 'cash' as const, name: '现金及存款', icon: '💵', accounts: [] as Account[], total: 0 },
-    { type: 'bank' as const, name: '银行账户', icon: '🏦', accounts: [] as Account[], total: 0 },
-    { type: 'investment' as const, name: '投资账户', icon: '📈', accounts: [] as Account[], total: 0 },
+    { type: 'cash' as const, name: t('accounts.cash'), icon: '💵', accounts: [] as Account[], total: 0 },
+    { type: 'bank' as const, name: t('accounts.bank'), icon: '🏦', accounts: [] as Account[], total: 0 },
+    { type: 'investment' as const, name: t('accounts.investment'), icon: '📈', accounts: [] as Account[], total: 0 },
     { type: 'fixed' as const, name: '固定资产', icon: '🏠', accounts: [] as Account[], total: 0 },
-    { type: 'other' as const, name: '其他资产', icon: '💎', accounts: [] as Account[], total: 0 }
+    { type: 'other' as const, name: t('accounts.other'), icon: '💎', accounts: [] as Account[], total: 0 }
   ]
 
   accountStore.accounts.forEach(account => {
