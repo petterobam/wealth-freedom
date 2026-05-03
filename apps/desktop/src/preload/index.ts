@@ -197,4 +197,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
     preview: (filePath: string) => ipcRenderer.invoke('import:preview', filePath),
     execute: (filePath: string, accountId: string) => ipcRenderer.invoke('import:execute', filePath, accountId),
   },
+
+  // 多币种支持 (v1.9.0)
+  currency: {
+    getSupported: () => ipcRenderer.invoke('currency:getSupported'),
+    getRate: (from: string, to: string) => ipcRenderer.invoke('currency:getRate', { from, to }),
+    convert: (amount: number, from: string, to: string) => ipcRenderer.invoke('currency:convert', { amount, from, to }),
+    convertBatch: (items: Array<{ amount: number; currency: string }>, baseCurrency: string) => ipcRenderer.invoke('currency:convertBatch', { items, baseCurrency }),
+    getRatesForBase: (baseCurrency: string, currencies: string[]) => ipcRenderer.invoke('currency:getRatesForBase', { baseCurrency, currencies }),
+    getBaseCurrency: (userId: string) => ipcRenderer.invoke('currency:getBaseCurrency', { userId }),
+    setBaseCurrency: (userId: string, currency: string) => ipcRenderer.invoke('currency:setBaseCurrency', { userId, currency }),
+    getCacheStatus: () => ipcRenderer.invoke('currency:getCacheStatus'),
+    clearCache: () => ipcRenderer.invoke('currency:clearCache'),
+    formatAmount: (amount: number, currency: string) => ipcRenderer.invoke('currency:formatAmount', { amount, currency }),
+  },
 })

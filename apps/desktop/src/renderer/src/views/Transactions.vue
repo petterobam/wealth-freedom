@@ -233,10 +233,10 @@ const handleAddTransaction = async () => {
 
   await transactionStore.createTransaction({
     userId: user.id,
-    type: transactionForm.value.type,
+    type: transactionForm.value.type as any,
     amount: transactionForm.value.amount,
     category: transactionForm.value.category,
-    date: dayjs(transactionForm.value.date).format('YYYY-MM-DD'),
+    date: new Date(transactionForm.value.date) as any,
     note: transactionForm.value.note
   })
 

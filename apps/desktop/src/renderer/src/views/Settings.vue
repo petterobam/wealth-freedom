@@ -591,12 +591,13 @@ const saveBasicData = async () => {
     // 1. 更新用户设置
     if (userStore.user) {
       await userStore.updateUser(userStore.user.id, {
-        settings: JSON.stringify({
-          monthlyIncome: basicForm.value.monthlyIncome,
-          monthlyExpense: basicForm.value.monthlyExpense,
+        settings: {
+          language: userStore.user.settings?.language || 'zh',
+          theme: userStore.user.settings?.theme || 'light',
+          startDayOfMonth: userStore.user.settings?.startDayOfMonth || 1,
           guaranteeMonths: basicForm.value.guaranteeMonths,
           expectedReturnRate: basicForm.value.expectedReturnRate
-        })
+        }
       })
     }
 
@@ -840,7 +841,7 @@ const handleExportExcel = () => {
           '分类': t.category,
           '金额': t.amount,
           '账户': t.accountId,
-          '备注': t.note || t.description || ''
+          '备注': (t as any).note || (t as any).description || ''
         }))
       })
     }
@@ -853,8 +854,8 @@ const handleExportExcel = () => {
           '名称': a.name,
           '类型': a.type,
           '余额': a.balance,
-          '机构': a.institution || '',
-          '备注': a.notes || ''
+          '机构': (a as any).institution || '',
+          '备注': (a as any).notes || ''
         }))
       })
     }
@@ -867,7 +868,7 @@ const handleExportExcel = () => {
           '名称': d.name,
           '类型': d.type,
           '总额': d.totalAmount,
-          '已还': d.paidAmount,
+          '已还': (d as any).paidAmount || d.totalAmount - d.remainingAmount,
           '剩余': d.remainingAmount,
           '月供': d.monthlyPayment || '',
           '利率': d.interestRate ? `${d.interestRate}%` : ''
@@ -880,7 +881,7 @@ const handleExportExcel = () => {
       sheets.push({
         name: '目标',
         data: goalStore.goals.map(g => ({
-          '阶段': g.stage,
+          '阶段': (g as any).stage || g.type,
           '目标金额': g.targetAmount,
           '当前金额': g.currentAmount,
           '完成率': g.targetAmount > 0 ? `${((g.currentAmount / g.targetAmount) * 100).toFixed(1)}%` : '',
@@ -1050,7 +1051,7 @@ const executeImport = async () => {
           ? JSON.parse(content.settings)
           : content.settings
         const merged = { ...existingSettings, ...newSettings }
-        await userStore.updateUser(userStore.user.id, { settings: JSON.stringify(merged) })
+        await userStore.updateUser(userStore.user.id, { settings: merged as any })
       }
 
     } else {
@@ -1094,7 +1095,7 @@ const executeImport = async () => {
         const settings = typeof content.settings === 'string'
           ? JSON.parse(content.settings)
           : content.settings
-        await userStore.updateUser(userStore.user.id, { settings: JSON.stringify(settings) })
+        await userStore.updateUser(userStore.user.id, { settings: settings as any })
       }
     }
 

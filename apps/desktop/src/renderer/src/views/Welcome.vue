@@ -294,10 +294,13 @@ const handleComplete = async () => {
   await safeCall(async () => {
     const user = await userStore.createUser({
       name: form.value.name || t('welcome.defaultUser'),
-      settings: JSON.stringify({
-        monthlyIncome: form.value.monthlyIncome,
-        monthlyExpense: form.value.monthlyExpense
-      })
+      settings: {
+        language: 'zh',
+        theme: 'light',
+        startDayOfMonth: 1,
+        guaranteeMonths: 6,
+        expectedReturnRate: 0.04
+      }
     })
 
     if (form.value.cashAssets > 0) {

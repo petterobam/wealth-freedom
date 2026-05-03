@@ -376,7 +376,7 @@ async function handleIncomeStrategyApply(_event: any, id: string) {
   stmt.run(id);
 
   // 自动生成行动计划
-  const strategy = await handleIncomeStrategyGetById(null, id);
+  const strategy = db.prepare('SELECT * FROM income_strategies WHERE id = ?').get(id) as any;
   if (strategy && Array.isArray(strategy.steps)) {
     for (let i = 0; i < strategy.steps.length; i++) {
       const step = strategy.steps[i];
@@ -474,7 +474,7 @@ async function handleIncomeActionDelete(_event: any, id: string) {
 
 async function handleIncomeGetDashboard(_event: any, params: any) {
   const sources = await handleIncomeSourceGetAll();
-  const records = await handleIncomeRecordGetAll();
+  const records = await handleIncomeRecordGetAll(null as any);
 
   const targetPassivePercentage = params?.targetPassivePercentage || 50;
 
@@ -483,7 +483,7 @@ async function handleIncomeGetDashboard(_event: any, params: any) {
 
 async function handleIncomeGetAnalysis() {
   const sources = await handleIncomeSourceGetAll();
-  const records = await handleIncomeRecordGetAll();
+  const records = await handleIncomeRecordGetAll(null as any);
 
   return generateIncomeAnalysisReport(sources, records);
 }

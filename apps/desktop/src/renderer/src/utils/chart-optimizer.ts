@@ -122,7 +122,7 @@ export const optimizedGrid = {
  * 优化的动画配置
  */
 export const optimizedAnimation = {
-  animation: true,
+  animation: true as const,
   animationDuration: 1000,
   animationEasing: 'cubicInOut',
   animationDelay: 0
