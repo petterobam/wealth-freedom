@@ -1,10 +1,10 @@
 <template>
   <div class="debts-page">
     <div class="page-header">
-      <h1 class="page-title">负债管理</h1>
+      <h1 class="page-title">{{ t('debts.title') }}</h1>
       <el-button type="primary" @click="showAddDialog = true">
         <el-icon><Plus /></el-icon>
-        添加负债
+        {{ t('debts.addDebt') }}
       </el-button>
     </div>
 
@@ -13,14 +13,14 @@
       <div class="summary-card total-debt">
         <div class="summary-icon">💳</div>
         <div class="summary-info">
-          <div class="summary-label">总负债</div>
+          <div class="summary-label">{{ t('debts.totalDebt') }}</div>
           <div class="summary-value">{{ formatCurrency(debtStore.totalDebt) }}</div>
         </div>
       </div>
       <div class="summary-card monthly-payment">
         <div class="summary-icon">📅</div>
         <div class="summary-info">
-          <div class="summary-label">月还款额</div>
+          <div class="summary-label">{{ t('debts.monthlyPayment') }}</div>
           <div class="summary-value">{{ formatCurrency(debtStore.monthlyPayment) }}</div>
         </div>
       </div>
@@ -30,8 +30,8 @@
     <div v-if="debtStore.consumerDebts.length > 0" class="warning-card">
       <el-icon><WarningFilled /></el-icon>
       <div class="warning-content">
-        <h4>发现 {{ debtStore.consumerDebts.length }} 笔消费债</h4>
-        <p>消费债（信用卡、花呗等）没有任何优点，建议优先清偿！</p>
+        <h4>{{ t('debts.consumerDebtFound', { count: debtStore.consumerDebts.length }) }}</h4>
+        <p>{{ t('debts.consumerDebtWarning') }}</p>
       </div>
     </div>
 
@@ -40,19 +40,19 @@
       <div v-for="debt in debtStore.debts" :key="debt.id" class="debt-card">
         <div class="debt-header">
           <div class="debt-type-tag" :class="debt.type">
-            {{ debtTypeMap[debt.type] }}
+            {{ t('debts.types.' + debt.type) }}
           </div>
           <div class="debt-actions">
-            <el-button text size="small" @click="handleEdit(debt)">编辑</el-button>
-            <el-button text size="small" type="danger" @click="handleDelete(debt.id)">删除</el-button>
+            <el-button text size="small" @click="handleEdit(debt)">{{ t('common.edit') }}</el-button>
+            <el-button text size="small" type="danger" @click="handleDelete(debt.id)">{{ t('common.delete') }}</el-button>
           </div>
         </div>
-        
+
         <h3 class="debt-name">{{ debt.name }}</h3>
-        
+
         <div class="debt-progress">
-          <el-progress 
-            :percentage="debtProgress(debt)" 
+          <el-progress
+            :percentage="debtProgress(debt)"
             :stroke-width="12"
             :color="debtProgress(debt) >= 100 ? '#67c23a' : '#e6a23c'"
           />
@@ -60,19 +60,19 @@
 
         <div class="debt-details">
           <div class="detail-item">
-            <span class="label">总金额</span>
+            <span class="label">{{ t('debts.totalAmount') }}</span>
             <span class="value">{{ formatCurrency(debt.totalAmount) }}</span>
           </div>
           <div class="detail-item">
-            <span class="label">剩余</span>
+            <span class="label">{{ t('debts.remaining') }}</span>
             <span class="value highlight">{{ formatCurrency(debt.remainingAmount) }}</span>
           </div>
           <div class="detail-item">
-            <span class="label">月还款</span>
+            <span class="label">{{ t('debts.monthlyPayment') }}</span>
             <span class="value">{{ formatCurrency(debt.monthlyPayment) }}</span>
           </div>
           <div class="detail-item">
-            <span class="label">利率</span>
+            <span class="label">{{ t('debts.interestRate') }}</span>
             <span class="value">{{ debt.interestRate }}%</span>
           </div>
         </div>
@@ -80,41 +80,41 @@
 
       <div v-if="debtStore.debts.length === 0" class="empty-state">
         <span class="empty-icon">🎉</span>
-        <p>暂无负债记录</p>
-        <p class="empty-tip">保持无债一身轻！</p>
+        <p>{{ t('debts.noDebts') }}</p>
+        <p class="empty-tip">{{ t('debts.emptyTip') }}</p>
       </div>
     </div>
 
     <!-- 添加/编辑负债弹窗 -->
-    <el-dialog v-model="showAddDialog" :title="editingDebt ? '编辑负债' : '添加负债'" width="500px">
+    <el-dialog v-model="showAddDialog" :title="editingDebt ? t('debts.editDebt') : t('debts.addDebt')" width="500px">
       <el-form :model="debtForm" label-width="100px">
-        <el-form-item label="负债名称">
-          <el-input v-model="debtForm.name" placeholder="如：招商银行信用卡" />
+        <el-form-item :label="t('debts.form.name')">
+          <el-input v-model="debtForm.name" :placeholder="t('debts.form.namePlaceholder')" />
         </el-form-item>
-        <el-form-item label="负债类型">
-          <el-select v-model="debtForm.type" placeholder="选择类型" style="width: 100%">
-            <el-option label="消费债（信用卡）" value="consumer" />
-            <el-option label="房贷" value="mortgage" />
-            <el-option label="车贷" value="car" />
-            <el-option label="其他" value="other" />
+        <el-form-item :label="t('debts.form.type')">
+          <el-select v-model="debtForm.type" :placeholder="t('debts.form.selectType')" style="width: 100%">
+            <el-option :label="t('debts.types.consumer')" value="consumer" />
+            <el-option :label="t('debts.types.mortgage')" value="mortgage" />
+            <el-option :label="t('debts.types.car')" value="car" />
+            <el-option :label="t('debts.types.other')" value="other" />
           </el-select>
         </el-form-item>
-        <el-form-item label="总金额">
+        <el-form-item :label="t('debts.form.totalAmount')">
           <el-input-number v-model="debtForm.totalAmount" :min="0" :precision="0" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="剩余金额">
+        <el-form-item :label="t('debts.form.remainingAmount')">
           <el-input-number v-model="debtForm.remainingAmount" :min="0" :precision="0" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="月还款额">
+        <el-form-item :label="t('debts.form.monthlyPayment')">
           <el-input-number v-model="debtForm.monthlyPayment" :min="0" :precision="0" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="年利率(%)">
+        <el-form-item :label="t('debts.form.interestRate')">
           <el-input-number v-model="debtForm.interestRate" :min="0" :precision="2" :step="0.1" style="width: 100%" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleSave">保存</el-button>
+        <el-button @click="showAddDialog = false">{{ t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="handleSave">{{ t('common.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -125,8 +125,10 @@ import { ref, onMounted } from 'vue'
 import { Plus, WarningFilled } from '@element-plus/icons-vue'
 import { useDebtStore } from '@/stores/debts'
 import { useUserStore } from '@/stores/user'
+import { useI18n } from '@/i18n'
 import type { Debt } from '@wealth-freedom/shared'
 
+const { t } = useI18n()
 const debtStore = useDebtStore()
 const userStore = useUserStore()
 
@@ -143,10 +145,10 @@ const debtForm = ref({
 })
 
 const debtTypeMap: Record<string, string> = {
-  consumer: '消费债',
-  mortgage: '房贷',
-  car: '车贷',
-  other: '其他'
+  consumer: t('debts.types.consumer'),
+  mortgage: t('debts.types.mortgage'),
+  car: t('debts.types.car'),
+  other: t('debts.types.other')
 }
 
 const formatCurrency = (value: number) => {

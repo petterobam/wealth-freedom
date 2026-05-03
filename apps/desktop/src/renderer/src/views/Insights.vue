@@ -1,18 +1,18 @@
 <template>
-  <FeatureGate feature="hasInsights" featureName="财务洞察" description="基准对比与成就系统，升级以解锁">
+  <FeatureGate feature="hasInsights" :featureName="t('insights.title')" :description="t('insights.featureDesc')">
   <div class="insight-page">
     <div class="page-header">
-      <h2>财务洞察</h2>
-      <p class="subtitle">与行业标准对比，追踪你的财务成就</p>
+      <h2>{{ t('insights.title') }}</h2>
+      <p class="subtitle">{{ t('insights.subtitle') }}</p>
     </div>
 
     <!-- 标签切换 -->
     <el-tabs v-model="activeTab" class="insight-tabs">
       <!-- 基准对比 -->
-      <el-tab-pane label="基准对比" name="benchmark">
+      <el-tab-pane :label="t('insights.tabBenchmark')" name="benchmark">
         <div v-if="loading" class="loading-state">
           <el-icon class="is-loading"><Loading /></el-icon>
-          <span>分析中...</span>
+          <span>{{ t('insights.analyzing') }}</span>
         </div>
         <div v-else-if="benchmarks.length" class="benchmark-grid">
           <div v-for="cat in benchmarks" :key="cat.name" class="benchmark-card">
@@ -36,7 +36,7 @@
                     </div>
                   </div>
                   <div class="compare-benchmark">
-                    行业基准：{{ item.benchmarkValue }}{{ item.unit }}
+                    {{ t('insights.benchmarkLabel') }}：{{ item.benchmarkValue }}{{ item.unit }}
                   </div>
                 </div>
                 <p class="item-desc">{{ item.description }}</p>
@@ -44,14 +44,14 @@
             </div>
           </div>
         </div>
-        <el-empty v-else description="暂无数据，请先记录交易" />
+        <el-empty v-else :description="t('insights.noDataRecord')" />
       </el-tab-pane>
 
       <!-- 成就系统 -->
-      <el-tab-pane label="成就" name="achievements">
+      <el-tab-pane :label="t('insights.tabAchievements')" name="achievements">
         <div v-if="loading" class="loading-state">
           <el-icon class="is-loading"><Loading /></el-icon>
-          <span>加载成就...</span>
+          <span>{{ t('insights.loadingAchievements') }}</span>
         </div>
         <template v-else-if="achievementData">
           <!-- 成就概览 -->
@@ -59,17 +59,17 @@
             <div class="summary-card total">
               <div class="summary-icon">⭐</div>
               <div class="summary-value">{{ achievementData.score.total }}</div>
-              <div class="summary-label">成就积分</div>
+              <div class="summary-label">{{ t('insights.achievementScore') }}</div>
             </div>
             <div class="summary-card unlocked">
               <div class="summary-icon">🏆</div>
               <div class="summary-value">{{ achievementData.score.unlocked }}/{{ achievementData.score.total_count }}</div>
-              <div class="summary-label">已解锁</div>
+              <div class="summary-label">{{ t('insights.unlocked') }}</div>
             </div>
             <div class="summary-card progress">
               <div class="summary-icon">📈</div>
               <div class="summary-value">{{ Math.round(achievementData.score.total / achievementData.score.max * 100) }}%</div>
-              <div class="summary-label">完成度</div>
+              <div class="summary-label">{{ t('insights.completion') }}</div>
             </div>
           </div>
 
@@ -107,11 +107,11 @@
             </div>
           </div>
         </template>
-        <el-empty v-else description="暂无数据" />
+        <el-empty v-else :description="t('insights.noData')" />
       </el-tab-pane>
 
       <!-- 洞察摘要 -->
-      <el-tab-pane label="洞察" name="summary">
+      <el-tab-pane :label="t('insights.tabSummary')" name="summary">
         <div v-if="loading" class="loading-state">
           <el-icon class="is-loading"><Loading /></el-icon>
         </div>
@@ -121,11 +121,11 @@
               <div class="phase-icon">{{ phaseIcon(summaryData.financialPhase) }}</div>
               <div class="phase-label">{{ phaseLabel(summaryData.financialPhase) }}</div>
               <div class="phase-networth">
-                净资产：¥{{ summaryData.netWorth?.toLocaleString() }}
+                {{ t('insights.netWorth') }}：¥{{ summaryData.netWorth?.toLocaleString() }}
               </div>
             </div>
             <div class="recommendation-card">
-              <h3>💡 建议</h3>
+              <h3>💡 {{ t('insights.recommendation') }}</h3>
               <p>{{ summaryData.recommendation }}</p>
             </div>
           </div>
@@ -140,6 +140,9 @@
 import { ref, onMounted } from 'vue'
 import { Loading } from '@element-plus/icons-vue'
 import FeatureGate from '@/components/FeatureGate.vue'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 const activeTab = ref('benchmark')
 const loading = ref(false)
@@ -148,12 +151,12 @@ const achievementData = ref<any>(null)
 const summaryData = ref<any>(null)
 
 const levelLabel = (level: string) => {
-  const map: Record<string, string> = { excellent: '优秀', good: '良好', warning: '注意', danger: '警告' }
+  const map: Record<string, string> = { excellent: t('insights.levelExcellent'), good: t('insights.levelGood'), warning: t('insights.levelWarning'), danger: t('insights.levelDanger') }
   return map[level] || level
 }
 
 const tierLabel = (tier: string) => {
-  const map: Record<string, string> = { bronze: '铜', silver: '银', gold: '金', diamond: '钻' }
+  const map: Record<string, string> = { bronze: t('insights.tierBronze'), silver: t('insights.tierSilver'), gold: t('insights.tierGold'), diamond: t('insights.tierDiamond') }
   return map[tier] || tier
 }
 
@@ -170,7 +173,7 @@ const phaseIcon = (phase: string) => {
 }
 
 const phaseLabel = (phase: string) => {
-  const map: Record<string, string> = { accumulation: '积累期', growth: '成长期', freedom: '自由期' }
+  const map: Record<string, string> = { accumulation: t('insights.phaseAccumulation'), growth: t('insights.phaseGrowth'), freedom: t('insights.phaseFreedom') }
   return map[phase] || phase
 }
 

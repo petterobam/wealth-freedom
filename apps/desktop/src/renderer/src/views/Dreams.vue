@@ -1,8 +1,8 @@
 <template>
   <div class="dreams-page">
     <div class="page-header">
-      <h1 class="page-title">梦想图册</h1>
-      <p class="page-desc">把梦想具象化，让目标更清晰</p>
+      <h1 class="page-title">{{ t('dreams.title') }}</h1>
+      <p class="page-desc">{{ t('dreams.subtitle') }}</p>
     </div>
 
     <!-- 梦想卡片 -->
@@ -22,8 +22,8 @@
           <h3 class="dream-title">{{ dream.title }}</h3>
           <p class="dream-desc">{{ dream.description }}</p>
           <div class="dream-cost">
-            <span class="label">预计花费</span>
-            <span class="value">{{ formatCurrency(dream.estimatedCost) }}/月</span>
+            <span class="label">{{ t('dreams.estimatedCost') }}</span>
+            <span class="value">{{ formatCurrency(dream.estimatedCost) }}{{ t('dreams.perMonth') }}</span>
           </div>
         </div>
       </div>
@@ -32,43 +32,43 @@
       <div class="dream-card add-card" @click="showAddDialog = true">
         <div class="add-content">
           <el-icon><Plus /></el-icon>
-          <span>添加梦想</span>
+          <span>{{ t('dreams.addDream') }}</span>
         </div>
       </div>
     </div>
 
     <!-- 梦想与财务自由的联系 -->
     <div class="dream-freedom-link">
-      <h3>梦想与财务自由</h3>
-      <p>你梦想中的生活每月需要 <strong>{{ formatCurrency(totalDreamCost) }}</strong></p>
-      <p>财务自由所需本金：<strong>{{ formatCurrency(totalDreamCost * 150) }}</strong></p>
-      <el-progress 
-        :percentage="freedomProgress" 
+      <h3>{{ t('dreams.dreamFreedom') }}</h3>
+      <p>{{ t('dreams.monthlyCost', { amount: formatCurrency(totalDreamCost) }) }}</p>
+      <p>{{ t('dreams.requiredPrincipal', { amount: formatCurrency(totalDreamCost * 150) }) }}</p>
+      <el-progress
+        :percentage="freedomProgress"
         :stroke-width="16"
         color="linear-gradient(90deg, #4facfe, #00f2fe)"
       />
-      <p class="progress-text">当前进度 {{ freedomProgress }}%</p>
+      <p class="progress-text">{{ t('dreams.currentProgress', { percent: freedomProgress }) }}</p>
     </div>
 
     <!-- 添加/编辑梦想弹窗 -->
-    <el-dialog v-model="showAddDialog" :title="editingDream ? '编辑梦想' : '添加梦想'" width="500px">
+    <el-dialog v-model="showAddDialog" :title="editingDream ? t('dreams.editDream') : t('dreams.addDream')" width="500px">
       <el-form :model="dreamForm" label-width="100px">
-        <el-form-item label="梦想标题">
-          <el-input v-model="dreamForm.title" placeholder="如：环游世界" />
+        <el-form-item :label="t('dreams.form.title')">
+          <el-input v-model="dreamForm.title" :placeholder="t('dreams.form.titlePlaceholder')" />
         </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="dreamForm.description" type="textarea" :rows="3" placeholder="详细描述你的梦想" />
+        <el-form-item :label="t('dreams.form.description')">
+          <el-input v-model="dreamForm.description" type="textarea" :rows="3" :placeholder="t('dreams.form.descPlaceholder')" />
         </el-form-item>
-        <el-form-item label="图片链接">
-          <el-input v-model="dreamForm.imageUrl" placeholder="粘贴图片 URL" />
+        <el-form-item :label="t('dreams.form.imageUrl')">
+          <el-input v-model="dreamForm.imageUrl" :placeholder="t('dreams.form.imagePlaceholder')" />
         </el-form-item>
-        <el-form-item label="月花费预估">
+        <el-form-item :label="t('dreams.form.estimatedCost')">
           <el-input-number v-model="dreamForm.estimatedCost" :min="0" :precision="0" style="width: 100%" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleSave">保存</el-button>
+        <el-button @click="showAddDialog = false">{{ t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="handleSave">{{ t('common.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -80,8 +80,10 @@ import { Plus, Edit, Delete } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useAccountStore } from '@/stores/accounts'
 import { useDebtStore } from '@/stores/debts'
+import { useI18n } from '@/i18n'
 import type { Dream } from '@wealth-freedom/shared'
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const accountStore = useAccountStore()
 const debtStore = useDebtStore()

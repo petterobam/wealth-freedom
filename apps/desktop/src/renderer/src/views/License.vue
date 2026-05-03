@@ -1,6 +1,6 @@
 <template>
   <div class="license-page">
-    <h2>🔑 授权管理</h2>
+    <h2>{{ t('license.title') }}</h2>
 
     <!-- 当前状态卡片 -->
     <el-card class="status-card" shadow="hover">
@@ -10,12 +10,12 @@
             {{ statusLabel }}
           </el-tag>
           <span v-if="licenseStatus.daysLeft !== null && licenseStatus.isActive" class="days-left">
-            {{ licenseStatus.daysLeft > 0 ? `剩余 ${licenseStatus.daysLeft} 天` : licenseStatus.message }}
+            {{ licenseStatus.daysLeft > 0 ? t('license.daysLeft', { days: licenseStatus.daysLeft }) : licenseStatus.message }}
           </span>
         </div>
-        <el-button v-if="licenseStatus.tier !== 'free' && licenseStatus.tier !== 'trial'" 
+        <el-button v-if="licenseStatus.tier !== 'free' && licenseStatus.tier !== 'trial'"
                    type="danger" plain size="small" @click="handleDeactivate">
-          停用授权
+          {{ t('license.deactivate') }}
         </el-button>
       </div>
       <p class="status-message">{{ licenseStatus.message }}</p>
@@ -24,39 +24,39 @@
     <!-- 在线验证状态 -->
     <el-card v-if="licenseStatus.tier !== 'free'" class="online-status-card" shadow="hover">
       <div class="online-status-header">
-        <span>🌐 在线验证</span>
+        <span>{{ t('license.onlineCheck') }}</span>
         <el-tag :type="onlineCheckNeeded ? 'warning' : 'success'" size="small">
-          {{ onlineCheckNeeded ? '需要联网验证' : '验证正常' }}
+          {{ onlineCheckNeeded ? t('license.onlineCheckNeeded') : t('license.onlineCheckNormal') }}
         </el-tag>
       </div>
       <p class="online-status-desc">
-        {{ onlineCheckNeeded ? '已超过7天未联网验证，请点击按钮进行在线验证' : '许可证在线验证状态正常' }}
+        {{ onlineCheckNeeded ? t('license.onlineCheckNeededDesc') : t('license.onlineCheckNormalDesc') }}
       </p>
       <el-button v-if="onlineCheckNeeded" type="primary" size="small" :loading="checkingOnline" @click="handleOnlineCheck">
-        立即验证
+        {{ t('license.verifyNow') }}
       </el-button>
     </el-card>
 
     <!-- 版本对比 -->
     <div class="plans">
-      <el-card v-for="plan in plans" :key="plan.key" 
-               class="plan-card" 
+      <el-card v-for="plan in plans" :key="plan.key"
+               class="plan-card"
                :class="{ active: licenseStatus.tier === plan.key }"
                shadow="hover">
         <div class="plan-header">
           <span class="plan-icon">{{ plan.icon }}</span>
-          <h3>{{ plan.name }}</h3>
+          <h3>{{ plan.nameLabel }}</h3>
           <div class="plan-price">
-            <span class="price">¥{{ plan.price }}</span>
-            <span class="period">{{ plan.period }}</span>
+            <span class="price">{{ plan.priceLabel }}</span>
+            <span class="period">{{ plan.periodLabel }}</span>
           </div>
         </div>
         <ul class="plan-features">
-          <li v-for="f in plan.features" :key="f">
+          <li v-for="f in plan.featureItems" :key="f">
             <el-icon color="#67c23a"><Select /></el-icon>
             {{ f }}
           </li>
-          <li v-for="f in plan.limitations" :key="f" class="limited">
+          <li v-for="f in plan.limitationItems" :key="f" class="limited">
             <el-icon color="#909399"><CloseBold /></el-icon>
             {{ f }}
           </li>
@@ -64,22 +64,22 @@
         <el-button v-if="plan.key !== 'free' && licenseStatus.tier !== plan.key"
                    :type="plan.key === 'pro' ? 'primary' : 'default'"
                    @click="handleUpgrade(plan.key)">
-          升级到{{ plan.name }}
+          {{ t('license.upgradeTo', { name: plan.nameLabel }) }}
         </el-button>
         <el-tag v-else-if="licenseStatus.tier === plan.key" type="success" effect="plain">
-          当前版本
+          {{ t('license.currentVersion') }}
         </el-tag>
       </el-card>
     </div>
 
     <!-- 激活密钥 -->
     <el-card class="activate-card" shadow="hover">
-      <h3>激活许可证</h3>
-      <p class="activate-desc">已有密钥？在下方输入激活码完成升级</p>
+      <h3>{{ t('license.activateLicense') }}</h3>
+      <p class="activate-desc">{{ t('license.activateDesc') }}</p>
       <div class="activate-form">
         <el-input
           v-model="licenseKey"
-          placeholder="WF-BAS-XXXX-XXXX-XXXX-XXXX"
+          :placeholder="t('license.inputPlaceholder')"
           size="large"
           clearable
           @keyup.enter="handleActivate"
@@ -89,7 +89,7 @@
           </template>
         </el-input>
         <el-button type="primary" size="large" :loading="activating" @click="handleActivate">
-          激活
+          {{ t('license.activateBtn') }}
         </el-button>
       </div>
     </el-card>
@@ -97,12 +97,12 @@
     <!-- 续期 -->
     <el-card v-if="licenseStatus.tier !== 'free' && licenseStatus.tier !== 'trial'" class="renew-card" shadow="hover">
       <div class="renew-header">
-        <h3>续期管理</h3>
+        <h3>{{ t('license.renewManagement') }}</h3>
         <el-button type="primary" plain :loading="renewing" @click="handleRenew">
-          立即续期
+          {{ t('license.renewNow') }}
         </el-button>
       </div>
-      <p>每 7 天自动联网续期，宽限期 14 天。续期失败不影响正常使用。</p>
+      <p>{{ t('license.renewInfo') }}</p>
     </el-card>
   </div>
 </template>

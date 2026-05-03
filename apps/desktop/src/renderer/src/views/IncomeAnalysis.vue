@@ -1,6 +1,6 @@
 <template>
   <div class="income-analysis">
-    <h1 class="page-title">收入分析</h1>
+    <h1 class="page-title">{{ t('incomeAnalysis.title') }}</h1>
 
     <!-- 分析时间范围选择 -->
     <div class="time-range-selector">
@@ -241,11 +241,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
+import useI18n from "../i18n"
 import { Refresh, Check, Close } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { useIncomeStore } from '@/stores/income'
 
 const incomeStore = useIncomeStore()
+const { t } = useI18n()
 
 // 分析时间范围
 const timeRange = ref('6m')

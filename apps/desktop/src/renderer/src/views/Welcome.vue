@@ -3,52 +3,52 @@
     <div class="welcome-card">
       <div class="welcome-header">
         <span class="welcome-icon">💰</span>
-        <h1>欢迎使用财富自由之路</h1>
-        <p>让我们开始你的财富自由之旅</p>
+        <h1>{{ t('welcome.title') }}</h1>
+        <p>{{ t('welcome.subtitle') }}</p>
       </div>
 
       <el-steps :active="currentStep" align-center class="welcome-steps" finish-status="success">
-        <el-step title="基本信息" icon="User" />
-        <el-step title="财务现状" icon="Wallet" />
-        <el-step title="目标设定" icon="Flag" />
+        <el-step :title="t('welcome.steps.basicInfo')" icon="User" />
+        <el-step :title="t('welcome.steps.financialStatus')" icon="Wallet" />
+        <el-step :title="t('welcome.steps.goalSetting')" icon="Flag" />
       </el-steps>
 
       <!-- 步骤1：基本信息 -->
       <transition name="fade-slide" mode="out-in">
         <div v-if="currentStep === 0" key="step0" class="step-content">
           <el-form :model="form" :rules="rules0" ref="formRef0" label-width="100px" class="welcome-form">
-            <el-form-item label="姓名" prop="name">
-              <el-input v-model="form.name" placeholder="请输入你的名字" maxlength="20" />
+            <el-form-item :label="t('welcome.form.name')" prop="name">
+              <el-input v-model="form.name" :placeholder="t('welcome.form.namePlaceholder')" maxlength="20" />
             </el-form-item>
-            <el-form-item label="每月收入" prop="monthlyIncome">
+            <el-form-item :label="t('welcome.form.monthlyIncome')" prop="monthlyIncome">
               <el-input-number
                 v-model="form.monthlyIncome"
                 :min="0"
                 :precision="0"
                 :step="1000"
-                placeholder="税后收入"
+                :placeholder="t('welcome.form.afterTax')"
                 style="width: 200px"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('welcome.form.unit') }}</span>
             </el-form-item>
-            <el-form-item label="每月支出" prop="monthlyExpense">
+            <el-form-item :label="t('welcome.form.monthlyExpense')" prop="monthlyExpense">
               <el-input-number
                 v-model="form.monthlyExpense"
                 :min="0"
                 :precision="0"
                 :step="500"
-                placeholder="基本生活开支"
+                :placeholder="t('welcome.form.livingExpenses')"
                 style="width: 200px"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('welcome.form.unit') }}</span>
             </el-form-item>
           </el-form>
 
           <div class="summary-box" v-if="form.monthlyIncome > 0">
-            <p>每月结余：<span class="highlight" :class="{ negative: form.monthlyIncome - form.monthlyExpense < 0 }">{{ formatCurrency(form.monthlyIncome - form.monthlyExpense) }}</span></p>
+            <p>{{ t('welcome.monthlyBalance') }}<span class="highlight" :class="{ negative: form.monthlyIncome - form.monthlyExpense < 0 }">{{ formatCurrency(form.monthlyIncome - form.monthlyExpense) }}</span></p>
             <p class="summary-note">
-              储蓄率：<span :class="savingsRateClass">{{ savingsRate }}%</span>
-              <el-tooltip v-if="savingsRate >= 50" content="优秀！储蓄率超过50%" placement="top">
+              {{ t('welcome.savingsRate') }}<span :class="savingsRateClass">{{ savingsRate }}%</span>
+              <el-tooltip v-if="savingsRate >= 50" :content="t('welcome.savingsRateTip')" placement="top">
                 <el-tag type="success" size="small" style="margin-left: 8px">🏆</el-tag>
               </el-tooltip>
             </p>
@@ -60,7 +60,7 @@
       <transition name="fade-slide" mode="out-in">
         <div v-if="currentStep === 1" key="step1" class="step-content">
           <el-form :model="form" label-width="120px" class="welcome-form">
-            <el-form-item label="现金及存款">
+            <el-form-item :label="t('welcome.form.cashAssets')">
               <el-input-number
                 v-model="form.cashAssets"
                 :min="0"
@@ -68,9 +68,9 @@
                 :step="10000"
                 style="width: 200px"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('welcome.form.unit') }}</span>
             </el-form-item>
-            <el-form-item label="投资资产">
+            <el-form-item :label="t('welcome.form.investmentAssets')">
               <el-input-number
                 v-model="form.investmentAssets"
                 :min="0"
@@ -78,9 +78,9 @@
                 :step="10000"
                 style="width: 200px"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('welcome.form.unit') }}</span>
             </el-form-item>
-            <el-form-item label="负债总额">
+            <el-form-item :label="t('welcome.form.totalDebt')">
               <el-input-number
                 v-model="form.totalDebt"
                 :min="0"
@@ -88,14 +88,14 @@
                 :step="10000"
                 style="width: 200px"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('welcome.form.unit') }}</span>
             </el-form-item>
           </el-form>
 
           <div class="summary-box">
-            <p>你的净资产：<span class="highlight" :class="{ negative: netWorth < 0 }">{{ formatCurrency(netWorth) }}</span></p>
+            <p>{{ t('welcome.yourNetWorth') }}<span class="highlight" :class="{ negative: netWorth < 0 }">{{ formatCurrency(netWorth) }}</span></p>
             <p class="summary-note" v-if="netWorth >= 0">
-              离财务保障还需：<span :class="shortfallClass">{{ formatCurrency(Math.max(0, form.monthlyExpense * 6 - netWorth)) }}</span>
+              {{ t('welcome.gapToSecurity', { amount: formatCurrency(Math.max(0, form.monthlyExpense * 6 - netWorth)) }) }}
             </p>
           </div>
         </div>
@@ -105,16 +105,16 @@
       <transition name="fade-slide" mode="out-in">
         <div v-if="currentStep === 2" key="step2" class="step-content">
           <div class="goal-intro">
-            <h3>财务自由三阶段目标</h3>
-            <p>系统会根据你的月支出自动计算目标金额</p>
+            <h3>{{ t('welcome.goals.threeStages') }}</h3>
+            <p>{{ t('welcome.goals.autoCalculate') }}</p>
           </div>
 
           <div class="goal-cards">
             <div class="goal-card" :class="{ achieved: netWorth >= form.monthlyExpense * 6 }">
               <div class="goal-icon">🛡️</div>
-              <div class="goal-name">财务保障</div>
+              <div class="goal-name">{{ t('welcome.goals.security') }}</div>
               <div class="goal-amount">{{ formatCurrency(form.monthlyExpense * 6) }}</div>
-              <div class="goal-note">6个月支出</div>
+              <div class="goal-note">{{ t('welcome.goals.sixMonths') }}</div>
               <el-progress
                 v-if="netWorth > 0"
                 :percentage="Math.min(100, Math.round(netWorth / (form.monthlyExpense * 6) * 100))"
@@ -122,13 +122,13 @@
                 :color="progressColors"
                 style="margin-top: 8px"
               />
-              <div v-if="netWorth >= form.monthlyExpense * 6" class="goal-check">✅ 已达成</div>
+              <div v-if="netWorth >= form.monthlyExpense * 6" class="goal-check">✅ {{ t('welcome.goals.achieved') }}</div>
             </div>
             <div class="goal-card" :class="{ achieved: netWorth >= form.monthlyExpense * 150 }">
               <div class="goal-icon">🔒</div>
-              <div class="goal-name">财务安全</div>
+              <div class="goal-name">{{ t('welcome.goals.safety') }}</div>
               <div class="goal-amount">{{ formatCurrency(form.monthlyExpense * 150) }}</div>
-              <div class="goal-note">靠利息生活</div>
+              <div class="goal-note">{{ t('welcome.goals.liveOnInterest') }}</div>
               <el-progress
                 v-if="netWorth > 0"
                 :percentage="Math.min(100, Math.round(netWorth / (form.monthlyExpense * 150) * 100))"
@@ -136,13 +136,13 @@
                 :color="progressColors"
                 style="margin-top: 8px"
               />
-              <div v-if="netWorth >= form.monthlyExpense * 150" class="goal-check">✅ 已达成</div>
+              <div v-if="netWorth >= form.monthlyExpense * 150" class="goal-check">✅ {{ t('welcome.goals.achieved') }}</div>
             </div>
             <div class="goal-card" :class="{ achieved: netWorth >= form.monthlyExpense * 300 }">
               <div class="goal-icon">✨</div>
-              <div class="goal-name">财务自由</div>
+              <div class="goal-name">{{ t('welcome.goals.freedom') }}</div>
               <div class="goal-amount">{{ formatCurrency(form.monthlyExpense * 300) }}</div>
-              <div class="goal-note">梦想生活</div>
+              <div class="goal-note">{{ t('welcome.goals.dreamLife') }}</div>
               <el-progress
                 v-if="netWorth > 0"
                 :percentage="Math.min(100, Math.round(netWorth / (form.monthlyExpense * 300) * 100))"
@@ -150,33 +150,33 @@
                 :color="progressColors"
                 style="margin-top: 8px"
               />
-              <div v-if="netWorth >= form.monthlyExpense * 300" class="goal-check">✅ 已达成</div>
+              <div v-if="netWorth >= form.monthlyExpense * 300" class="goal-check">✅ {{ t('welcome.goals.achieved') }}</div>
             </div>
           </div>
 
           <div class="goal-tip" v-if="form.monthlyExpense > 0">
             <el-icon><InfoFilled /></el-icon>
-            以当前储蓄率 {{ savingsRate }}%，预计约 <strong>{{ estimatedYears }}</strong> 年达成财务安全
+            {{ t('welcome.estimatedYears', { rate: savingsRate, years: estimatedYears }) }}
           </div>
         </div>
       </transition>
 
       <div class="welcome-actions">
-        <el-button v-if="currentStep > 0" @click="prevStep">上一步</el-button>
-        <el-button v-if="currentStep < 2" type="primary" @click="nextStep">下一步</el-button>
+        <el-button v-if="currentStep > 0" @click="prevStep">{{ t('welcome.previousStep') }}</el-button>
+        <el-button v-if="currentStep < 2" type="primary" @click="nextStep">{{ t('welcome.nextStep') }}</el-button>
         <el-button v-if="currentStep === 2" type="primary" @click="handleComplete" :loading="loading" size="large">
-          🚀 开始使用
+          🚀 {{ t('welcome.startUsing') }}
         </el-button>
       </div>
 
       <div class="demo-entry">
-        <el-divider>或者</el-divider>
+        <el-divider>{{ t('welcome.or') }}</el-divider>
         <el-button type="warning" plain size="large" @click="handleDemoMode" :loading="demoLoading">
-          🎮 体验演示模式
+          🎮 {{ t('welcome.demoMode') }}
         </el-button>
-        <p class="demo-hint">加载示例数据，快速体验全部功能</p>
+        <p class="demo-hint">{{ t('welcome.demoHint') }}</p>
         <el-button link type="info" size="small" @click="handleSkip" style="margin-top: 8px">
-          跳过引导，直接进入 →
+          {{ t('welcome.skipGuide') }}
         </el-button>
       </div>
     </div>
@@ -191,9 +191,11 @@ import { useUserStore } from '@/stores/user'
 import { useAccountStore } from '@/stores/accounts'
 import { useDebtStore } from '@/stores/debts'
 import { useGoalStore } from '@/stores/goals'
+import { useI18n } from '@/i18n'
 
 const emit = defineEmits(['complete'])
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const accountStore = useAccountStore()
 const debtStore = useDebtStore()
@@ -218,9 +220,9 @@ const form = ref({
 })
 
 const rules0 = {
-  name: [{ required: true, message: '请输入你的名字', trigger: 'blur' }],
-  monthlyIncome: [{ type: 'number' as const, min: 1, message: '请输入月收入', trigger: 'blur' }],
-  monthlyExpense: [{ type: 'number' as const, min: 1, message: '请输入月支出', trigger: 'blur' }]
+  name: [{ required: true, message: t('welcome.form.nameRequired'), trigger: 'blur' }],
+  monthlyIncome: [{ type: 'number' as const, min: 1, message: t('welcome.form.incomeRequired'), trigger: 'blur' }],
+  monthlyExpense: [{ type: 'number' as const, min: 1, message: t('welcome.form.expenseRequired'), trigger: 'blur' }]
 }
 
 const netWorth = computed(() => {
@@ -288,7 +290,7 @@ const handleComplete = async () => {
 
   try {
     const user = await userStore.createUser({
-      name: form.value.name || '用户',
+      name: form.value.name || t('welcome.defaultUser'),
       settings: JSON.stringify({
         monthlyIncome: form.value.monthlyIncome,
         monthlyExpense: form.value.monthlyExpense
@@ -298,7 +300,7 @@ const handleComplete = async () => {
     if (form.value.cashAssets > 0) {
       await accountStore.createAccount({
         userId: user.id,
-        name: '现金及存款',
+        name: t('welcome.accounts.cash'),
         type: 'cash',
         balance: form.value.cashAssets,
         icon: '💵'
@@ -308,7 +310,7 @@ const handleComplete = async () => {
     if (form.value.investmentAssets > 0) {
       await accountStore.createAccount({
         userId: user.id,
-        name: '投资资产',
+        name: t('welcome.accounts.investment'),
         type: 'investment',
         balance: form.value.investmentAssets,
         icon: '📈'
@@ -318,7 +320,7 @@ const handleComplete = async () => {
     if (form.value.totalDebt > 0) {
       await debtStore.createDebt({
         userId: user.id,
-        name: '负债',
+        name: t('welcome.accounts.debt'),
         type: 'other',
         totalAmount: form.value.totalDebt,
         remainingAmount: form.value.totalDebt,
@@ -342,11 +344,11 @@ const handleComplete = async () => {
       })
     }
 
-    ElMessage.success('初始化成功！开始你的财务自由之旅吧！')
+    ElMessage.success(t('welcome.initSuccess'))
     emit('complete')
   } catch (error) {
     console.error('初始化失败:', error)
-    ElMessage.error('初始化失败，请检查输入信息后重试')
+    ElMessage.error(t('welcome.initFailed'))
   } finally {
     loading.value = false
   }
@@ -358,12 +360,12 @@ const handleDemoMode = async () => {
   try {
     const result = await (window as any).electronAPI.demo.seed()
     if (result.success) {
-      ElMessage.success('演示数据已加载！正在进入...')
+      ElMessage.success(t('welcome.demoLoaded'))
       emit('complete')
     }
   } catch (error) {
     console.error('演示模式加载失败:', error)
-    ElMessage.error('演示数据加载失败')
+    ElMessage.error(t('welcome.demoFailed'))
   } finally {
     demoLoading.value = false
   }
@@ -372,14 +374,14 @@ const handleDemoMode = async () => {
 const handleSkip = async () => {
   try {
     await userStore.createUser({
-      name: '用户',
+      name: t('welcome.defaultUser'),
       settings: JSON.stringify({ monthlyIncome: 0, monthlyExpense: 0 })
     })
-    ElMessage.success('已跳过引导')
+    ElMessage.success(t('welcome.skipped'))
     emit('complete')
   } catch (error) {
     console.error('跳过失败:', error)
-    ElMessage.error('操作失败')
+    ElMessage.error(t('welcome.skipFailed'))
   }
 }
 </script>
