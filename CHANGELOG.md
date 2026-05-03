@@ -7,6 +7,25 @@
 
 ---
 
+## [1.9.0] - 2026-05-03
+
+### 新增
+- 🌐 **i18n 多语言支持**：轻量级 i18n 系统（reactive + provide/inject，无 vue-i18n 依赖）
+  - 中英文 locale 文件 + 侧边栏全面 i18n + 语言切换按钮
+  - 全部 29 个视图页面完成 i18n 适配
+  - Element Plus locale 联动
+  - +171 个 locale key
+- 💱 **多币种 Dashboard 集成**：useCurrency composable + Dashboard 基准币 badge + 多币种格式化
+- 🔐 **数据加密服务**：AES-256-GCM + PBKDF2 密钥派生
+  - encryptionService 完整实现
+  - 11 个 IPC + preload 桥接 + 数据迁移
+- 🔧 **Welcome.vue 类型修复**：AccountType/DebtType/GoalType 枚举 + 补全必填字段
+
+### 变更
+- 🔧 版本号更新至 1.9.0
+
+---
+
 ## [1.8.0] - 2026-05-03
 
 ### 新增
