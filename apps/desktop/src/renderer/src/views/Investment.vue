@@ -1,29 +1,29 @@
 <template>
-  <FeatureGate feature="hasInvestment" feature-name="投资追踪" description="追踪持仓、记录交易、分析资产配置，让钱为你工作" required-tier="basic">
+  <FeatureGate feature="hasInvestment" :feature-name="t('investment.featureName')" :description="t('investment.featureDesc')" required-tier="basic">
   <div class="investment-page">
-    <h1 class="page-title">投资追踪</h1>
-    <p class="page-desc">让钱为你工作，用数据驱动投资决策</p>
+    <h1 class="page-title">{{ t('investment.title') }}</h1>
+    <p class="page-desc">{{ t('investment.desc') }}</p>
 
     <!-- 投资概览卡片 -->
     <div class="overview-cards">
       <div class="overview-card">
         <div class="card-icon">📈</div>
         <div class="card-info">
-          <div class="card-label">总市值</div>
+          <div class="card-label">{{ t('investment.totalMarketValue') }}</div>
           <div class="card-value">{{ formatCurrency(summary.total_market_value) }}</div>
         </div>
       </div>
       <div class="overview-card">
         <div class="card-icon">💰</div>
         <div class="card-info">
-          <div class="card-label">总成本</div>
+          <div class="card-label">{{ t('investment.totalCost') }}</div>
           <div class="card-value">{{ formatCurrency(summary.total_cost) }}</div>
         </div>
       </div>
       <div class="overview-card" :class="{ positive: summary.total_profit_loss >= 0, negative: summary.total_profit_loss < 0 }">
         <div class="card-icon">{{ summary.total_profit_loss >= 0 ? '✅' : '🔻' }}</div>
         <div class="card-info">
-          <div class="card-label">总盈亏</div>
+          <div class="card-label">{{ t('investment.totalProfitLoss') }}</div>
           <div class="card-value">{{ formatCurrency(summary.total_profit_loss) }}</div>
           <div class="card-sub" :class="summary.total_profit_loss >= 0 ? 'text-green' : 'text-red'">
             {{ summary.total_return_pct.toFixed(2) }}%
@@ -33,7 +33,7 @@
       <div class="overview-card">
         <div class="card-icon">🏦</div>
         <div class="card-info">
-          <div class="card-label">持有标的</div>
+          <div class="card-label">{{ t('investment.holdingCount') }}</div>
           <div class="card-value">{{ summary.holding_count }}</div>
         </div>
       </div>
@@ -42,20 +42,20 @@
     <!-- 标签页切换 -->
     <el-tabs v-model="activeTab" class="main-tabs">
       <!-- 持仓总览 -->
-      <el-tab-pane label="持仓总览" name="holdings">
+      <el-tab-pane :label="t('investment.holdings')" name="holdings">
         <div class="toolbar">
-          <el-select v-model="selectedAccountId" placeholder="筛选账户" clearable @change="loadPortfolios" style="width: 200px">
+          <el-select v-model="selectedAccountId" :placeholder="t('investment.filterAccount')" clearable @change="loadPortfolios" style="width: 200px">
             <el-option v-for="a in accounts" :key="a.id" :label="`${a.name} (${a.platform})`" :value="a.id" />
           </el-select>
           <div class="toolbar-actions">
             <el-button type="primary" @click="showAddAccountDialog = true">
-              <el-icon><Plus /></el-icon> 新建账户
+              <el-icon><Plus /></el-icon> {{ t('investment.newAccount') }}
             </el-button>
             <el-button @click="showAddPortfolioDialog = true" :disabled="accounts.length === 0">
-              <el-icon><Plus /></el-icon> 新建组合
+              <el-icon><Plus /></el-icon> {{ t('investment.newPortfolio') }}
             </el-button>
             <el-button @click="showAddHoldingDialog = true" :disabled="allPortfolios.length === 0">
-              <el-icon><Plus /></el-icon> 添加持仓
+              <el-icon><Plus /></el-icon> {{ t('investment.addHolding') }}
             </el-button>
           </div>
         </div>
@@ -63,7 +63,7 @@
         <!-- 账户列表 -->
         <div v-if="accounts.length === 0" class="empty-state">
           <div class="empty-icon">🏦</div>
-          <p>还没有投资账户，点击「新建账户」开始</p>
+          <p>{{ t('investment.noAccount') }}</p>
         </div>
 
         <!-- 按账户/组合展示持仓 -->
@@ -82,38 +82,38 @@
                 <span class="portfolio-name">{{ portfolio.name }}</span>
                 <div class="portfolio-actions">
                   <el-button size="small" text @click="openAddHoldingForPortfolio(portfolio.id)">
-                    <el-icon><Plus /></el-icon> 添加
+                    <el-icon><Plus /></el-icon> {{ t('investment.add') }}
                   </el-button>
-                  <el-popconfirm title="确定删除此组合？" @confirm="deletePortfolio(portfolio.id)">
+                  <el-popconfirm :title="t('investment.confirmDeletePortfolio')" @confirm="deletePortfolio(portfolio.id)">
                     <template #reference>
-                      <el-button size="small" text type="danger">删除</el-button>
+                      <el-button size="small" text type="danger"> {{ t('investment.delete') }}</el-button>
                     </template>
                   </el-popconfirm>
                 </div>
               </div>
               <el-table :data="getPortfolioHoldings(portfolio.id)" stripe size="small" class="holdings-table">
-                <el-table-column prop="symbol" label="代码" width="100" />
-                <el-table-column prop="name" label="名称" min-width="120" />
-                <el-table-column prop="type" label="类型" width="80">
+                <el-table-column prop="symbol" :label="t('investment.colSymbol')" width="100" />
+                <el-table-column prop="name" :label="t('investment.colName')" min-width="120" />
+                <el-table-column prop="type" :label="t('investment.colType')" width="80">
                   <template #default="{ row }">
                     <el-tag size="small" :type="typeTagMap[row.type] || 'info'">{{ typeLabelMap[row.type] || row.type }}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column label="持仓量" width="100" align="right">
+                <el-table-column :label="t('investment.colQuantity')" width="100" align="right">
                   <template #default="{ row }">{{ row.quantity?.toFixed(2) }}</template>
                 </el-table-column>
-                <el-table-column label="均价" width="110" align="right">
+                <el-table-column :label="t('investment.colAvgCost')" width="110" align="right">
                   <template #default="{ row }">{{ formatCurrency(row.avg_cost) }}</template>
                 </el-table-column>
-                <el-table-column label="现价" width="110" align="right">
+                <el-table-column :label="t('investment.colCurrentPrice')" width="110" align="right">
                   <template #default="{ row }">
                     <span class="editable-price" @click="openEditPrice(row)">{{ formatCurrency(row.current_price) }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column label="市值" width="120" align="right">
+                <el-table-column :label="t('investment.colMarketValue')" width="120" align="right">
                   <template #default="{ row }">{{ formatCurrency(row.market_value) }}</template>
                 </el-table-column>
-                <el-table-column label="盈亏" width="130" align="right">
+                <el-table-column :label="t('investment.colProfitLoss')" width="130" align="right">
                   <template #default="{ row }">
                     <span :class="row.profit_loss >= 0 ? 'text-green' : 'text-red'">
                       {{ formatCurrency(row.profit_loss) }}
@@ -121,83 +121,83 @@
                     </span>
                   </template>
                 </el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column :label="t('investment.colActions')" width="180" align="center">
                   <template #default="{ row }">
-                    <el-button size="small" text @click="openAddTransaction(row)">交易</el-button>
-                    <el-popconfirm title="确定删除此持仓及其交易记录？" @confirm="deleteHolding(row.id)">
+                    <el-button size="small" text @click="openAddTransaction(row)">{{ t('investment.trade') }}</el-button>
+                    <el-popconfirm :title="t('investment.confirmDeleteHolding')" @confirm="deleteHolding(row.id)">
                       <template #reference>
-                        <el-button size="small" text type="danger">删除</el-button>
+                        <el-button size="small" text type="danger">{{ t('investment.delete') }}</el-button>
                       </template>
                     </el-popconfirm>
                   </template>
                 </el-table-column>
               </el-table>
               <div v-if="getPortfolioHoldings(portfolio.id).length === 0" class="empty-portfolio">
-                暂无持仓，点击「添加」开始
+                {{ t('investment.noHolding') }}
               </div>
             </div>
             <div v-if="getAccountPortfolios(account.id).length === 0" class="empty-portfolio">
-              暂无组合，点击上方「新建组合」
+              {{ t('investment.noPortfolio') }}
             </div>
           </div>
         </div>
       </el-tab-pane>
 
       <!-- 交易记录 -->
-      <el-tab-pane label="交易记录" name="transactions">
+      <el-tab-pane :label="t('investment.transactions')" name="transactions">
         <div class="toolbar">
-          <el-select v-model="txFilterType" placeholder="交易类型" clearable style="width: 130px">
-            <el-option label="买入" value="buy" />
-            <el-option label="卖出" value="sell" />
-            <el-option label="分红" value="dividend" />
+          <el-select v-model="txFilterType" :placeholder="t('investment.transactionType')" clearable style="width: 130px">
+            <el-option :label="t('investment.buy')" value="buy" />
+            <el-option :label="t('investment.sell')" value="sell" />
+            <el-option :label="t('investment.dividend')" value="dividend" />
           </el-select>
-          <el-button @click="loadTransactions">刷新</el-button>
+          <el-button @click="loadTransactions">{{ t('investment.refresh') }}</el-button>
         </div>
         <el-table :data="transactions" stripe size="small">
-          <el-table-column prop="transaction_date" label="日期" width="110" />
-          <el-table-column prop="symbol" label="代码" width="90" />
-          <el-table-column prop="holding_name" label="名称" min-width="120" />
-          <el-table-column prop="type" label="类型" width="80">
+          <el-table-column prop="transaction_date" :label="t('investment.colDate')" width="110" />
+          <el-table-column prop="symbol" :label="t('investment.colSymbol')" width="90" />
+          <el-table-column prop="holding_name" :label="t('investment.colName')" min-width="120" />
+          <el-table-column prop="type" :label="t('investment.type')" width="80">
             <template #default="{ row }">
               <el-tag size="small" :type="row.type === 'buy' ? 'success' : row.type === 'sell' ? 'danger' : 'warning'">
-                {{ row.type === 'buy' ? '买入' : row.type === 'sell' ? '卖出' : '分红' }}
+                {{ row.type === 'buy' ? t('investment.buy') : row.type === 'sell' ? t('investment.sell') : t('investment.dividend') }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="数量" width="90" align="right">
+          <el-table-column :label="t('investment.quantity')" width="90" align="right">
             <template #default="{ row }">{{ row.quantity?.toFixed(2) }}</template>
           </el-table-column>
-          <el-table-column label="价格" width="110" align="right">
+          <el-table-column :label="t('investment.colPrice')" width="110" align="right">
             <template #default="{ row }">{{ formatCurrency(row.price) }}</template>
           </el-table-column>
-          <el-table-column label="金额" width="120" align="right">
+          <el-table-column :label="t('investment.amount')" width="120" align="right">
             <template #default="{ row }">{{ formatCurrency(row.amount) }}</template>
           </el-table-column>
-          <el-table-column label="手续费" width="100" align="right">
+          <el-table-column :label="t('investment.colFee')" width="100" align="right">
             <template #default="{ row }">{{ row.fee ? formatCurrency(row.fee) : '-' }}</template>
           </el-table-column>
-          <el-table-column label="操作" width="80" align="center">
+          <el-table-column :label="t('investment.colActions')" width="80" align="center">
             <template #default="{ row }">
-              <el-popconfirm title="确定删除？" @confirm="deleteTransaction(row.id)">
+              <el-popconfirm :title="t('investment.confirmDelete')" @confirm="deleteTransaction(row.id)">
                 <template #reference>
-                  <el-button size="small" text type="danger">删除</el-button>
+                  <el-button size="small" text type="danger">{{ t('investment.delete') }}</el-button>
                 </template>
               </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
         <div v-if="transactions.length === 0" class="empty-state">
-          <p>暂无交易记录</p>
+          <p>{{ t('investment.noTransactions') }}</p>
         </div>
       </el-tab-pane>
 
       <!-- 资产配置 -->
-      <el-tab-pane label="资产配置" name="allocation">
+      <el-tab-pane :label="t('investment.allocation')" name="allocation">
         <div v-if="allocation" class="allocation-section">
           <el-row :gutter="20">
             <el-col :span="12">
               <div class="allocation-card">
-                <h3>按类型分布</h3>
+                <h3>{{ t('investment.byType') }}</h3>
                 <div v-for="item in allocation.by_type" :key="item.type" class="alloc-bar">
                   <div class="alloc-label">
                     <span>{{ typeLabelMap[item.type] || item.type }}</span>
@@ -211,7 +211,7 @@
             </el-col>
             <el-col :span="12">
               <div class="allocation-card">
-                <h3>按账户分布</h3>
+                <h3>{{ t('investment.byAccount') }}</h3>
                 <div v-for="item in allocation.by_account" :key="item.account_name" class="alloc-bar">
                   <div class="alloc-label">
                     <span>{{ item.account_name }} ({{ item.platform }})</span>
@@ -225,14 +225,14 @@
             </el-col>
           </el-row>
           <div class="allocation-card top-holdings">
-            <h3>Top 10 持仓</h3>
+            <h3>{{ t('investment.topHoldings') }}</h3>
             <el-table :data="allocation.top_holdings" stripe size="small">
-              <el-table-column prop="symbol" label="代码" width="100" />
-              <el-table-column prop="name" label="名称" min-width="120" />
-              <el-table-column label="市值" width="130" align="right">
+              <el-table-column prop="symbol" :label="t('investment.symbol')" width="100" />
+              <el-table-column prop="name" :label="t('investment.name')" min-width="120" />
+              <el-table-column :label="t('investment.colMarketValue')" width="130" align="right">
                 <template #default="{ row }">{{ formatCurrency(row.market_value) }}</template>
               </el-table-column>
-              <el-table-column label="盈亏%" width="100" align="right">
+              <el-table-column :label="t('investment.colProfitLoss')" width="100" align="right">
                 <template #default="{ row }">
                   <span :class="row.profit_loss_pct >= 0 ? 'text-green' : 'text-red'">
                     {{ row.profit_loss_pct?.toFixed(2) }}%
@@ -243,142 +243,142 @@
           </div>
         </div>
         <div v-else class="empty-state">
-          <p>暂无持仓数据</p>
+          <p>{{ t('investment.noAllocation') }}</p>
         </div>
       </el-tab-pane>
     </el-tabs>
 
     <!-- 新建账户弹窗 -->
-    <el-dialog v-model="showAddAccountDialog" title="新建投资账户" width="450px">
+    <el-dialog v-model="showAddAccountDialog" :title="t('investment.newInvestmentAccount')" width="450px">
       <el-form :model="accountForm" label-width="80px">
-        <el-form-item label="账户名称">
-          <el-input v-model="accountForm.name" placeholder="如：A股账户" />
+        <el-form-item :label="t('investment.accountName')">
+          <el-input v-model="accountForm.name" :placeholder="t('investment.accountNamePlaceholder')" />
         </el-form-item>
-        <el-form-item label="平台">
-          <el-input v-model="accountForm.platform" placeholder="如：华泰证券" />
+        <el-form-item :label="t('investment.platform')">
+          <el-input v-model="accountForm.platform" :placeholder="t('investment.platformPlaceholder')" />
         </el-form-item>
-        <el-form-item label="类型">
+        <el-form-item :label="t('investment.type')">
           <el-select v-model="accountForm.type" style="width: 100%">
-            <el-option label="股票" value="stock" />
-            <el-option label="基金" value="fund" />
-            <el-option label="债券" value="bond" />
-            <el-option label="期货" value="future" />
-            <el-option label="加密货币" value="crypto" />
-            <el-option label="其他" value="other" />
+            <el-option :label="t('investment.stock')" value="stock" />
+            <el-option :label="t('investment.fund')" value="fund" />
+            <el-option :label="t('investment.bond')" value="bond" />
+            <el-option :label="t('investment.future')" value="future" />
+            <el-option :label="t('investment.crypto')" value="crypto" />
+            <el-option :label="t('investment.other')" value="other" />
           </el-select>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item :label="t('investment.notes')">
           <el-input v-model="accountForm.notes" type="textarea" :rows="2" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddAccountDialog = false">取消</el-button>
-        <el-button type="primary" @click="addAccount">创建</el-button>
+        <el-button @click="showAddAccountDialog = false"> {{ t('investment.cancel') }}</el-button>
+        <el-button type="primary" @click="addAccount">{{ t('investment.create') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 新建组合弹窗 -->
-    <el-dialog v-model="showAddPortfolioDialog" title="新建投资组合" width="450px">
+    <el-dialog v-model="showAddPortfolioDialog" :title="t('investment.newPortfolioDialog')" width="450px">
       <el-form :model="portfolioForm" label-width="80px">
-        <el-form-item label="所属账户">
+        <el-form-item :label="t('investment.selectAccount')">
           <el-select v-model="portfolioForm.account_id" style="width: 100%">
             <el-option v-for="a in accounts" :key="a.id" :label="`${a.name} (${a.platform})`" :value="a.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="组合名称">
-          <el-input v-model="portfolioForm.name" placeholder="如：核心持仓" />
+        <el-form-item :label="t('investment.portfolioName')">
+          <el-input v-model="portfolioForm.name" :placeholder="t('investment.portfolioNamePlaceholder')" />
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item :label="t('investment.description')">
           <el-input v-model="portfolioForm.description" type="textarea" :rows="2" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddPortfolioDialog = false">取消</el-button>
-        <el-button type="primary" @click="addPortfolio">创建</el-button>
+        <el-button @click="showAddPortfolioDialog = false"> {{ t('investment.cancel') }}</el-button>
+        <el-button type="primary" @click="addPortfolio">{{ t('investment.create') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 添加持仓弹窗 -->
-    <el-dialog v-model="showAddHoldingDialog" title="添加持仓" width="500px">
+    <el-dialog v-model="showAddHoldingDialog" :title="t('investment.addHolding')" width="500px">
       <el-form :model="holdingForm" label-width="80px">
-        <el-form-item label="所属组合">
+        <el-form-item :label="t('investment.selectPortfolio')">
           <el-select v-model="holdingForm.portfolio_id" style="width: 100%">
             <el-option v-for="p in allPortfolios" :key="p.id" :label="`${p.account_name || ''} - ${p.name}`" :value="p.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="代码">
-          <el-input v-model="holdingForm.symbol" placeholder="如：600519" />
+        <el-form-item :label="t('investment.symbol')">
+          <el-input v-model="holdingForm.symbol" :placeholder="t('investment.symbolPlaceholder')" />
         </el-form-item>
-        <el-form-item label="名称">
-          <el-input v-model="holdingForm.name" placeholder="如：贵州茅台" />
+        <el-form-item :label="t('investment.name')">
+          <el-input v-model="holdingForm.name" :placeholder="t('investment.namePlaceholder')" />
         </el-form-item>
-        <el-form-item label="类型">
+        <el-form-item :label="t('investment.type')">
           <el-select v-model="holdingForm.type" style="width: 100%">
-            <el-option label="股票" value="stock" />
-            <el-option label="基金" value="fund" />
-            <el-option label="债券" value="bond" />
-            <el-option label="ETF" value="etf" />
-            <el-option label="其他" value="other" />
+            <el-option :label="t('investment.stock')" value="stock" />
+            <el-option :label="t('investment.fund')" value="fund" />
+            <el-option :label="t('investment.bond')" value="bond" />
+            <el-option :label="t('investment.etf')" value="etf" />
+            <el-option :label="t('investment.other')" value="other" />
           </el-select>
         </el-form-item>
-        <el-form-item label="数量">
+        <el-form-item :label="t('investment.quantity')">
           <el-input-number v-model="holdingForm.quantity" :min="0" :precision="2" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="均价">
+        <el-form-item :label="t('investment.avgCost')">
           <el-input-number v-model="holdingForm.avg_cost" :min="0" :precision="4" style="width: 100%" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddHoldingDialog = false">取消</el-button>
-        <el-button type="primary" @click="addHolding">添加</el-button>
+        <el-button @click="showAddHoldingDialog = false"> {{ t('investment.cancel') }}</el-button>
+        <el-button type="primary" @click="addHolding">{{ t('investment.add') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 新增交易弹窗 -->
-    <el-dialog v-model="showAddTransactionDialog" title="新增交易" width="500px">
+    <el-dialog v-model="showAddTransactionDialog" :title="t('investment.newTransaction')" width="500px">
       <el-form :model="txForm" label-width="80px">
-        <el-form-item label="标的">
+        <el-form-item :label="t('investment.target')">
           <el-input :model-value="`${txForm.symbol} ${txForm.name}`" disabled />
         </el-form-item>
-        <el-form-item label="类型">
+        <el-form-item :label="t('investment.type')">
           <el-select v-model="txForm.type" style="width: 100%">
-            <el-option label="买入" value="buy" />
-            <el-option label="卖出" value="sell" />
-            <el-option label="分红" value="dividend" />
+            <el-option :label="t('investment.buy')" value="buy" />
+            <el-option :label="t('investment.sell')" value="sell" />
+            <el-option :label="t('investment.dividend')" value="dividend" />
           </el-select>
         </el-form-item>
-        <el-form-item label="数量">
+        <el-form-item :label="t('investment.quantity')">
           <el-input-number v-model="txForm.quantity" :min="0" :precision="2" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="价格">
+        <el-form-item :label="t('investment.price')">
           <el-input-number v-model="txForm.price" :min="0" :precision="4" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="手续费">
+        <el-form-item :label="t('investment.fee')">
           <el-input-number v-model="txForm.fee" :min="0" :precision="2" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="日期">
+        <el-form-item :label="t('investment.date')">
           <el-date-picker v-model="txForm.transaction_date" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item :label="t('investment.notes')">
           <el-input v-model="txForm.notes" type="textarea" :rows="2" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddTransactionDialog = false">取消</el-button>
-        <el-button type="primary" @click="addTransaction">确认</el-button>
+        <el-button @click="showAddTransactionDialog = false"> {{ t('investment.cancel') }}</el-button>
+        <el-button type="primary" @click="addTransaction">{{ t('investment.confirm') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 修改价格弹窗 -->
-    <el-dialog v-model="showEditPriceDialog" title="更新当前价格" width="350px">
+    <el-dialog v-model="showEditPriceDialog" :title="t('investment.updatePrice')" width="350px">
       <el-form label-width="80px">
         <el-form-item :label="editPriceTarget?.name">
           <el-input-number v-model="editPriceValue" :min="0" :precision="4" style="width: 100%" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showEditPriceDialog = false">取消</el-button>
-        <el-button type="primary" @click="updatePrice">更新</el-button>
+        <el-button @click="showEditPriceDialog = false"> {{ t('investment.cancel') }}</el-button>
+        <el-button type="primary" @click="updatePrice">{{ t('investment.update') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -390,6 +390,9 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { Plus, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import FeatureGate from '@/components/FeatureGate.vue'
+import { useI18n } from '@/i18n'
+
+const { t } = useI18n()
 
 const api = (window as any).electronAPI
 
@@ -421,7 +424,7 @@ const txForm = reactive({ holding_id: '', symbol: '', name: '', type: 'buy', qua
 const editPriceTarget = ref<any>(null)
 const editPriceValue = ref(0)
 
-const typeLabelMap: Record<string, string> = { stock: '股票', fund: '基金', bond: '债券', etf: 'ETF', future: '期货', crypto: '加密', other: '其他' }
+const typeLabelMap = computed<Record<string, string>>(() => ({ stock: t('investment.stock'), fund: t('investment.fund'), bond: t('investment.bond'), etf: t('investment.etf'), future: t('investment.future'), crypto: t('investment.crypto'), other: t('investment.other') }))
 const typeTagMap: Record<string, string> = { stock: 'success', fund: '', bond: 'warning', etf: 'info', future: 'danger', crypto: 'warning', other: 'info' }
 
 // ========== 计算 ==========
@@ -433,7 +436,7 @@ const filteredAccounts = computed(() => {
 const totalAllocValue = computed(() => {
   if (!allocation.value) return 1
   const types = allocation.value.by_type || []
-  return types.reduce((s: number, t: any) => s + (t.value || 0), 0) || 1
+  return types.reduce((s: number, item: any) => s + (item.value || 0), 0) || 1
 })
 
 function allocPct(value: number) {
@@ -486,27 +489,27 @@ async function loadAllocation() {
 
 // ========== 操作 ==========
 async function addAccount() {
-  if (!accountForm.name || !accountForm.platform) { ElMessage.warning('请填写账户名称和平台'); return }
+  if (!accountForm.name || !accountForm.platform) { ElMessage.warning(t('investment.fillAccountAndPlatform')); return }
   await api.addInvestmentAccount({ ...accountForm })
-  ElMessage.success('账户已创建')
+  ElMessage.success(t('investment.accountCreated'))
   showAddAccountDialog.value = false
   Object.assign(accountForm, { name: '', platform: '', type: 'stock', notes: '' })
   await loadAccounts()
 }
 
 async function addPortfolio() {
-  if (!portfolioForm.account_id || !portfolioForm.name) { ElMessage.warning('请选择账户并填写组合名称'); return }
+  if (!portfolioForm.account_id || !portfolioForm.name) { ElMessage.warning(t('investment.selectAccountAndName')); return }
   await api.addPortfolio({ ...portfolioForm })
-  ElMessage.success('组合已创建')
+  ElMessage.success(t('investment.portfolioCreated'))
   showAddPortfolioDialog.value = false
   Object.assign(portfolioForm, { account_id: '', name: '', description: '' })
   await loadPortfolios()
 }
 
 async function addHolding() {
-  if (!holdingForm.portfolio_id || !holdingForm.symbol) { ElMessage.warning('请选择组合并填写代码'); return }
+  if (!holdingForm.portfolio_id || !holdingForm.symbol) { ElMessage.warning(t('investment.selectPortfolioAndSymbol')); return }
   await api.addHolding({ ...holdingForm })
-  ElMessage.success('持仓已添加')
+  ElMessage.success(t('investment.holdingAdded'))
   showAddHoldingDialog.value = false
   Object.assign(holdingForm, { portfolio_id: '', symbol: '', name: '', type: 'stock', quantity: 0, avg_cost: 0 })
   await Promise.all([loadPortfolios(), loadSummary(), loadAllocation()])
@@ -514,19 +517,19 @@ async function addHolding() {
 
 async function deletePortfolio(id: string) {
   await api.deletePortfolio(id)
-  ElMessage.success('组合已删除')
+  ElMessage.success(t('investment.portfolioDeleted'))
   await Promise.all([loadPortfolios(), loadSummary(), loadAllocation()])
 }
 
 async function deleteHolding(id: string) {
   await api.deleteHolding(id)
-  ElMessage.success('持仓已删除')
+  ElMessage.success(t('investment.holdingDeleted'))
   await Promise.all([loadPortfolios(), loadSummary(), loadAllocation()])
 }
 
 async function deleteTransaction(id: string) {
   await api.deleteInvestmentTransaction(id)
-  ElMessage.success('交易已删除')
+  ElMessage.success(t('investment.transactionDeleted'))
   await Promise.all([loadTransactions(), loadPortfolios(), loadSummary()])
 }
 
@@ -549,9 +552,9 @@ function openAddTransaction(holding: any) {
 }
 
 async function addTransaction() {
-  if (!txForm.holding_id || txForm.quantity <= 0) { ElMessage.warning('请填写交易数量'); return }
+  if (!txForm.holding_id || txForm.quantity <= 0) { ElMessage.warning(t('investment.fillQuantity')); return }
   await api.addInvestmentTransaction({ ...txForm })
-  ElMessage.success('交易已记录')
+  ElMessage.success(t('investment.transactionRecorded'))
   showAddTransactionDialog.value = false
   await Promise.all([loadPortfolios(), loadTransactions(), loadSummary(), loadAllocation()])
 }
@@ -565,7 +568,7 @@ function openEditPrice(holding: any) {
 async function updatePrice() {
   if (!editPriceTarget.value) return
   await api.updateHoldingPrice({ id: editPriceTarget.value.id, current_price: editPriceValue.value })
-  ElMessage.success('价格已更新')
+  ElMessage.success(t('investment.priceUpdated'))
   showEditPriceDialog.value = false
   await Promise.all([loadPortfolios(), loadSummary(), loadAllocation()])
 }

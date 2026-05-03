@@ -1,21 +1,21 @@
 <template>
-  <FeatureGate feature="hasRecurring" feature-name="周期性交易" description="自动记录周期性收支，告别重复手动录入" required-tier="basic">
+  <FeatureGate feature="hasRecurring" :feature-name="t('recurring.featureName')" :description="t('recurring.featureDesc')" required-tier="basic">
   <div class="recurring-page">
-    <h1 class="page-title">周期性交易</h1>
-    <p class="page-desc">自动化你的周期收支，让规律性收入支出不再手动录入</p>
+    <h1 class="page-title">{{ t('recurring.title') }}</h1>
+    <p class="page-desc">{{ t('recurring.desc') }}</p>
 
     <!-- 顶部操作栏 -->
     <div class="toolbar">
       <div class="toolbar-left">
         <el-select v-model="filterStatus" style="width: 120px" @change="loadRules">
-          <el-option label="全部" value="all" />
-          <el-option label="活跃" value="active" />
-          <el-option label="已暂停" value="paused" />
+          <el-option :label="t('recurring.all')" value="all" />
+          <el-option :label="t('recurring.active')" value="active" />
+          <el-option :label="t('recurring.paused')" value="paused" />
         </el-select>
       </div>
       <el-button type="primary" @click="openCreateDialog">
         <el-icon><Plus /></el-icon>
-        新建规则
+        {{ t('recurring.newRule') }}
       </el-button>
     </div>
 
@@ -24,28 +24,28 @@
       <div class="overview-card">
         <div class="card-icon">🔄</div>
         <div class="card-info">
-          <div class="card-label">活跃规则</div>
+          <div class="card-label">{{ t('recurring.activeRules') }}</div>
           <div class="card-value">{{ activeCount }}</div>
         </div>
       </div>
       <div class="overview-card">
         <div class="card-icon">💰</div>
         <div class="card-info">
-          <div class="card-label">月度自动收入</div>
+          <div class="card-label">{{ t('recurring.monthlyAutoIncome') }}</div>
           <div class="card-value">{{ formatCurrency(monthlyIncome) }}</div>
         </div>
       </div>
       <div class="overview-card">
         <div class="card-icon">💸</div>
         <div class="card-info">
-          <div class="card-label">月度自动支出</div>
+          <div class="card-label">{{ t('recurring.monthlyAutoExpense') }}</div>
           <div class="card-value">{{ formatCurrency(monthlyExpense) }}</div>
         </div>
       </div>
       <div class="overview-card">
         <div class="card-icon">📅</div>
         <div class="card-info">
-          <div class="card-label">下次执行</div>
+          <div class="card-label">{{ t('recurring.nextExecution') }}</div>
           <div class="card-value">{{ nextExecution || '-' }}</div>
         </div>
       </div>
@@ -55,9 +55,9 @@
     <div class="rule-list" v-loading="loading">
       <div v-if="filteredRules.length === 0 && !loading" class="empty-state">
         <div class="empty-icon">🔄</div>
-        <p>还没有周期性交易规则</p>
-        <p class="empty-hint">创建规则，自动记录工资、房租、订阅等周期性收支</p>
-        <el-button type="primary" @click="openCreateDialog">创建规则</el-button>
+        <p>{{ t('recurring.noRules') }}</p>
+        <p class="empty-hint">{{ t('recurring.noRulesHint') }}</p>
+        <el-button type="primary" @click="openCreateDialog">{{ t('recurring.createRule') }}</el-button>
       </div>
 
       <div
@@ -69,7 +69,7 @@
         <div class="rule-header">
           <div class="rule-left">
             <span class="rule-type-badge" :class="rule.type">
-              {{ rule.type === 'income' ? '收入' : '支出' }}
+              {{ rule.type === 'income' ? t('recurring.income') : t('recurring.expense') }}
             </span>
             <div class="rule-meta">
               <span class="rule-name">{{ rule.name }}</span>
@@ -81,7 +81,7 @@
               :type="rule.status === 'active' ? 'success' : 'info'"
               size="small"
             >
-              {{ rule.status === 'active' ? '活跃' : '已暂停' }}
+              {{ rule.status === 'active' ? t('recurring.active') : t('recurring.paused') }}
             </el-tag>
             <el-dropdown trigger="click" @command="(cmd: string) => handleAction(cmd, rule)">
               <el-button text size="small">
@@ -90,10 +90,10 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item command="toggle">
-                    {{ rule.status === 'active' ? '暂停' : '恢复' }}
+                    {{ rule.status === 'active' ? t('recurring.pause') : t('recurring.resume') }}
                   </el-dropdown-item>
-                  <el-dropdown-item command="edit">编辑</el-dropdown-item>
-                  <el-dropdown-item command="delete" divided>删除</el-dropdown-item>
+                  <el-dropdown-item command="edit">{{ t('recurring.edit') }}</el-dropdown-item>
+                  <el-dropdown-item command="delete" divided>{{ t('recurring.delete') }}</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -102,21 +102,21 @@
 
         <div class="rule-details">
           <div class="detail-item">
-            <span class="detail-label">金额</span>
+            <span class="detail-label">{{ t('recurring.amount') }}</span>
             <span class="detail-value amount" :class="rule.type">
               {{ rule.type === 'income' ? '+' : '-' }}{{ formatCurrency(rule.amount) }}
             </span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">下次执行</span>
+            <span class="detail-label">{{ t('recurring.nextExecution') }}</span>
             <span class="detail-value">{{ rule.next_execution || '-' }}</span>
           </div>
           <div class="detail-item" v-if="rule.last_execution">
-            <span class="detail-label">上次执行</span>
+            <span class="detail-label">{{ t('recurring.lastExecution') }}</span>
             <span class="detail-value">{{ rule.last_execution }}</span>
           </div>
           <div class="detail-item" v-if="rule.end_date">
-            <span class="detail-label">结束日期</span>
+            <span class="detail-label">{{ t('recurring.endDate') }}</span>
             <span class="detail-value">{{ rule.end_date }}</span>
           </div>
         </div>
@@ -126,23 +126,23 @@
     <!-- 创建/编辑对话框 -->
     <el-dialog
       v-model="showDialog"
-      :title="editingRule ? '编辑规则' : '新建周期性交易'"
+      :title="editingRule ? t('recurring.editRule') : t('recurring.newRecurringTransaction')"
       width="520px"
       @close="resetForm"
     >
       <el-form :model="form" label-width="90px" label-position="left">
-        <el-form-item label="名称" required>
-          <el-input v-model="form.name" placeholder="如：月工资、房租、Netflix订阅" />
+        <el-form-item :label="t('recurring.name')" required>
+          <el-input v-model="form.name" :placeholder="t('recurring.namePlaceholder')" />
         </el-form-item>
 
-        <el-form-item label="类型" required>
+        <el-form-item :label="t('recurring.type')" required>
           <el-radio-group v-model="form.type">
-            <el-radio value="income">收入</el-radio>
-            <el-radio value="expense">支出</el-radio>
+            <el-radio value="income">{{ t('recurring.income') }}</el-radio>
+            <el-radio value="expense">{{ t('recurring.expense') }}</el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="金额" required>
+        <el-form-item :label="t('recurring.amount')" required>
           <el-input-number
             v-model="form.amount"
             :min="0.01"
@@ -152,8 +152,8 @@
           />
         </el-form-item>
 
-        <el-form-item label="账户" required>
-          <el-select v-model="form.account_id" style="width: 100%" placeholder="选择关联账户">
+        <el-form-item :label="t('recurring.account')" required>
+          <el-select v-model="form.account_id" style="width: 100%" :placeholder="t('recurring.selectAccount')">
             <el-option
               v-for="acc in accounts"
               :key="acc.id"
@@ -163,22 +163,22 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="分类">
-          <el-input v-model="form.category" placeholder="如：工资、房租、娱乐" />
+        <el-form-item :label="t('recurring.category')">
+          <el-input v-model="form.category" :placeholder="t('recurring.categoryPlaceholder')" />
         </el-form-item>
 
-        <el-divider content-position="left">执行频率</el-divider>
+        <el-divider content-position="left">{{ t('recurring.executionFrequency') }}</el-divider>
 
-        <el-form-item label="频率" required>
+        <el-form-item :label="t('recurring.frequency')" required>
           <el-select v-model="form.frequency" style="width: 100%">
-            <el-option label="每天" value="daily" />
-            <el-option label="每周" value="weekly" />
-            <el-option label="每月" value="monthly" />
-            <el-option label="每年" value="yearly" />
+            <el-option :label="t('recurring.everyDay')" value="daily" />
+            <el-option :label="t('recurring.everyWeek')" value="weekly" />
+            <el-option :label="t('recurring.everyMonth')" value="monthly" />
+            <el-option :label="t('recurring.everyYear')" value="yearly" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="间隔" v-if="form.frequency !== 'monthly' || form.interval_num > 1">
+        <el-form-item :label="t('recurring.interval')" v-if="form.frequency !== 'monthly' || form.interval_num > 1">
           <el-input-number
             v-model="form.interval_num"
             :min="1"
@@ -188,58 +188,58 @@
           <span class="form-hint">{{ intervalHint }}</span>
         </el-form-item>
 
-        <el-form-item label="执行日" v-if="form.frequency === 'weekly'">
+        <el-form-item :label="t('recurring.executionDay')" v-if="form.frequency === 'weekly'">
           <el-select v-model="form.day_of_week" style="width: 100%">
-            <el-option :value="0" label="周日" />
-            <el-option :value="1" label="周一" />
-            <el-option :value="2" label="周二" />
-            <el-option :value="3" label="周三" />
-            <el-option :value="4" label="周四" />
-            <el-option :value="5" label="周五" />
-            <el-option :value="6" label="周六" />
+            <el-option :value="0" :label="t('recurring.sunday')" />
+            <el-option :value="1" :label="t('recurring.monday')" />
+            <el-option :value="2" :label="t('recurring.tuesday')" />
+            <el-option :value="3" :label="t('recurring.wednesday')" />
+            <el-option :value="4" :label="t('recurring.thursday')" />
+            <el-option :value="5" :label="t('recurring.friday')" />
+            <el-option :value="6" :label="t('recurring.saturday')" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="执行日" v-if="form.frequency === 'monthly'">
+        <el-form-item :label="t('recurring.executionDay')" v-if="form.frequency === 'monthly'">
           <el-input-number
             v-model="form.day_of_month"
             :min="1"
             :max="28"
             style="width: 160px"
           />
-          <span class="form-hint">每月几号执行（1-28，自动处理月末）</span>
+          <span class="form-hint">{{ t('recurring.dayOfMonthHint') }}</span>
         </el-form-item>
 
-        <el-divider content-position="left">时间范围</el-divider>
+        <el-divider content-position="left">{{ t('recurring.timeRange') }}</el-divider>
 
-        <el-form-item label="开始日期" required>
+        <el-form-item :label="t('recurring.startDate')" required>
           <el-date-picker
             v-model="form.start_date"
             type="date"
-            placeholder="选择开始日期"
+            :placeholder="t('recurring.selectStartDate')"
             value-format="YYYY-MM-DD"
             style="width: 100%"
           />
         </el-form-item>
 
-        <el-form-item label="结束日期">
+        <el-form-item :label="t('recurring.endDateLabel')">
           <el-date-picker
             v-model="form.end_date"
             type="date"
-            placeholder="留空则永久执行"
+            :placeholder="t('recurring.noEndDateHint')"
             value-format="YYYY-MM-DD"
             style="width: 100%"
             :disabled-date="(d: Date) => d < new Date(form.start_date)"
           />
         </el-form-item>
 
-        <el-form-item label="备注">
-          <el-input v-model="form.notes" type="textarea" :rows="2" placeholder="可选备注" />
+        <el-form-item :label="t('recurring.notes')">
+          <el-input v-model="form.notes" type="textarea" :rows="2" :placeholder="t('recurring.notesPlaceholder')" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveRule" :loading="saving">保存</el-button>
+        <el-button @click="showDialog = false">{{ t('recurring.cancel') }}</el-button>
+        <el-button type="primary" @click="saveRule" :loading="saving">{{ t('recurring.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -251,6 +251,9 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, MoreFilled } from '@element-plus/icons-vue'
 import FeatureGate from '@/components/FeatureGate.vue'
+import { useI18n } from '@/i18n'
+
+const { t } = useI18n()
 
 interface RecurringRule {
   id: string
@@ -322,8 +325,13 @@ const nextExecution = computed(() => {
 })
 
 const intervalHint = computed(() => {
-  const unit: Record<string, string> = { daily: '天', weekly: '周', monthly: '月', yearly: '年' }
-  return `每${form.value.interval_num}${unit[form.value.frequency] || ''}执行一次`
+  const unitMap: Record<string, string> = {
+    daily: t('recurring.unitDay'),
+    weekly: t('recurring.unitWeek'),
+    monthly: t('recurring.unitMonth'),
+    yearly: t('recurring.unitYear')
+  }
+  return t('recurring.intervalExec').replace('{n}', String(form.value.interval_num)).replace('{unit}', unitMap[form.value.frequency] || '')
 })
 
 function toMonthly(rule: RecurringRule): number {
@@ -342,10 +350,15 @@ function formatCurrency(val: number) {
 }
 
 function formatFrequency(rule: RecurringRule): string {
-  const unit: Record<string, string> = { daily: '天', weekly: '周', monthly: '月', yearly: '年' }
-  const u = unit[rule.frequency] || ''
-  if (rule.interval_num === 1) return `每${u}`
-  return `每${rule.interval_num}${u}`
+  const unitMap: Record<string, string> = {
+    daily: t('recurring.unitDay'),
+    weekly: t('recurring.unitWeek'),
+    monthly: t('recurring.unitMonth'),
+    yearly: t('recurring.unitYear')
+  }
+  const u = unitMap[rule.frequency] || ''
+  if (rule.interval_num === 1) return `${t('recurring.every')}${u}`
+  return `${t('recurring.every')}${rule.interval_num}${u}`
 }
 
 async function loadRules() {
@@ -361,7 +374,7 @@ async function loadRules() {
     rules.value = ruleList || []
     accounts.value = accList || []
   } catch (e: any) {
-    ElMessage.error('加载失败: ' + e.message)
+    ElMessage.error(t('recurring.loadFailed') + ': ' + e.message)
   } finally {
     loading.value = false
   }
@@ -388,7 +401,7 @@ function openCreateDialog() {
 
 async function saveRule() {
   if (!form.value.name || form.value.amount <= 0 || !form.value.account_id || !form.value.start_date) {
-    ElMessage.warning('请填写必要信息')
+    ElMessage.warning(t('recurring.fillRequired'))
     return
   }
   saving.value = true
@@ -415,15 +428,15 @@ async function saveRule() {
 
     if (editingRule.value) {
       await window.electronAPI.updateRecurringRule(editingRule.value.id, data)
-      ElMessage.success('规则已更新')
+      ElMessage.success(t('recurring.ruleUpdated'))
     } else {
       await window.electronAPI.createRecurringRule(data)
-      ElMessage.success('规则已创建')
+      ElMessage.success(t('recurring.ruleCreated'))
     }
     showDialog.value = false
     await loadRules()
   } catch (e: any) {
-    ElMessage.error('保存失败: ' + e.message)
+    ElMessage.error(t('recurring.saveFailed') + ': ' + e.message)
   } finally {
     saving.value = false
   }
@@ -436,7 +449,7 @@ function resetForm() {
 async function handleAction(cmd: string, rule: RecurringRule) {
   if (cmd === 'toggle') {
     await window.electronAPI.toggleRecurringRule(rule.id)
-    ElMessage.success(rule.status === 'active' ? '已暂停' : '已恢复')
+    ElMessage.success(rule.status === 'active' ? t('recurring.paused_') : t('recurring.resumed_'))
     await loadRules()
   } else if (cmd === 'edit') {
     editingRule.value = rule
@@ -456,9 +469,9 @@ async function handleAction(cmd: string, rule: RecurringRule) {
     }
     showDialog.value = true
   } else if (cmd === 'delete') {
-    await ElMessageBox.confirm(`确定删除规则「${rule.name}」？`, '确认删除', { type: 'warning' })
+    await ElMessageBox.confirm(`${t('recurring.confirmDeleteRule').replace('{name}', rule.name)}`, t('recurring.confirmDelete'), { type: 'warning' })
     await window.electronAPI.deleteRecurringRule(rule.id)
-    ElMessage.success('已删除')
+    ElMessage.success(t('recurring.deleted_'))
     await loadRules()
   }
 }

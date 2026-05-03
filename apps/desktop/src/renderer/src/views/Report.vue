@@ -2,28 +2,28 @@
   <div class="report-page">
     <div class="title-row">
       <div>
-        <h1 class="page-title">报表分析</h1>
-        <p class="page-desc">用数据说话，看清你的财务全貌</p>
+        <h1 class="page-title">{{ t('report.title') }}</h1>
+        <p class="page-desc">{{ t('report.desc') }}</p>
       </div>
       <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
-        导出 PDF 报表
+        {{ t('report.exportPDFReport') }}
       </el-button>
     </div>
 
     <!-- Tab 切换 -->
     <el-tabs v-model="activeTab" class="report-tabs">
       <!-- 财务健康评分 -->
-      <el-tab-pane label="健康评分" name="health">
+      <el-tab-pane :label="t('report.healthScore')" name="health">
         <HealthScore />
       </el-tab-pane>
 
       <!-- 月度报表 -->
-      <el-tab-pane label="月度报表" name="monthly">
+      <el-tab-pane :label="t('report.monthly')" name="monthly">
         <div class="toolbar">
           <el-date-picker
             v-model="monthlyPeriod"
             type="month"
-            placeholder="选择月份"
+            :placeholder="t('report.selectMonth')"
             format="YYYY年MM月"
             value-format="YYYY-MM"
             @change="loadMonthlyReport"
@@ -35,21 +35,21 @@
           <div class="overview-card">
             <div class="card-icon">💰</div>
             <div class="card-info">
-              <div class="card-label">总收入</div>
+              <div class="card-label">{{ t('report.totalIncome') }}</div>
               <div class="card-value income">{{ fmt(monthly.total_income) }}</div>
             </div>
           </div>
           <div class="overview-card">
             <div class="card-icon">💸</div>
             <div class="card-info">
-              <div class="card-label">总支出</div>
+              <div class="card-label">{{ t('report.totalExpense') }}</div>
               <div class="card-value expense">{{ fmt(monthly.total_expense) }}</div>
             </div>
           </div>
           <div class="overview-card">
             <div class="card-icon">📊</div>
             <div class="card-info">
-              <div class="card-label">净储蓄</div>
+              <div class="card-label">{{ t('report.netSavings') }}</div>
               <div class="card-value" :class="monthly.net_savings >= 0 ? 'income' : 'expense'">
                 {{ fmt(monthly.net_savings) }}
               </div>
@@ -58,7 +58,7 @@
           <div class="overview-card">
             <div class="card-icon">📈</div>
             <div class="card-info">
-              <div class="card-label">储蓄率</div>
+              <div class="card-label">{{ t('report.savingsRate') }}</div>
               <div class="card-value">{{ monthly.savingsRate?.toFixed(1) ?? 0 }}%</div>
             </div>
           </div>
@@ -69,25 +69,25 @@
           <el-row :gutter="20">
             <el-col :span="12" :xs="24">
               <div class="category-card">
-                <h3>收入分类</h3>
+                <h3>{{ t('report.incomeCategory') }}</h3>
                 <div class="category-list">
                   <div v-for="item in monthly.incomeByCategory" :key="item.category" class="category-item">
-                    <span class="cat-name">{{ item.category || '未分类' }}</span>
+                    <span class="cat-name">{{ item.category || t('report.uncategorized') }}</span>
                     <span class="cat-amount income">{{ fmt(item.amount) }}</span>
                   </div>
-                  <div v-if="!monthly.incomeByCategory?.length" class="empty-hint">暂无数据</div>
+                  <div v-if="!monthly.incomeByCategory?.length" class="empty-hint">{{ t('report.noData') }}</div>
                 </div>
               </div>
             </el-col>
             <el-col :span="12" :xs="24">
               <div class="category-card">
-                <h3>支出分类</h3>
+                <h3>{{ t('report.expenseCategory') }}</h3>
                 <div class="category-list">
                   <div v-for="item in monthly.expenseByCategory" :key="item.category" class="category-item">
-                    <span class="cat-name">{{ item.category || '未分类' }}</span>
+                    <span class="cat-name">{{ item.category || t('report.uncategorized') }}</span>
                     <span class="cat-amount expense">{{ fmt(item.amount) }}</span>
                   </div>
-                  <div v-if="!monthly.expenseByCategory?.length" class="empty-hint">暂无数据</div>
+                  <div v-if="!monthly.expenseByCategory?.length" class="empty-hint">{{ t('report.noData') }}</div>
                 </div>
               </div>
             </el-col>
@@ -96,17 +96,17 @@
 
         <div class="empty-state" v-if="!monthlyLoading && !monthly.total_income && !monthly.total_expense">
           <div class="empty-icon">📋</div>
-          <p>该月暂无交易记录</p>
+          <p>{{ t('report.noRecordsMonth') }}</p>
         </div>
       </el-tab-pane>
 
       <!-- 年度报表 -->
-      <el-tab-pane label="年度报表" name="yearly">
+      <el-tab-pane :label="t('report.yearly')" name="yearly">
         <div class="toolbar">
           <el-date-picker
             v-model="yearlyPeriod"
             type="year"
-            placeholder="选择年份"
+            :placeholder="t('report.selectYear')"
             format="YYYY年"
             value-format="YYYY"
             @change="loadYearlyReport"
@@ -117,21 +117,21 @@
           <div class="overview-card">
             <div class="card-icon">💰</div>
             <div class="card-info">
-              <div class="card-label">年总收入</div>
+              <div class="card-label">{{ t('report.yearlyTotalIncome') }}</div>
               <div class="card-value income">{{ fmt(yearly.total_income) }}</div>
             </div>
           </div>
           <div class="overview-card">
             <div class="card-icon">💸</div>
             <div class="card-info">
-              <div class="card-label">年总支出</div>
+              <div class="card-label">{{ t('report.yearlyTotalExpense') }}</div>
               <div class="card-value expense">{{ fmt(yearly.total_expense) }}</div>
             </div>
           </div>
           <div class="overview-card">
             <div class="card-icon">📊</div>
             <div class="card-info">
-              <div class="card-label">年净储蓄</div>
+              <div class="card-label">{{ t('report.yearlyNetSavings') }}</div>
               <div class="card-value" :class="yearly.net_savings >= 0 ? 'income' : 'expense'">
                 {{ fmt(yearly.net_savings) }}
               </div>
@@ -140,7 +140,7 @@
           <div class="overview-card">
             <div class="card-icon">📈</div>
             <div class="card-info">
-              <div class="card-label">年储蓄率</div>
+              <div class="card-label">{{ t('report.yearlySavingsRate') }}</div>
               <div class="card-value">{{ yearly.savingsRate?.toFixed(1) ?? 0 }}%</div>
             </div>
           </div>
@@ -149,22 +149,22 @@
         <!-- 同比变化 -->
         <div class="yoy-section" v-if="yearly.yoyChange">
           <div class="section-card">
-            <h3>同比变化（vs 上年）</h3>
+            <h3>{{ t('report.yoyChange') }}</h3>
             <div class="yoy-grid">
               <div class="yoy-item">
-                <span class="yoy-label">收入</span>
+                <span class="yoy-label">{{ t('report.income') }}</span>
                 <span class="yoy-value" :class="yearly.yoyChange.income >= 0 ? 'income' : 'expense'">
                   {{ yearly.yoyChange.income != null ? (yearly.yoyChange.income >= 0 ? '+' : '') + yearly.yoyChange.income.toFixed(1) + '%' : '-' }}
                 </span>
               </div>
               <div class="yoy-item">
-                <span class="yoy-label">支出</span>
+                <span class="yoy-label">{{ t('report.expense') }}</span>
                 <span class="yoy-value" :class="yearly.yoyChange.expense <= 0 ? 'income' : 'expense'">
                   {{ yearly.yoyChange.expense != null ? (yearly.yoyChange.expense >= 0 ? '+' : '') + yearly.yoyChange.expense.toFixed(1) + '%' : '-' }}
                 </span>
               </div>
               <div class="yoy-item">
-                <span class="yoy-label">储蓄</span>
+                <span class="yoy-label">{{ t('report.savings') }}</span>
                 <span class="yoy-value" :class="yearly.yoyChange.savings >= 0 ? 'income' : 'expense'">
                   {{ yearly.yoyChange.savings != null ? (yearly.yoyChange.savings >= 0 ? '+' : '') + yearly.yoyChange.savings.toFixed(1) + '%' : '-' }}
                 </span>
@@ -175,7 +175,7 @@
 
         <!-- 月度趋势 -->
         <div class="section-card" v-if="yearly.monthlyBreakdown?.length">
-          <h3>月度明细</h3>
+          <h3>{{ t('report.monthlyBreakdown') }}</h3>
           <div class="monthly-breakdown">
             <div v-for="m in yearly.monthlyBreakdown" :key="m.month" class="breakdown-row">
               <span class="month-label">{{ m.month }}月</span>
@@ -191,24 +191,24 @@
 
         <div class="empty-state" v-if="!yearlyLoading && !yearly.total_income && !yearly.total_expense">
           <div class="empty-icon">📋</div>
-          <p>该年暂无交易记录</p>
+          <p>{{ t('report.noRecordsYear') }}</p>
         </div>
       </el-tab-pane>
 
       <!-- 收支趋势 -->
-      <el-tab-pane label="收支趋势" name="trend">
+      <el-tab-pane :label="t('report.trend')" name="trend">
         <div class="toolbar">
           <el-select v-model="trendMonths" style="width: 160px" @change="loadTrend">
-            <el-option :value="6" label="近 6 个月" />
-            <el-option :value="12" label="近 12 个月" />
-            <el-option :value="24" label="近 24 个月" />
+            <el-option :value="6" :label="t('report.last6Months')" />
+            <el-option :value="12" :label="t('report.last12Months')" />
+            <el-option :value="24" :label="t('report.last24Months')" />
           </el-select>
         </div>
 
         <div class="section-card" v-loading="trendLoading">
-          <h3>收支月度趋势</h3>
+          <h3>{{ t('report.trendTitle') }}</h3>
           <div v-if="trend.length === 0 && !trendLoading" class="empty-state" style="padding: 20px">
-            <p>暂无趋势数据</p>
+            <p>{{ t('report.noTrendData') }}</p>
           </div>
           <div v-else class="trend-list">
             <div v-for="t in trend" :key="t.month" class="trend-row">
@@ -234,19 +234,19 @@
         <el-row :gutter="16" style="margin-top: 16px" v-if="trend.length">
           <el-col :span="8" :xs="24">
             <div class="stat-card">
-              <div class="stat-label">月均收入</div>
+              <div class="stat-label">{{ t('report.avgMonthlyIncome') }}</div>
               <div class="stat-value income">{{ fmt(avgIncome) }}</div>
             </div>
           </el-col>
           <el-col :span="8" :xs="24">
             <div class="stat-card">
-              <div class="stat-label">月均支出</div>
+              <div class="stat-label">{{ t('report.avgMonthlyExpense') }}</div>
               <div class="stat-value expense">{{ fmt(avgExpense) }}</div>
             </div>
           </el-col>
           <el-col :span="8" :xs="24">
             <div class="stat-card">
-              <div class="stat-label">月均储蓄率</div>
+              <div class="stat-label">{{ t('report.avgMonthlySavingsRate') }}</div>
               <div class="stat-value">{{ avgSavingsRate.toFixed(1) }}%</div>
             </div>
           </el-col>
@@ -254,24 +254,24 @@
       </el-tab-pane>
 
       <!-- 目标进度 -->
-      <el-tab-pane label="目标进度" name="goals">
+      <el-tab-pane :label="t('report.goalProgress')" name="goals">
         <div v-loading="goalsLoading">
           <div v-if="goals.length === 0 && !goalsLoading" class="empty-state">
             <div class="empty-icon">🎯</div>
-            <p>暂无进行中的目标</p>
+            <p>{{ t('report.noGoals') }}</p>
           </div>
 
           <!-- 月均储蓄提示 -->
           <div class="section-card" v-if="avgMonthlySavings > 0" style="margin-bottom: 16px">
             <div class="savings-hint">
-              基于近 6 个月数据，月均储蓄 <strong>{{ fmt(avgMonthlySavings) }}</strong>
+              {{ t('report.savingsHintPrefix') }} <strong>{{ fmt(avgMonthlySavings) }}</strong>
             </div>
           </div>
 
           <!-- 按阶段分组 -->
           <div v-for="(items, stage) in goalsByStage" :key="stage" class="stage-group">
             <h3 class="stage-title">
-              {{ stage === 'guarantee' ? '🟢 财务保障' : stage === 'security' ? '🟡 财务安全' : '🔴 财务自由' }}
+              {{ stage === 'guarantee' ? t('report.guarantee') : stage === 'security' ? t('report.security') : t('report.freedom') }}
             </h3>
             <div v-for="g in items" :key="g.id" class="goal-card">
               <div class="goal-header">
@@ -286,7 +286,7 @@
               <div class="goal-meta">
                 <span>{{ fmt(g.current_amount) }} / {{ fmt(g.target_amount) }}</span>
                 <span v-if="g.estimatedMonths">
-                  预计还需 <strong>{{ g.estimatedMonths }}</strong> 个月（{{ g.estimatedDate }}）
+                  {{ t('report.estimatedMonths') }} <strong>{{ g.estimatedMonths }}</strong> {{ t('report.monthsUnit') }}（{{ g.estimatedDate }}）
                 </span>
               </div>
             </div>
@@ -303,6 +303,9 @@ import { ElMessage } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
 import HealthScore from './HealthScore.vue'
 import { exportToPDF } from '../utils/export'
+import { useI18n } from '@/i18n'
+
+const { t } = useI18n()
 
 const activeTab = ref('health')
 const pdfLoading = ref(false)
@@ -310,9 +313,9 @@ const pdfLoading = ref(false)
 async function handleExportPDF() {
   pdfLoading.value = true
   try {
-    await exportToPDF('财富自由报表')
+    await exportToPDF(t('report.title'))
   } catch (e: any) {
-    ElMessage.error('PDF 导出失败: ' + e.message)
+    ElMessage.error(t('report.exportPDFFailed') + ': ' + e.message)
   } finally {
     pdfLoading.value = false
   }
@@ -332,7 +335,7 @@ async function loadMonthlyReport() {
     const [year, month] = monthlyPeriod.value.split('-').map(Number)
     monthly.value = await window.electronAPI.report.monthlySummary({ userId: user.id, year, month })
   } catch (e: any) {
-    ElMessage.error('加载月度报表失败: ' + e.message)
+    ElMessage.error(t('report.loadMonthlyFailed') + ': ' + e.message)
   } finally {
     monthlyLoading.value = false
   }
@@ -354,7 +357,7 @@ async function loadYearlyReport() {
       year: parseInt(yearlyPeriod.value)
     })
   } catch (e: any) {
-    ElMessage.error('加载年度报表失败: ' + e.message)
+    ElMessage.error(t('report.loadYearlyFailed') + ': ' + e.message)
   } finally {
     yearlyLoading.value = false
   }
@@ -390,7 +393,7 @@ async function loadTrend() {
     })
     trend.value = res.trend || []
   } catch (e: any) {
-    ElMessage.error('加载趋势失败: ' + e.message)
+    ElMessage.error(t('report.loadTrendFailed') + ': ' + e.message)
   } finally {
     trendLoading.value = false
   }
@@ -421,7 +424,7 @@ async function loadGoals() {
     goals.value = res.goals || []
     avgMonthlySavings.value = res.avgMonthlySavings || 0
   } catch (e: any) {
-    ElMessage.error('加载目标进度失败: ' + e.message)
+    ElMessage.error(t('report.loadGoalsFailed') + ': ' + e.message)
   } finally {
     goalsLoading.value = false
   }

@@ -1,9 +1,9 @@
 <template>
-  <FeatureGate feature="hasHealthScore" feature-name="健康评分" description="五维财务健康评分，发现财务盲点" required-tier="basic">
+  <FeatureGate feature="hasHealthScore" :feature-name="t('healthScore.featureName')" :description="t('healthScore.featureDesc')" required-tier="basic">
   <div class="health-score-page" v-loading="loading">
     <div v-if="!loading && !score" class="empty-state">
       <div class="empty-icon">🏥</div>
-      <p>暂无财务数据，无法计算健康评分</p>
+      <p>{{ t('healthScore.noData') }}</p>
     </div>
 
     <template v-if="score">
@@ -25,7 +25,7 @@
           </svg>
           <div class="score-center">
             <div class="score-number" :style="{ color: scoreColor }">{{ score.totalScore }}</div>
-            <div class="score-label">综合评分</div>
+            <div class="score-label">{{ t('healthScore.overallScore') }}</div>
           </div>
         </div>
         <div class="score-desc">
@@ -55,7 +55,7 @@
 
       <!-- 建议区 -->
       <div class="advice-section" v-if="advices.length">
-        <h3>💡 优化建议</h3>
+        <h3>{{ t('healthScore.adviceTitle') }}</h3>
         <div class="advice-list">
           <div v-for="(a, i) in advices" :key="i" class="advice-item">
             <span class="advice-icon">{{ a.icon }}</span>
@@ -71,6 +71,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import FeatureGate from '@/components/FeatureGate.vue'
+import { useI18n } from '@/i18n'
+
+const { t } = useI18n()
 
 interface Dimension {
   score: number
@@ -96,19 +99,19 @@ const scoreColor = computed(() => {
 
 const scoreLevel = computed(() => {
   const s = score.value?.totalScore ?? 0
-  if (s >= 90) return '优秀'
-  if (s >= 80) return '良好'
-  if (s >= 60) return '一般'
-  if (s >= 40) return '需改善'
-  return '需警惕'
+  if (s >= 90) return t('healthScore.excellent')
+  if (s >= 80) return t('healthScore.good')
+  if (s >= 60) return t('healthScore.fair')
+  if (s >= 40) return t('healthScore.needsImprovement')
+  return t('healthScore.needsAttention')
 })
 
 const scoreTip = computed(() => {
   const s = score.value?.totalScore ?? 0
-  if (s >= 80) return '你的财务状况很健康，继续保持！'
-  if (s >= 60) return '整体不错，还有提升空间，看看下方建议。'
-  if (s >= 40) return '需要关注几个维度，建议优先改善最弱项。'
-  return '财务状况需要认真改善，建议从储蓄和债务入手。'
+  if (s >= 80) return t('healthScore.tipExcellent')
+  if (s >= 60) return t('healthScore.tipGood')
+  if (s >= 40) return t('healthScore.tipFair')
+  return t('healthScore.tipBad')
 })
 
 const advices = computed(() => {
@@ -117,23 +120,23 @@ const advices = computed(() => {
   const list: { icon: string; text: string }[] = []
 
   if (dims.savings?.score < 60) {
-    list.push({ icon: '🐷', text: '储蓄率偏低，建议将储蓄率提升至 30% 以上，先存后花。' })
+    list.push({ icon: '🐷', text: t('healthScore.adviceSavings') })
   }
   if (dims.investment?.score < 50) {
-    list.push({ icon: '📈', text: '投资占比不足，建议适当增加投资资产比例（30%-60%为佳）。' })
+    list.push({ icon: '📈', text: t('healthScore.adviceInvestment') })
   }
   if (dims.debt?.score < 60) {
-    list.push({ icon: '💳', text: '债务负担较重，优先偿还高利率债务，降低负债率。' })
+    list.push({ icon: '💳', text: t('healthScore.adviceDebt') })
   }
   if (dims.stability?.score < 50) {
-    list.push({ icon: '🔧', text: '收入来源单一，建议开拓副业或被动收入渠道。' })
+    list.push({ icon: '🔧', text: t('healthScore.adviceStability') })
   }
   if (dims.growth?.score < 50) {
-    list.push({ icon: '🌱', text: '财务成长放缓，回顾支出结构，寻找增加净储蓄的方法。' })
+    list.push({ icon: '🌱', text: t('healthScore.adviceGrowth') })
   }
 
   if (list.length === 0) {
-    list.push({ icon: '🎉', text: '各方面表现优秀！继续保持，向财务自由迈进。' })
+    list.push({ icon: '🎉', text: t('healthScore.adviceAllGood') })
   }
   return list
 })
@@ -146,11 +149,11 @@ function dimLevel(s: number) {
 }
 
 function formatDimValue(key: string, dim: Dimension) {
-  if (key === 'savings') return `储蓄率 ${dim.value}%`
-  if (key === 'investment') return `投资占比 ${dim.value}%`
-  if (key === 'debt') return `负债率 ${dim.value}%`
-  if (key === 'stability') return `${dim.value} 个收入源`
-  if (key === 'growth') return `成长率 ${dim.value}%`
+  if (key === 'savings') return t('healthScore.savingsRate').replace('{value}', String(dim.value))
+  if (key === 'investment') return t('healthScore.investmentRatio').replace('{value}', String(dim.value))
+  if (key === 'debt') return t('healthScore.debtRatio').replace('{value}', String(dim.value))
+  if (key === 'stability') return t('healthScore.incomeSources').replace('{value}', String(dim.value))
+  if (key === 'growth') return t('healthScore.growthRate').replace('{value}', String(dim.value))
   return `${dim.value}`
 }
 
@@ -162,7 +165,7 @@ async function loadScore() {
     if (!user) return
     score.value = await window.electronAPI.report.healthScore(user.id)
   } catch (e) {
-    console.error('加载健康评分失败', e)
+    console.error(t('healthScore.loadFailed'), e)
   } finally {
     loading.value = false
   }

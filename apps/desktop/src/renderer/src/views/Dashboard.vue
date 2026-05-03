@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard">
     <div class="page-header">
-      <h1 class="page-title">财务看板 <span v-if="currency.loaded.value" class="base-currency-badge">{{ currency.baseCurrency.value }}</span></h1>
+      <h1 class="page-title">{{ t('dashboard.title') }} <span v-if="currency.loaded.value" class="base-currency-badge">{{ currency.baseCurrency.value }}</span></h1>
       <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
-        导出 PDF
+        {{ t('dashboard.exportPDF') }}
       </el-button>
     </div>
 
@@ -12,7 +12,7 @@
       <div class="metric-card gradient-primary">
         <div class="metric-icon">💎</div>
         <div class="metric-info">
-          <div class="metric-label">净资产</div>
+          <div class="metric-label">{{ t('dashboard.netWorth') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.netWorth) }}</div>
         </div>
       </div>
@@ -20,7 +20,7 @@
       <div class="metric-card gradient-success">
         <div class="metric-icon">📈</div>
         <div class="metric-info">
-          <div class="metric-label">本月收入</div>
+          <div class="metric-label">{{ t('dashboard.monthlyIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.monthlyIncome) }}</div>
         </div>
       </div>
@@ -28,7 +28,7 @@
       <div class="metric-card gradient-warning">
         <div class="metric-icon">📉</div>
         <div class="metric-info">
-          <div class="metric-label">本月支出</div>
+          <div class="metric-label">{{ t('dashboard.monthlyExpense') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.monthlyExpense) }}</div>
         </div>
       </div>
@@ -36,7 +36,7 @@
       <div class="metric-card" :class="metrics.monthlyBalance >= 0 ? 'gradient-success' : 'gradient-danger'">
         <div class="metric-icon">💰</div>
         <div class="metric-info">
-          <div class="metric-label">本月结余</div>
+          <div class="metric-label">{{ t('dashboard.monthlyBalance') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.monthlyBalance) }}</div>
         </div>
       </div>
@@ -46,7 +46,7 @@
     <div class="daily-insight">
       <div class="insight-header">
         <el-icon><Sunny /></el-icon>
-        <span class="insight-title">今日财富洞察</span>
+        <span class="insight-title">{{ t('dashboard.dailyInsight') }}</span>
       </div>
       <div class="insight-content">
         <p class="insight-text">{{ dailyInsight.text }}</p>
@@ -55,7 +55,7 @@
     </div>
 
     <!-- 财务比率 -->
-    <div class="section-title">关键比率</div>
+    <div class="section-title">{{ t('dashboard.keyRatios') }}</div>
     <div class="ratio-cards">
       <div class="ratio-card">
         <el-progress 
@@ -65,10 +65,10 @@
         >
           <template #default>
             <span class="progress-value">{{ ratios.savingsRate }}%</span>
-            <span class="progress-label">储蓄率</span>
+            <span class="progress-label">{{ t('dashboard.savingsRate') }}</span>
           </template>
         </el-progress>
-        <p class="ratio-tip">目标: >30%</p>
+        <p class="ratio-tip">{{ t('dashboard.targetGt30') }}</p>
       </div>
 
       <div class="ratio-card">
@@ -79,10 +79,10 @@
         >
           <template #default>
             <span class="progress-value">{{ ratios.passiveIncomeRatio }}%</span>
-            <span class="progress-label">被动收入覆盖</span>
+            <span class="progress-label">{{ t('dashboard.passiveCoverage') }}</span>
           </template>
         </el-progress>
-        <p class="ratio-tip">目标: >100%</p>
+        <p class="ratio-tip">{{ t('dashboard.targetGt30') }}</p>
       </div>
 
       <div class="ratio-card">
@@ -93,10 +93,10 @@
         >
           <template #default>
             <span class="progress-value">{{ ratios.debtRatio }}%</span>
-            <span class="progress-label">负债率</span>
+            <span class="progress-label">{{ t('dashboard.debtRatio') }}</span>
           </template>
         </el-progress>
-        <p class="ratio-tip">目标: <30%</p>
+        <p class="ratio-tip">{{ t('dashboard.targetLt30') }}</p>
       </div>
 
       <div class="ratio-card">
@@ -107,17 +107,17 @@
         >
           <template #default>
             <span class="progress-value">{{ ratios.freedomProgress }}%</span>
-            <span class="progress-label">自由进度</span>
+            <span class="progress-label">{{ t('dashboard.freedomProgress') }}</span>
           </template>
         </el-progress>
-        <p class="ratio-tip">财务安全进度</p>
+        <p class="ratio-tip">{{ t('dashboard.freedomProgressTip') }}</p>
       </div>
     </div>
 
     <!-- 净资产趋势 -->
     <div class="finance-card chart-card full-width">
       <div class="card-header">
-        <span class="card-title">净资产趋势（近12个月）</span>
+        <span class="card-title">{{ t('dashboard.netWorthTrend') }}</span>
       </div>
       <div ref="netWorthChartRef" class="chart-container chart-tall"></div>
     </div>
@@ -126,14 +126,14 @@
     <div class="charts-row">
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">资产结构</span>
+          <span class="card-title">{{ t('dashboard.assetStructure') }}</span>
         </div>
         <div ref="assetChartRef" class="chart-container"></div>
       </div>
 
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">月度收支对比</span>
+          <span class="card-title">{{ t('dashboard.monthlyComparison') }}</span>
         </div>
         <div ref="cashFlowChartRef" class="chart-container"></div>
       </div>
@@ -142,74 +142,74 @@
     <!-- 支出分类 Top5 -->
     <div class="finance-card chart-card full-width">
       <div class="card-header">
-        <span class="card-title">本月支出分类 Top 5</span>
+        <span class="card-title">{{ t('dashboard.expenseTop5') }}</span>
       </div>
       <div ref="expenseTop5Ref" class="chart-container"></div>
     </div>
 
     <!-- 快捷操作 -->
-    <div class="section-title">快捷操作</div>
+    <div class="section-title">{{ t('dashboard.quickActions') }}</div>
     <div class="quick-actions">
       <el-button type="primary" @click="showAddTransaction = true">
         <el-icon><Plus /></el-icon>
-        记一笔
+        {{ t('dashboard.addTransaction') }}
       </el-button>
       <el-button @click="$router.push('/goals')">
         <el-icon><Flag /></el-icon>
-        查看目标
+        {{ t('dashboard.viewGoals') }}
       </el-button>
       <el-button @click="$router.push('/dreams')">
         <el-icon><PictureFilled /></el-icon>
-        梦想图册
+        {{ t('dashboard.dreamBoard') }}
       </el-button>
     </div>
 
     <!-- 记账弹窗 -->
-    <el-dialog v-model="showAddTransaction" title="记一笔" width="400px">
+    <el-dialog v-model="showAddTransaction" :title="t('dashboard.addTransaction')" width="400px">
       <el-form :model="transactionForm" label-width="80px">
-        <el-form-item label="类型">
+        <el-form-item :label="t('dashboard.type')">
           <el-radio-group v-model="transactionForm.type">
-            <el-radio value="expense">支出</el-radio>
-            <el-radio value="income">收入</el-radio>
+            <el-radio value="expense">{{ t('dashboard.expense') }}</el-radio>
+            <el-radio value="income">{{ t('dashboard.income') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="金额">
+        <el-form-item :label="t('dashboard.amount')">
           <el-input-number v-model="transactionForm.amount" :min="0" :precision="2" />
         </el-form-item>
-        <el-form-item label="分类">
-          <el-select v-model="transactionForm.category" placeholder="选择分类">
+        <el-form-item :label="t('dashboard.category')">
+          <el-select v-model="transactionForm.category" :placeholder="t('transactions.selectCategory')">
             <template v-if="transactionForm.type === 'expense'">
-              <el-option label="餐饮" value="food" />
-              <el-option label="交通" value="transport" />
-              <el-option label="购物" value="shopping" />
-              <el-option label="娱乐" value="entertainment" />
-              <el-option label="其他" value="other" />
+              <el-option :label="t('transactions.categories.food')" value="food" />
+              <el-option :label="t('transactions.categories.transport')" value="transport" />
+              <el-option :label="t('transactions.categories.shopping')" value="shopping" />
+              <el-option :label="t('transactions.categories.entertainment')" value="entertainment" />
+              <el-option :label="t('transactions.categories.other')" value="other" />
             </template>
             <template v-else>
-              <el-option-group label="主动收入">
-                <el-option label="工资" value="salary" />
-                <el-option label="兼职" value="parttime" />
-                <el-option label="其他" value="other" />
+              <el-option-group :label="t('transactions.activeIncome')">
+                <el-option :label="t('transactions.categories.salary')" value="salary" />
+                <el-option :label="t('transactions.categories.parttime')" value="parttime" />
+                <el-option :label="t('transactions.categories.other')" value="other" />
               </el-option-group>
-              <el-option-group label="被动收入">
-                <el-option label="投资收益" value="investment" />
-                <el-option label="分红" value="dividend" />
-                <el-option label="利息" value="interest" />
-                <el-option label="产品收入" value="product" />
-                <el-option label="租金" value="rental" />
-                <el-option label="版税" value="royalty" />
-                <el-option label="其他被动收入" value="passive" />
+              <el-option-group :label="t('transactions.passiveIncome')">
+                <el-option :label="t('transactions.categories.investment')" value="investment" />
+                <el-option :label="t('transactions.categories.dividend')" value="dividend" />
+                <el-option :label="t('transactions.categories.interest')" value="interest" />
+                <el-option :label="t('transactions.categories.product')" value="product" />
+                <el-option :label="t('transactions.categories.rental')" value="rental" />
+                <el-option :label="t('transactions.categories.royalty')" value="royalty" />
+                <el-option :label="t('transactions.categories.passiveOther')" value="passive" />
               </el-option-group>
             </template>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="transactionForm.note" placeholder="可选" />
+        <el-form-item :label="t('dashboard.note')">
+          <el-input v-model="transactionForm.note" :placeholder="t('dashboard.optional')" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddTransaction = false">取消</el-button>
-        <el-button type="primary" @click="handleAddTransaction">保存</el-button>
+        <el-button @click="showAddTransaction = false">{{ t('dashboard.cancel') }}</el-button>
+        <el-button type="primary" @click="handleAddTransaction">{{ t('dashboard.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -227,15 +227,18 @@ import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { exportToPDF } from '../utils/export'
 import { useCurrency } from '@/composables/useCurrency'
+import { useI18n } from '@/i18n'
+
+const { t } = useI18n()
 
 const pdfLoading = ref(false)
 
 async function handleExportPDF() {
   pdfLoading.value = true
   try {
-    await exportToPDF('财务看板')
+    await exportToPDF(t('dashboard.title'))
   } catch (e: any) {
-    ElMessage.error('PDF 导出失败: ' + e.message)
+    ElMessage.error(t('dashboard.exportPDF') + ': ' + e.message)
   } finally {
     pdfLoading.value = false
   }
@@ -365,7 +368,7 @@ const initCharts = () => {
     }
 
     chart.setOption({
-      tooltip: { trigger: 'axis', formatter: (p: any) => `${p[0].axisValue}<br/>净资产: ¥${p[0].value.toLocaleString()}` },
+      tooltip: { trigger: 'axis', formatter: (p: any) => `${p[0].axisValue}<br/>${t('dashboard.netWorth')}: ¥${p[0].value.toLocaleString()}` },
       grid: { left: 80, right: 20, top: 20, bottom: 30 },
       xAxis: { type: 'category', data: months, axisLabel: { fontSize: 11 } },
       yAxis: { type: 'value', axisLabel: { formatter: (v: number) => `¥${(v / 1000).toFixed(0)}k` } },
@@ -383,9 +386,9 @@ const initCharts = () => {
     assetChart = echarts.init(assetChartRef.value)
     const chart = assetChart
     const assetData = [
-      { value: accountStore.byType('cash').reduce((s, a) => s + a.balance, 0), name: '现金' },
-      { value: accountStore.byType('investment').reduce((s, a) => s + a.balance, 0), name: '投资' },
-      { value: accountStore.byType('fixed').reduce((s, a) => s + a.balance, 0), name: '固定资产' }
+      { value: accountStore.byType('cash').reduce((s, a) => s + a.balance, 0), name: t('accounts.cash') },
+      { value: accountStore.byType('investment').reduce((s, a) => s + a.balance, 0), name: t('accounts.investment') },
+      { value: accountStore.byType('fixed').reduce((s, a) => s + a.balance, 0), name: 'Fixed' }
     ]
     chart.setOption({
       tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
@@ -420,13 +423,13 @@ const initCharts = () => {
       tooltip: { trigger: 'axis', formatter: (params: any) => {
         return params.map((p: any) => `${p.seriesName}: ¥${p.value.toLocaleString()}`).join('<br/>')
       }},
-      legend: { data: ['收入', '支出'] },
+      legend: { data: [t('dashboard.income'), t('dashboard.expense')] },
       grid: { left: 60, right: 20, top: 40, bottom: 30 },
       xAxis: { type: 'category', data: months },
       yAxis: { type: 'value', axisLabel: { formatter: (v: number) => `¥${(v / 1000).toFixed(0)}k` } },
       series: [
-        { name: '收入', type: 'bar', data: incomeData, itemStyle: { color: '#67c23a', borderRadius: [4, 4, 0, 0] } },
-        { name: '支出', type: 'bar', data: expenseData, itemStyle: { color: '#e6a23c', borderRadius: [4, 4, 0, 0] } }
+        { name: t('dashboard.income'), type: 'bar', data: incomeData, itemStyle: { color: '#67c23a', borderRadius: [4, 4, 0, 0] } },
+        { name: t('dashboard.expense'), type: 'bar', data: expenseData, itemStyle: { color: '#e6a23c', borderRadius: [4, 4, 0, 0] } }
       ]
     })
   }
@@ -458,7 +461,7 @@ const initCharts = () => {
         itemStyle: { borderRadius: 6 },
         label: { show: true, formatter: '{b}: ¥{c}' },
         emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.2)' } },
-        data: top5.length > 0 ? top5 : [{ name: '暂无数据', value: 1 }]
+        data: top5.length > 0 ? top5 : [{ name: t('dashboard.noData'), value: 1 }]
       }]
     })
   }
