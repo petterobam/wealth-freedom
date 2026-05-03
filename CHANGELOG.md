@@ -7,6 +7,28 @@
 
 ---
 
+## [2.0.0] - 2026-05-04
+
+### 新增
+- 🛡️ **全局错误处理体系**：三阶段统一错误管理
+  - ErrorBoundary 组件包裹 router-view，捕获渲染层未处理异常
+  - setupGlobalHandlers 注册 unhandledrejection + window.onerror
+  - safeCall 工具函数统一替代 ~40+ 处重复 try/catch
+- 🔄 **safeCall 全面迁移**：14 个视图完成迁移
+  - Transactions、Goals、Budget、Investment、Recurring、License、PdfReport、BigScreen、AIAdvice、IncomeOverview、IncomeStrategy、IncomeGoals、HealthScore、Report
+  - 5 个视图保留有意义的 try/catch（Settings、Accounts、Dashboard 等）
+- 🔧 **TypeScript 类型大修复**
+  - global.d.ts 同步 preload（新增 backup/license/currency 等 40+ API 类型）
+  - UserSettings 类型修复（Settings/Welcome/Transactions）
+  - incomeHandlers 运行时 bug 修复
+  - @types/better-sqlite3 + CSS 模块声明
+- 🐛 **IncomeGoals.vue submitGoal 函数修复**
+
+### 变更
+- 🔧 版本号更新至 2.0.0
+
+---
+
 ## [1.9.0] - 2026-05-03
 
 ### 新增
