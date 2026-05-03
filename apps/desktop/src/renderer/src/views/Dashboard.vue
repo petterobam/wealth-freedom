@@ -227,21 +227,21 @@ import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { exportToPDF } from '../utils/export'
 import { useCurrency } from '@/composables/useCurrency'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useI18n } from '@/i18n'
 
 const { t } = useI18n()
+const { safeCall } = useErrorHandler()
 
 const pdfLoading = ref(false)
 
 async function handleExportPDF() {
   pdfLoading.value = true
-  try {
-    await exportToPDF(t('dashboard.title'))
-  } catch (e: any) {
-    ElMessage.error(t('dashboard.exportPDF') + ': ' + e.message)
-  } finally {
-    pdfLoading.value = false
-  }
+  await safeCall(
+    () => exportToPDF(t('dashboard.title')),
+    { successMsg: t('dashboard.exportPDF') + ' ✅' }
+  )
+  pdfLoading.value = false
 }
 
 const accountStore = useAccountStore()
@@ -488,12 +488,14 @@ const handleAddTransaction = async () => {
 }
 
 onMounted(async () => {
-  await Promise.all([
-    accountStore.fetchAccounts(),
-    debtStore.fetchDebts(),
-    transactionStore.fetchTransactions(),
-    goalStore.fetchGoals()
-  ])
+  await safeCall(() =>
+    Promise.all([
+      accountStore.fetchAccounts(),
+      debtStore.fetchDebts(),
+      transactionStore.fetchTransactions(),
+      goalStore.fetchGoals()
+    ])
+  )
   // v1.9.0 多币种初始化
   try {
     const userStore = await import('@/stores/user').then(m => m.useUserStore())

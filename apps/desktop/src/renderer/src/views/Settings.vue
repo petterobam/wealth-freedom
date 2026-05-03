@@ -491,8 +491,10 @@ import { useDebtStore } from '@/stores/debts'
 import { useTransactionStore } from '@/stores/transactions'
 import { useGoalStore } from '@/stores/goals'
 import { useI18n } from '@/i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 const { t } = useI18n()
+const { safeCall } = useErrorHandler()
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -552,7 +554,7 @@ const handleBasicChange = () => {
 
 // 加载基础数据
 const loadBasicData = async () => {
-  try {
+  await safeCall(async () => {
     await userStore.fetchUser()
     await accountStore.fetchAccounts()
     await debtStore.fetchDebts()
@@ -578,16 +580,14 @@ const loadBasicData = async () => {
 
     // 从负债加载
     basicForm.value.totalDebt = debtStore.totalDebt
-  } catch (error) {
-    console.error('加载基础数据失败:', error)
-  }
+  })
 }
 
 // 保存基础数据
 const saveBasicData = async () => {
   saving.value = true
 
-  try {
+  await safeCall(async () => {
     // 1. 更新用户设置
     if (userStore.user) {
       await userStore.updateUser(userStore.user.id, {
@@ -649,14 +649,8 @@ const saveBasicData = async () => {
         currentAmount: netWorth.value
       })
     }
-
-    ElMessage.success('基础数据已保存，目标已自动更新！')
-  } catch (error) {
-    console.error('保存失败:', error)
-    ElMessage.error('保存失败，请重试')
-  } finally {
-    saving.value = false
-  }
+  }, { successMsg: '基础数据已保存，目标已自动更新！' })
+  saving.value = false
 }
 
 // 数据统计

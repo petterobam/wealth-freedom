@@ -174,7 +174,9 @@
 
       <!-- 主内容区 -->
       <el-main class="app-main" :style="{ paddingLeft: mainPadding }">
-        <router-view />
+        <ErrorBoundary :retryable="true" :show-detail="true">
+          <router-view />
+        </ErrorBoundary>
       </el-main>
     </el-container>
 
@@ -206,9 +208,11 @@ import {
   Monitor
 } from '@element-plus/icons-vue'
 import Welcome from '@/views/Welcome.vue'
+import ErrorBoundary from '@/components/ErrorBoundary.vue'
 import { useUserStore } from '@/stores/user'
 import { useTheme } from '@/composables/useTheme'
 import { useUpdate } from '@/composables/useUpdate'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useI18n } from '@/i18n'
 import {
   getCurrentBreakpoint,
@@ -221,6 +225,7 @@ const route = useRoute()
 const userStore = useUserStore()
 const { isDark, toggleTheme } = useTheme()
 const { updateInfo, checkUpdate, openDownload } = useUpdate()
+const { setupGlobalHandlers } = useErrorHandler()
 const { t, locale, setLocale } = useI18n()
 const hasUpdate = computed(() => updateInfo.value?.hasUpdate ?? false)
 const openUpdateDownload = () => {
@@ -286,6 +291,7 @@ const checkInit = async () => {
 }
 
 onMounted(() => {
+  setupGlobalHandlers()
   checkInit()
   updateResponsiveLayout()
 
