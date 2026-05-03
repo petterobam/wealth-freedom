@@ -1,38 +1,38 @@
 <template>
   <div class="retirement-planner">
-    <h1 class="page-title">退休规划工具</h1>
-    
+    <h1 class="page-title">{{ t('retirementPlanner.title') }}</h1>
+
     <!-- 输入参数 -->
     <div class="finance-card input-card">
       <div class="card-header">
-        <span class="card-title">规划参数</span>
-        <el-tag type="info">看见未来的财务自由</el-tag>
+        <span class="card-title">{{ t('retirementPlanner.planParameters') }}</span>
+        <el-tag type="info">{{ t('retirementPlanner.tagline') }}</el-tag>
       </div>
-      
+
       <el-form :model="plannerForm" label-width="140px" class="planner-form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="当前年龄">
+            <el-form-item :label="t('retirementPlanner.currentAge')">
               <el-input-number
                 v-model="plannerForm.currentAge"
                 :min="18"
                 :max="70"
                 controls-position="right"
               />
-              <span class="unit">岁</span>
+              <span class="unit">{{ t('retirementPlanner.unitYears') }}</span>
               <HelpTooltip :content="retirementTutorial.parameters.currentAge" />
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="退休年龄">
+            <el-form-item :label="t('retirementPlanner.retirementAge')">
               <el-input-number
                 v-model="plannerForm.retirementAge"
                 :min="50"
                 :max="75"
                 controls-position="right"
               />
-              <span class="unit">岁</span>
+              <span class="unit">{{ t('retirementPlanner.unitYears') }}</span>
               <HelpTooltip :content="retirementTutorial.parameters.retirementAge" />
             </el-form-item>
           </el-col>
@@ -40,7 +40,7 @@
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="当前储蓄">
+            <el-form-item :label="t('retirementPlanner.currentSavings')">
               <el-input-number
                 v-model="plannerForm.currentSavings"
                 :min="0"
@@ -48,13 +48,13 @@
                 :precision="0"
                 controls-position="right"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('retirementPlanner.unitYuan') }}</span>
               <HelpTooltip :content="retirementTutorial.parameters.currentSavings" />
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="每月储蓄">
+            <el-form-item :label="t('retirementPlanner.monthlySavings')">
               <el-input-number
                 v-model="plannerForm.monthlySavings"
                 :min="0"
@@ -62,7 +62,7 @@
                 :precision="0"
                 controls-position="right"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('retirementPlanner.unitYuan') }}</span>
               <HelpTooltip :content="retirementTutorial.parameters.monthlySavings" />
             </el-form-item>
           </el-col>
@@ -70,7 +70,7 @@
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="退休后月支出">
+            <el-form-item :label="t('retirementPlanner.retirementMonthlyExpense')">
               <el-input-number
                 v-model="plannerForm.retirementExpenses"
                 :min="0"
@@ -78,20 +78,20 @@
                 :precision="0"
                 controls-position="right"
               />
-              <span class="unit">元</span>
+              <span class="unit">{{ t('retirementPlanner.unitYuan') }}</span>
               <HelpTooltip :content="retirementTutorial.parameters.retirementExpenses" />
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="预期寿命">
+            <el-form-item :label="t('retirementPlanner.lifeExpectancy')">
               <el-input-number
                 v-model="plannerForm.lifeExpectancy"
                 :min="70"
                 :max="100"
                 controls-position="right"
               />
-              <span class="unit">岁</span>
+              <span class="unit">{{ t('retirementPlanner.unitYears') }}</span>
               <HelpTooltip :content="retirementTutorial.parameters.lifeExpectancy" />
             </el-form-item>
           </el-col>
@@ -99,7 +99,7 @@
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="年化收益率">
+            <el-form-item :label="t('retirementPlanner.expectedReturn')">
               <el-slider
                 v-model="plannerForm.expectedReturn"
                 :min="0"
@@ -108,13 +108,13 @@
                 :marks="returnMarks"
                 show-input
               />
-              <span class="unit">%</span>
+              <span class="unit">{{ t('retirementPlanner.unitPercent') }}</span>
               <HelpTooltip :content="retirementTutorial.parameters.expectedReturn" />
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="通胀率">
+            <el-form-item :label="t('retirementPlanner.inflationRate')">
               <el-slider
                 v-model="plannerForm.inflationRate"
                 :min="0"
@@ -123,7 +123,7 @@
                 :marks="inflationMarks"
                 show-input
               />
-              <span class="unit">%</span>
+              <span class="unit">{{ t('retirementPlanner.unitPercent') }}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -131,64 +131,64 @@
         <el-form-item>
           <el-button type="primary" @click="handleCalculate">
             <el-icon><TrendCharts /></el-icon>
-            计算退休规划
+            {{ t('retirementPlanner.calculateRetirement') }}
           </el-button>
-          <el-button @click="handleReset">重置</el-button>
+          <el-button @click="handleReset">{{ t('retirementPlanner.reset') }}</el-button>
 
           <el-button type="success" @click="openScenarioDialog">
             <el-icon><FolderOpened /></el-icon>
-            场景管理
+            {{ t('retirementPlanner.scenarioManagement') }}
           </el-button>
 
           <el-button type="warning" @click="loadExampleData">
             <el-icon><DocumentCopy /></el-icon>
-            示例数据
+            {{ t('retirementPlanner.exampleData') }}
           </el-button>
 
           <el-button v-if="result" type="info" @click="handleExportPDF">
             <el-icon><Download /></el-icon>
-            导出 PDF
+            {{ t('retirementPlanner.exportPDF') }}
           </el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <!-- 场景管理对话框 -->
-    <el-dialog v-model="showScenarioDialog" title="场景管理" width="600px">
+    <el-dialog v-model="showScenarioDialog" :title="t('retirementPlanner.scenarioManagement')" width="600px">
       <div class="scenario-actions">
         <el-input
           v-model="currentScenarioName"
-          placeholder="输入场景名称"
+          :placeholder="t('retirementPlanner.scenarioNamePlaceholder')"
           style="width: 200px"
         />
         <el-button type="primary" @click="handleSaveScenario(currentScenarioName)">
-          保存当前场景
+          {{ t('retirementPlanner.saveCurrentScenario') }}
         </el-button>
       </div>
 
       <el-divider />
 
       <div class="scenario-list">
-        <el-empty v-if="Object.keys(scenarios).length === 0" description="暂无保存的场景" />
+        <el-empty v-if="Object.keys(scenarios).length === 0" :description="t('retirementPlanner.noSavedScenarios')" />
 
         <el-table v-else :data="Object.entries(scenarios).map(([name, data]) => ({ name, ...data }))" style="width: 100%">
-          <el-table-column prop="name" label="场景名称" width="200" />
-          <el-table-column label="参数" width="300">
+          <el-table-column prop="name" :label="t('retirementPlanner.scenarioNameCol')" width="200" />
+          <el-table-column :label="t('retirementPlanner.parametersCol')" width="300">
             <template #default="{ row }">
               <div class="scenario-params">
-                <span>{{ row.data?.currentAge }}岁 → {{ row.data?.retirementAge }}岁退休</span>
-                <span>储蓄: ¥{{ row.data?.monthlySavings?.toLocaleString() }}/月</span>
-                <span>收益率: {{ row.data?.expectedReturn }}%</span>
+                <span>{{ row.data?.currentAge }}{{ t('retirementPlanner.unitYears') }} → {{ row.data?.retirementAge }}{{ t('retirementPlanner.retireAt') }}</span>
+                <span>{{ t('retirementPlanner.savingsPerMonth', { amount: row.data?.monthlySavings?.toLocaleString() }) }}</span>
+                <span>{{ t('retirementPlanner.returnRate', { rate: row.data?.expectedReturn }) }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="120">
+          <el-table-column :label="t('retirementPlanner.operationsCol')" width="120">
             <template #default="{ row }">
               <el-button type="primary" link @click="handleLoadScenario(row.name)">
-                加载
+                {{ t('retirementPlanner.load') }}
               </el-button>
               <el-button type="danger" link @click="handleDeleteScenario(row.name)">
-                删除
+                {{ t('retirementPlanner.delete') }}
               </el-button>
             </template>
           </el-table-column>
@@ -198,131 +198,128 @@
 
     <!-- 计算结果 -->
     <div v-if="result" class="result-section">
-      <div class="section-title">退休规划结果</div>
-      
+      <div class="section-title">{{ t('retirementPlanner.retirementResults') }}</div>
+
       <!-- 核心指标 -->
       <div class="metric-cards">
         <div class="metric-card gradient-primary">
           <div class="metric-icon">🎯</div>
           <div class="metric-info">
-            <div class="metric-label">退休前年限</div>
-            <div class="metric-value">{{ result.yearsToRetirement }}年</div>
+            <div class="metric-label">{{ t('retirementPlanner.yearsBeforeRetirement') }}</div>
+            <div class="metric-value">{{ result.yearsToRetirement }}{{ t('retirementPlanner.unitYearsShort') }}</div>
           </div>
         </div>
-        
+
         <div class="metric-card gradient-success">
           <div class="metric-icon">💰</div>
           <div class="metric-info">
-            <div class="metric-label">退休时总储蓄</div>
+            <div class="metric-label">{{ t('retirementPlanner.totalSavingsAtRetirement') }}</div>
             <div class="metric-value">{{ formatCurrency(result.totalSavingsAtRetirement) }}</div>
           </div>
         </div>
-        
+
         <div class="metric-card gradient-info">
           <div class="metric-icon">💳</div>
           <div class="metric-info">
-            <div class="metric-label">退休时月支出</div>
+            <div class="metric-label">{{ t('retirementPlanner.monthlyExpenseAtRetirement') }}</div>
             <div class="metric-value">{{ formatCurrency(result.inflatedMonthlyExpenses) }}</div>
-            <div class="metric-note">（考虑通胀）</div>
+            <div class="metric-note">{{ t('retirementPlanner.withInflation') }}</div>
           </div>
         </div>
-        
+
         <div class="metric-card" :class="result.isSufficient ? 'gradient-success' : 'gradient-warning'">
           <div class="metric-icon">{{ result.isSufficient ? '✅' : '⚠️' }}</div>
           <div class="metric-info">
-            <div class="metric-label">能维持年数</div>
+            <div class="metric-label">{{ t('retirementPlanner.sustainableYears') }}</div>
             <div class="metric-value">
-              {{ result.yearsCanSustain === Infinity ? '永续' : result.yearsCanSustain + '年' }}
+              {{ result.yearsCanSustain === Infinity ? t('retirementPlanner.perpetual') : result.yearsCanSustain + t('retirementPlanner.unitYearsShort') }}
             </div>
             <div class="metric-note">
-              （退休后{{ result.retirementYears }}年）
+              {{ t('retirementPlanner.retirementYears', { years: result.retirementYears }) }}
             </div>
           </div>
         </div>
       </div>
-      
+
       <!-- 充足性判断 -->
       <div class="finance-card status-card">
         <div class="card-header">
-          <span class="card-title">退休规划状态</span>
+          <span class="card-title">{{ t('retirementPlanner.retirementStatus') }}</span>
           <el-tag :type="result.isSufficient ? 'success' : 'warning'" size="large">
-            {{ result.isSufficient ? '✅ 充足' : '⚠️ 需要调整' }}
+            {{ result.isSufficient ? t('retirementPlanner.sufficient') : t('retirementPlanner.needsAdjustment') }}
           </el-tag>
         </div>
-        
+
         <div class="status-content">
           <div v-if="result.isSufficient" class="status-success">
             <el-icon :size="48" color="#67c23a"><SuccessFilled /></el-icon>
             <div class="status-text">
-              <h3>恭喜！你的退休规划非常健康！</h3>
+              <h3>{{ t('retirementPlanner.congratulations') }}</h3>
               <p>
-                按照当前的储蓄计划，退休时你将拥有 <strong>{{ formatCurrency(result.totalSavingsAtRetirement) }}</strong>，
-                考虑 {{ plannerForm.inflationRate }}% 通胀后，退休月支出为 <strong>{{ formatCurrency(result.inflatedMonthlyExpenses) }}</strong>，
-                储蓄可以 {{ result.yearsCanSustain === Infinity ? '永续维持' : '维持' + result.yearsCanSustain + '年' }}。
+                {{ congratulationsDetailText }}
               </p>
               <p v-if="result.monthlyRealReturn > 0">
-                <el-tag type="success">实际收益率 {{ (result.monthlyRealReturn * 12 * 100).toFixed(2) }}% > 0</el-tag>
-                你的储蓄在退休后可以永续维持！
+                <el-tag type="success">{{ t('retirementPlanner.realReturnRate', { rate: (result.monthlyRealReturn * 12 * 100).toFixed(2) }) }}</el-tag>
+                {{ t('retirementPlanner.perpetualSustainMsg') }}
               </p>
             </div>
           </div>
-          
+
           <div v-else class="status-warning">
             <el-icon :size="48" color="#e6a23c"><WarningFilled /></el-icon>
             <div class="status-text">
-              <h3>需要调整退休规划</h3>
+              <h3>{{ t('retirementPlanner.adjustmentNeeded') }}</h3>
               <p>
-                按照当前的储蓄计划，退休时你将拥有 <strong>{{ formatCurrency(result.totalSavingsAtRetirement) }}</strong>，
-                但退休后只能维持 <strong>{{ result.yearsCanSustain }}年</strong>（需要 {{ result.retirementYears }}年）。
+                {{ adjustmentDetailText }}
               </p>
               <p>
-                储蓄缺口：<strong>{{ formatCurrency(result.shortfall) }}</strong>
+                {{ t('retirementPlanner.savingsGap', { amount: formatCurrency(result.shortfall) }) }}
               </p>
               <p>
-                建议每月增加储蓄：<strong>{{ formatCurrency(result.additionalMonthlySavingsNeeded) }}</strong>
+                {{ t('retirementPlanner.suggestMoreSavings', { amount: formatCurrency(result.additionalMonthlySavingsNeeded) }) }}
               </p>
             </div>
           </div>
         </div>
       </div>
-      
+
       <!-- 详细分析 -->
       <div class="finance-card analysis-card">
         <div class="card-header">
-          <span class="card-title">详细分析</span>
+          <span class="card-title">{{ t('retirementPlanner.detailedAnalysis') }}</span>
         </div>
-        
+
         <div class="analysis-grid">
           <div class="analysis-item">
-            <div class="analysis-label">退休前工作年限</div>
-            <div class="analysis-value">{{ result.yearsToRetirement }}年</div>
+            <div class="analysis-label">{{ t('retirementPlanner.workingYears') }}</div>
+            <div class="analysis-value">{{ result.yearsToRetirement }}{{ t('retirementPlanner.unitYearsShort') }}</div>
           </div>
-          
+
           <div class="analysis-item">
-            <div class="analysis-label">退休后生活年限</div>
-            <div class="analysis-value">{{ result.retirementYears }}年</div>
+            <div class="analysis-label">{{ t('retirementPlanner.retirementLivingYears') }}</div>
+            <div class="analysis-value">{{ result.retirementYears }}{{ t('retirementPlanner.unitYearsShort') }}</div>
           </div>
-          
+
           <div class="analysis-item">
-            <div class="analysis-label">退休时总储蓄</div>
+            <div class="analysis-label">{{ t('retirementPlanner.totalSavingsAtRetirementLabel') }}</div>
             <div class="analysis-value">{{ formatCurrency(result.totalSavingsAtRetirement) }}</div>
           </div>
-          
+
           <div class="analysis-item">
-            <div class="analysis-label">退休时月支出（通胀后）</div>
+            <div class="analysis-label">{{ t('retirementPlanner.inflatedMonthlyExpense') }}</div>
             <div class="analysis-value">{{ formatCurrency(result.inflatedMonthlyExpenses) }}</div>
           </div>
-          
+
           <div class="analysis-item">
-            <div class="analysis-label">能维持年数</div>
+            <div class="analysis-label">{{ t('retirementPlanner.sustainableYearsLabel') }}</div>
             <div class="analysis-value">
-              {{ result.yearsCanSustain === Infinity ? '永续' : result.yearsCanSustain + '年' }}
+              {{ result.yearsCanSustain === Infinity ? t('retirementPlanner.perpetual') : result.yearsCanSustain + t('retirementPlanner.unitYearsShort') }}
             </div>
           </div>
-          
+
           <div class="analysis-item">
-            <div class="analysis-label">实际收益率（月）</div>
-            <div class="analysis-value">{{ (result.monthlyRealReturn * 100).toFixed(4) }}%</div>
+            <div class="analysis-label">{{ t('retirementPlanner.monthlyRealReturn') }}</div>
+            <div class="analysis-value">{{ (result.monthlyRealReturn * 100).toFixed(4) }}{{ t('retirementPlanner.unitPercent') }}</div>
           </div>
         </div>
       </div>
@@ -330,12 +327,12 @@
       <!-- 储蓄增长曲线 -->
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">储蓄增长曲线</span>
+          <span class="card-title">{{ t('retirementPlanner.savingsGrowthCurve') }}</span>
           <div>
-            <el-tag>可视化分析</el-tag>
+            <el-tag>{{ t('retirementPlanner.visualAnalysis') }}</el-tag>
             <el-button type="primary" text @click="handleExportChart">
               <el-icon><Picture /></el-icon>
-              保存图表
+              {{ t('retirementPlanner.saveChart') }}
             </el-button>
           </div>
         </div>
@@ -346,7 +343,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { TrendCharts, SuccessFilled, WarningFilled, FolderOpened, Download, Picture, Document, DocumentCopy } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { saveScenario, loadScenario, getScenarios, deleteScenario, autoSaveScene, loadAutoSaveScene, clearAutoSaveScene } from '../utils/localStorage'
@@ -355,6 +352,9 @@ import { getRetirementChartConfig } from '../utils/chart-optimizer'
 import { ElMessage } from 'element-plus'
 import HelpTooltip from '../components/HelpTooltip.vue'
 import { retirementTutorial } from '../utils/tutorial-content'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 // ==================== 退休规划计算器核心算法 ====================
 
@@ -396,35 +396,35 @@ function retirementCalculator(params: {
 
   // 1. 计算退休前的工作年限
   const yearsToRetirement = retirementAge - currentAge
-  
+
   // 2. 计算退休时的总储蓄（考虑复利）
   const monthlyReturn = expectedReturn / 12
   const monthsToRetirement = yearsToRetirement * 12
-  
+
   // 当前储蓄的增长
   const futureValueOfCurrentSavings = currentSavings * Math.pow(1 + expectedReturn, yearsToRetirement)
-  
+
   // 每月储蓄的增长（年金终值公式）
   let futureValueOfMonthlySavings = 0
   if (monthlyReturn > 0) {
-    futureValueOfMonthlySavings = monthlySavings * 
+    futureValueOfMonthlySavings = monthlySavings *
       ((Math.pow(1 + monthlyReturn, monthsToRetirement) - 1) / monthlyReturn)
   } else {
     futureValueOfMonthlySavings = monthlySavings * monthsToRetirement
   }
-  
+
   const totalSavingsAtRetirement = futureValueOfCurrentSavings + futureValueOfMonthlySavings
-  
+
   // 3. 计算退休时每月支出（考虑通胀）
   const inflatedMonthlyExpenses = retirementExpenses * Math.pow(1 + inflationRate, yearsToRetirement)
-  
+
   // 4. 计算退休后能维持的年数
   const retirementYears = lifeExpectancy - retirementAge
-  
+
   // 退休后的每月实际收益率（考虑通胀）
   const realReturnAfterRetirement = (1 + expectedReturn) / (1 + inflationRate) - 1
   const monthlyRealReturn = realReturnAfterRetirement / 12
-  
+
   // 计算能维持的月数（使用现值公式）
   let monthsCanSustain: number
   if (monthlyRealReturn > 0) {
@@ -437,22 +437,22 @@ function retirementCalculator(params: {
   } else {
     monthsCanSustain = totalSavingsAtRetirement / inflatedMonthlyExpenses
   }
-  
+
   const yearsCanSustain = monthsCanSustain / 12
-  
+
   // 5. 计算储蓄缺口（如果有）
-  const shortfall = yearsCanSustain < retirementYears 
-    ? (retirementYears - yearsCanSustain) * 12 * inflatedMonthlyExpenses 
+  const shortfall = yearsCanSustain < retirementYears
+    ? (retirementYears - yearsCanSustain) * 12 * inflatedMonthlyExpenses
     : 0
-  
+
   // 6. 计算需要增加的每月储蓄（如果有缺口）
   let additionalMonthlySavingsNeeded = 0
   if (shortfall > 0 && monthlyReturn > 0) {
     const additionalNeeded = shortfall / Math.pow(1 + expectedReturn, yearsToRetirement)
-    additionalMonthlySavingsNeeded = additionalNeeded / 
+    additionalMonthlySavingsNeeded = additionalNeeded /
       ((Math.pow(1 + monthlyReturn, monthsToRetirement) - 1) / monthlyReturn)
   }
-  
+
   return {
     yearsToRetirement,
     totalSavingsAtRetirement: Math.round(totalSavingsAtRetirement),
@@ -481,6 +481,27 @@ const plannerForm = ref({
 
 const result = ref<RetirementResult | null>(null)
 
+// Computed for interpolated template strings
+const congratulationsDetailText = computed(() => {
+  if (!result.value) return ''
+  const sustainText = result.value.yearsCanSustain === Infinity
+    ? t('retirementPlanner.perpetualSustain')
+    : t('retirementPlanner.sustainYears', { years: result.value.yearsCanSustain })
+  return t('retirementPlanner.congratulationsDetail')
+    .replace('{savings}', formatCurrency(result.value.totalSavingsAtRetirement))
+    .replace('{inflation}', String(plannerForm.value.inflationRate))
+    .replace('{expenses}', formatCurrency(result.value.inflatedMonthlyExpenses))
+    .replace('{sustain}', sustainText)
+})
+
+const adjustmentDetailText = computed(() => {
+  if (!result.value) return ''
+  return t('retirementPlanner.adjustmentDetail')
+    .replace('{savings}', formatCurrency(result.value.totalSavingsAtRetirement))
+    .replace('{sustain}', String(result.value.yearsCanSustain))
+    .replace('{needed}', String(result.value.retirementYears))
+})
+
 // ==================== 场景管理 ====================
 const currentScenarioName = ref('')
 const showScenarioDialog = ref(false)
@@ -494,7 +515,7 @@ const loadScenariosList = () => {
 // 保存当前场景
 const handleSaveScenario = (scenarioName: string) => {
   if (!scenarioName.trim()) {
-    ElMessage.error('场景名称不能为空')
+    ElMessage.error(t('retirementPlanner.scenarioNameEmpty'))
     return
   }
 
@@ -510,11 +531,11 @@ const handleSaveScenario = (scenarioName: string) => {
   })
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 保存成功`)
+    ElMessage.success(t('retirementPlanner.scenarioSaveSuccess').replace('{name}', scenarioName))
     currentScenarioName.value = scenarioName
     loadScenariosList()
   } else {
-    ElMessage.error('保存失败，请重试')
+    ElMessage.error(t('retirementPlanner.saveFailed'))
   }
 }
 
@@ -536,9 +557,9 @@ const handleLoadScenario = (scenarioName: string) => {
     currentScenarioName.value = scenarioName
     result.value = null
     handleCalculate()
-    ElMessage.success(`场景 "${scenarioName}" 加载成功`)
+    ElMessage.success(t('retirementPlanner.scenarioLoadSuccess').replace('{name}', scenarioName))
   } else {
-    ElMessage.error('加载失败，请重试')
+    ElMessage.error(t('retirementPlanner.loadFailed'))
   }
 }
 
@@ -547,13 +568,13 @@ const handleDeleteScenario = (scenarioName: string) => {
   const success = deleteScenario('retirement', scenarioName)
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 删除成功`)
+    ElMessage.success(t('retirementPlanner.scenarioDeleteSuccess').replace('{name}', scenarioName))
     loadScenariosList()
     if (currentScenarioName.value === scenarioName) {
       currentScenarioName.value = ''
     }
   } else {
-    ElMessage.error('删除失败，请重试')
+    ElMessage.error(t('retirementPlanner.deleteFailed'))
   }
 }
 
@@ -636,7 +657,7 @@ const loadExampleData = () => {
     inflationRate: retirementTutorial.exampleData.inflationRate
   }
   result.value = null
-  ElMessage.success('示例数据加载成功，点击"计算"查看结果')
+  ElMessage.success(t('retirementPlanner.exampleLoadSuccess'))
 }
 
 
@@ -647,27 +668,27 @@ const chartInstance = ref<any>(null)
 
 // 导出 PDF
 const handleExportPDF = () => {
-  exportToPDF('退休规划工具')
+  exportToPDF(t('retirementPlanner.title'))
 }
 
 // 导出图表
 const handleExportChart = () => {
   if (!chartInstance.value) {
-    ElMessage.error('图表未初始化')
+    ElMessage.error(t('retirementPlanner.chartNotInit'))
     return
   }
-  exportChartToImage(chartInstance.value, '退休规划工具_图表')
+  exportChartToImage(chartInstance.value, t('retirementPlanner.exportChartName'))
 }
 
 // 导出 Excel
 const handleExportExcel = () => {
   if (!result.value) {
-    ElMessage.error('请先计算')
+    ElMessage.error(t('retirementPlanner.pleaseCalculate'))
     return
   }
 
   const data = prepareYearlyDataForExcel(result.value.yearlyData)
-  exportToExcel(data, '退休规划工具_年度明细', '年度明细')
+  exportToExcel(data, t('retirementPlanner.exportExcelName'), t('retirementPlanner.exportExcelSheet'))
 }
 
 // 初始化图表
@@ -682,7 +703,7 @@ const initChart = () => {
   const expensesData = []
 
   for (let year = 0; year <= result.value.yearsToRetirement; year++) {
-    years.push(`${plannerForm.value.currentAge + year}岁`)
+    years.push(`${plannerForm.value.currentAge + year}${t('retirementPlanner.unitYears')}`)
 
     // 计算当年的储蓄
     const months = year * 12

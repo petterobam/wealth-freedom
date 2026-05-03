@@ -1,21 +1,21 @@
 <template>
   <div class="prepayment-calculator">
-    <h1 class="page-title">提前还款计算器</h1>
+    <h1 class="page-title">{{ t('prepaymentCalculator.title') }}</h1>
 
     <!-- 输入参数 -->
     <div class="finance-card input-card">
       <div class="card-header">
-        <span class="card-title">贷款信息</span>
-        <el-tag type="info">科学决策</el-tag>
+        <span class="card-title">{{ t('prepaymentCalculator.loanInfo') }}</span>
+        <el-tag type="info">{{ t('prepaymentCalculator.tagline') }}</el-tag>
 
             <el-button type="primary" text @click="handleExportChart">
               <el-icon><Picture /></el-icon>
-              保存图表
+              {{ t('prepaymentCalculator.saveChart') }}
             </el-button>
 </div>
 
       <el-form :model="calculatorForm" label-width="120px" class="calculator-form">
-        <el-form-item label="贷款总额">
+        <el-form-item :label="t('prepaymentCalculator.loanAmount')">
           <el-input-number
             v-model="calculatorForm.principal"
             :min="0"
@@ -23,22 +23,22 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('prepaymentCalculator.unitYuan') }}</span>
           <HelpTooltip :content="prepaymentTutorial.parameters.loanAmount" />
         </el-form-item>
 
-        <el-form-item label="贷款期限">
+        <el-form-item :label="t('prepaymentCalculator.loanTerm')">
           <el-input-number
             v-model="calculatorForm.totalYears"
             :min="1"
             :max="30"
             controls-position="right"
           />
-          <span class="unit">年</span>
+          <span class="unit">{{ t('prepaymentCalculator.unitYears') }}</span>
           <HelpTooltip :content="prepaymentTutorial.parameters.loanTerm" />
         </el-form-item>
 
-        <el-form-item label="贷款利率">
+        <el-form-item :label="t('prepaymentCalculator.loanRate')">
           <el-slider
             v-model="calculatorForm.annualRate"
             :min="0"
@@ -47,22 +47,22 @@
             :marks="rateMarks"
             show-input
           />
-          <span class="unit">%</span>
+          <span class="unit">{{ t('prepaymentCalculator.unitPercent') }}</span>
           <HelpTooltip :content="prepaymentTutorial.parameters.annualRate" />
         </el-form-item>
 
-        <el-form-item label="已还期数">
+        <el-form-item :label="t('prepaymentCalculator.paidPeriods')">
           <el-input-number
             v-model="calculatorForm.paidYears"
             :min="0"
             :max="calculatorForm.totalYears - 1"
             controls-position="right"
           />
-          <span class="unit">年</span>
+          <span class="unit">{{ t('prepaymentCalculator.unitYears') }}</span>
           <HelpTooltip :content="prepaymentTutorial.parameters.prepaymentDate" />
         </el-form-item>
 
-        <el-form-item label="提前还款金额">
+        <el-form-item :label="t('prepaymentCalculator.prepaymentAmount')">
           <el-input-number
             v-model="calculatorForm.prepayAmount"
             :min="0"
@@ -70,14 +70,14 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('prepaymentCalculator.unitYuan') }}</span>
           <HelpTooltip :content="prepaymentTutorial.parameters.prepaymentAmount" />
         </el-form-item>
 
-        <el-form-item label="还款方式">
+        <el-form-item :label="t('prepaymentCalculator.repaymentMethod')">
           <el-radio-group v-model="calculatorForm.prepayType">
-            <el-radio value="reduce_months">减少期数(月供不变)</el-radio>
-            <el-radio value="reduce_payment">减少月供(期数不变)</el-radio>
+            <el-radio value="reduce_months">{{ t('prepaymentCalculator.reduceMonths') }}</el-radio>
+            <el-radio value="reduce_payment">{{ t('prepaymentCalculator.reducePayment') }}</el-radio>
           </el-radio-group>
           <HelpTooltip :content="prepaymentTutorial.parameters.prepaymentType" />
         </el-form-item>
@@ -85,62 +85,62 @@
         <el-form-item>
           <el-button type="primary" @click="handleCalculate">
             <el-icon><TrendCharts /></el-icon>
-            计算
+            {{ t('prepaymentCalculator.calculate') }}
           </el-button>
-          <el-button @click="handleReset">重置</el-button>
+          <el-button @click="handleReset">{{ t('prepaymentCalculator.reset') }}</el-button>
           <el-button type="success" @click="openScenarioDialog">
             <el-icon><FolderOpened /></el-icon>
-            场景管理
+            {{ t('prepaymentCalculator.scenarioManagement') }}
           </el-button>
           <el-button type="warning" @click="loadExampleData">
             <el-icon><DocumentCopy /></el-icon>
-            示例数据
+            {{ t('prepaymentCalculator.exampleData') }}
           </el-button>
           <el-button v-if="result" type="info" @click="handleExportPDF">
             <el-icon><Download /></el-icon>
-            导出 PDF
+            {{ t('prepaymentCalculator.exportPDF') }}
           </el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <!-- 场景管理对话框 -->
-    <el-dialog v-model="showScenarioDialog" title="场景管理" width="600px">
+    <el-dialog v-model="showScenarioDialog" :title="t('prepaymentCalculator.scenarioManagement')" width="600px">
       <div class="scenario-actions">
         <el-input
           v-model="currentScenarioName"
-          placeholder="输入场景名称"
+          :placeholder="t('prepaymentCalculator.scenarioNamePlaceholder')"
           style="width: 200px"
         />
         <el-button type="primary" @click="handleSaveScenario(currentScenarioName)">
-          保存当前场景
+          {{ t('prepaymentCalculator.saveCurrentScenario') }}
         </el-button>
       </div>
 
       <el-divider />
 
       <div class="scenario-list">
-        <el-empty v-if="Object.keys(scenarios).length === 0" description="暂无保存的场景" />
+        <el-empty v-if="Object.keys(scenarios).length === 0" :description="t('prepaymentCalculator.noSavedScenarios')" />
 
         <el-table v-else :data="Object.entries(scenarios).map(([name, data]) => ({ name, ...data }))" style="width: 100%">
-          <el-table-column prop="name" label="场景名称" width="200" />
-          <el-table-column label="参数" width="300">
+          <el-table-column prop="name" :label="t('prepaymentCalculator.scenarioNameCol')" width="200" />
+          <el-table-column :label="t('prepaymentCalculator.parametersCol')" width="300">
             <template #default="{ row }">
               <div class="scenario-params">
-                <span>贷款: ¥{{ row.data?.principal?.toLocaleString() }}</span>
-                <span>{{ row.data?.totalYears }}年, {{ row.data?.annualRate }}%</span>
-                <span>已还{{ row.data?.paidYears }}年</span>
-                <span>提前: ¥{{ row.data?.prepayAmount?.toLocaleString() }}</span>
+                <span>{{ t('prepaymentCalculator.loan') }}: ¥{{ row.data?.principal?.toLocaleString() }}</span>
+                <span>{{ row.data?.totalYears }}{{ t('prepaymentCalculator.unitYears') }}, {{ row.data?.annualRate }}%</span>
+                <span>{{ t('prepaymentCalculator.paid') }}{{ row.data?.paidYears }}{{ t('prepaymentCalculator.unitYears') }}</span>
+                <span>{{ t('prepaymentCalculator.prepay') }}: ¥{{ row.data?.prepayAmount?.toLocaleString() }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="120">
+          <el-table-column :label="t('prepaymentCalculator.operationsCol')" width="120">
             <template #default="{ row }">
               <el-button type="primary" link @click="handleLoadScenario(row.name)">
-                加载
+                {{ t('prepaymentCalculator.load') }}
               </el-button>
               <el-button type="danger" link @click="handleDeleteScenario(row.name)">
-                删除
+                {{ t('prepaymentCalculator.delete') }}
               </el-button>
             </template>
           </el-table-column>
@@ -150,28 +150,28 @@
 
     <!-- 计算结果 -->
     <div v-if="result" class="result-section">
-      <div class="section-title">计算结果</div>
+      <div class="section-title">{{ t('prepaymentCalculator.calcResults') }}</div>
 
       <!-- 原贷款信息 -->
       <div class="finance-card">
         <div class="card-header">
-          <span class="card-title">原贷款信息</span>
+          <span class="card-title">{{ t('prepaymentCalculator.originalLoanInfo') }}</span>
         </div>
         <div class="info-grid">
           <div class="info-item">
-            <span class="label">原月供</span>
+            <span class="label">{{ t('prepaymentCalculator.originalMonthlyPayment') }}</span>
             <span class="value">{{ formatCurrency(result.originalLoan.monthlyPayment) }}</span>
           </div>
           <div class="info-item">
-            <span class="label">已还期数</span>
-            <span class="value">{{ result.paidMonths }}月({{ calculatorForm.paidYears }}年)</span>
+            <span class="label">{{ t('prepaymentCalculator.paidPeriodsLabel') }}</span>
+            <span class="value">{{ result.paidMonths }}{{ t('prepaymentCalculator.paidMonths') }}({{ calculatorForm.paidYears }}{{ t('prepaymentCalculator.unitYears') }})</span>
           </div>
           <div class="info-item">
-            <span class="label">已还本金</span>
+            <span class="label">{{ t('prepaymentCalculator.paidPrincipal') }}</span>
             <span class="value">{{ formatCurrency(result.paidPrincipal) }}</span>
           </div>
           <div class="info-item">
-            <span class="label">剩余本金</span>
+            <span class="label">{{ t('prepaymentCalculator.remainingPrincipal') }}</span>
             <span class="value primary">{{ formatCurrency(result.remainingPrincipal) }}</span>
           </div>
         </div>
@@ -180,9 +180,9 @@
       <!-- 提前还款方案 -->
       <div class="finance-card highlight-card">
         <div class="card-header">
-          <span class="card-title">提前还款方案</span>
-          <el-tag :type="result.type === '减少期数' ? 'success' : 'primary'">
-            {{ result.type }}
+          <span class="card-title">{{ t('prepaymentCalculator.prepaymentPlan') }}</span>
+          <el-tag :type="result.type === 'reduce_months' ? 'success' : 'primary'">
+            {{ result.type === 'reduce_months' ? t('prepaymentCalculator.reduceMonthsType') : t('prepaymentCalculator.reducePaymentType') }}
           </el-tag>
         </div>
 
@@ -190,7 +190,7 @@
           <div class="metric-card gradient-primary">
             <div class="metric-icon">💰</div>
             <div class="metric-info">
-              <div class="metric-label">提前还款</div>
+              <div class="metric-label">{{ t('prepaymentCalculator.prepayment') }}</div>
               <div class="metric-value">{{ formatCurrency(result.prepayAmount) }}</div>
             </div>
           </div>
@@ -198,46 +198,46 @@
           <div class="metric-card gradient-info">
             <div class="metric-icon">📉</div>
             <div class="metric-info">
-              <div class="metric-label">剩余本金</div>
+              <div class="metric-label">{{ t('prepaymentCalculator.remainingPrincipal') }}</div>
               <div class="metric-value">{{ formatCurrency(result.newPrincipal) }}</div>
             </div>
           </div>
         </div>
 
-        <div v-if="result.type === '减少期数'" class="info-grid">
+        <div v-if="result.type === 'reduce_months'" class="info-grid">
           <div class="info-item">
-            <span class="label">新月供</span>
-            <span class="value">{{ formatCurrency(result.originalLoan.monthlyPayment) }}(不变)</span>
+            <span class="label">{{ t('prepaymentCalculator.newMonthlyPayment') }}</span>
+            <span class="value">{{ formatCurrency(result.originalLoan.monthlyPayment) }}{{ t('prepaymentCalculator.unchanged') }}</span>
           </div>
           <div class="info-item">
-            <span class="label">新期限</span>
-            <span class="value success">{{ result.newMonths }}月({{ Math.round(result.newMonths / 12) }}年)</span>
+            <span class="label">{{ t('prepaymentCalculator.newTerm') }}</span>
+            <span class="value success">{{ result.newMonths }}{{ t('prepaymentCalculator.paidMonths') }}({{ Math.round(result.newMonths / 12) }}{{ t('prepaymentCalculator.unitYears') }})</span>
           </div>
           <div class="info-item highlight">
-            <span class="label">节省期数</span>
-            <span class="value success">{{ result.savedMonths }}月({{ Math.round(result.savedMonths / 12) }}年)</span>
+            <span class="label">{{ t('prepaymentCalculator.savedPeriods') }}</span>
+            <span class="value success">{{ result.savedMonths }}{{ t('prepaymentCalculator.paidMonths') }}({{ Math.round(result.savedMonths / 12) }}{{ t('prepaymentCalculator.unitYears') }})</span>
           </div>
           <div class="info-item highlight">
-            <span class="label">节省利息</span>
+            <span class="label">{{ t('prepaymentCalculator.savedInterest') }}</span>
             <span class="value success">{{ formatCurrency(result.savedInterest) }}</span>
           </div>
         </div>
 
         <div v-else class="info-grid">
           <div class="info-item">
-            <span class="label">新月供</span>
+            <span class="label">{{ t('prepaymentCalculator.newMonthlyPayment') }}</span>
             <span class="value success">{{ formatCurrency(result.newLoan.monthlyPayment) }}</span>
           </div>
           <div class="info-item">
-            <span class="label">减少月供</span>
+            <span class="label">{{ t('prepaymentCalculator.reducedPayment') }}</span>
             <span class="value success">{{ formatCurrency(result.savedPayment) }}</span>
           </div>
           <div class="info-item">
-            <span class="label">新期限</span>
-            <span class="value">{{ result.remainingMonths }}月(不变)</span>
+            <span class="label">{{ t('prepaymentCalculator.newTerm') }}</span>
+            <span class="value">{{ result.remainingMonths }}{{ t('prepaymentCalculator.paidMonths') }}{{ t('prepaymentCalculator.unchanged') }}</span>
           </div>
           <div class="info-item highlight">
-            <span class="label">节省利息</span>
+            <span class="label">{{ t('prepaymentCalculator.savedInterest') }}</span>
             <span class="value success">{{ formatCurrency(result.savedInterest) }}</span>
           </div>
         </div>
@@ -246,35 +246,35 @@
       <!-- 投资对比 -->
       <div class="finance-card">
         <div class="card-header">
-          <span class="card-title">投资收益对比</span>
-          <el-tag type="warning">决策参考</el-tag>
+          <span class="card-title">{{ t('prepaymentCalculator.investmentComparison') }}</span>
+          <el-tag type="warning">{{ t('prepaymentCalculator.decisionRef') }}</el-tag>
         </div>
 
         <div class="comparison-section">
           <div class="comparison-item">
-            <div class="comparison-label">提前还款节省利息</div>
+            <div class="comparison-label">{{ t('prepaymentCalculator.prepaySavedInterest') }}</div>
             <div class="comparison-value">{{ formatCurrency(result.savedInterest) }}</div>
           </div>
 
-          <div class="comparison-vs">VS</div>
+          <div class="comparison-vs">{{ t('prepaymentCalculator.vs') }}</div>
 
           <div class="comparison-item">
-            <div class="comparison-label">投资收益(8%年化,{{ result.investmentAlternative.years.toFixed(1) }}年)</div>
+            <div class="comparison-label">{{ investmentReturnLabel }}</div>
             <div class="comparison-value">{{ formatCurrency(result.investmentAlternative.amount) }}</div>
           </div>
         </div>
 
         <div class="comparison-result" :class="investmentBetter ? 'investment' : 'prepayment'">
           <el-icon><TrendCharts /></el-icon>
-          <span>{{ result.investmentAlternative.comparison }}</span>
+          <span>{{ investmentBetter ? t('prepaymentCalculator.investBetter') : t('prepaymentCalculator.prepayBetter') }}</span>
         </div>
 
         <div class="tips-section">
-          <div class="tip-title">💡 决策建议</div>
+          <div class="tip-title">{{ t('prepaymentCalculator.decisionAdvice') }}</div>
           <ul class="tip-list">
-            <li>如果投资收益率 > 贷款利率({{ calculatorForm.annualRate }}%),投资更划算</li>
-            <li>如果投资收益率 < 贷款利率,提前还款更划算</li>
-            <li>考虑因素:风险承受能力、流动性需求、心理压力</li>
+            <li>{{ adviceHigherText }}</li>
+            <li>{{ t('prepaymentCalculator.adviceLower') }}</li>
+            <li>{{ t('prepaymentCalculator.adviceConsider') }}</li>
           </ul>
         </div>
       </div>
@@ -282,12 +282,12 @@
       <!-- 贷款偿还曲线 -->
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">贷款偿还曲线</span>
+          <span class="card-title">{{ t('prepaymentCalculator.loanCurve') }}</span>
           <div>
-            <el-tag>可视化分析</el-tag>
+            <el-tag>{{ t('prepaymentCalculator.visualAnalysis') }}</el-tag>
             <el-button type="primary" text @click="handleExportChart">
               <el-icon><Picture /></el-icon>
-              保存图表
+              {{ t('prepaymentCalculator.saveChart') }}
             </el-button>
           </div>
         </div>
@@ -307,6 +307,9 @@ import { getPrepaymentChartConfig } from '../utils/chart-optimizer'
 import { ElMessage } from 'element-plus'
 import HelpTooltip from '../components/HelpTooltip.vue'
 import { prepaymentTutorial } from '../utils/tutorial-content'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 // ========== 类型定义 ==========
 interface LoanInfo {
@@ -362,7 +365,7 @@ const loadScenariosList = () => {
 // 保存当前场景
 const handleSaveScenario = (scenarioName: string) => {
   if (!scenarioName.trim()) {
-    ElMessage.error('场景名称不能为空')
+    ElMessage.error(t('prepaymentCalculator.scenarioNameEmpty'))
     return
   }
 
@@ -376,11 +379,11 @@ const handleSaveScenario = (scenarioName: string) => {
   })
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 保存成功`)
+    ElMessage.success(t('prepaymentCalculator.scenarioSaveSuccess').replace('{name}', scenarioName))
     currentScenarioName.value = scenarioName
     loadScenariosList()
   } else {
-    ElMessage.error('保存失败,请重试')
+    ElMessage.error(t('prepaymentCalculator.saveFailed'))
   }
 }
 
@@ -398,9 +401,9 @@ const handleLoadScenario = (scenarioName: string) => {
     currentScenarioName.value = scenarioName
     result.value = null
     handleCalculate()
-    ElMessage.success(`场景 "${scenarioName}" 加载成功`)
+    ElMessage.success(t('prepaymentCalculator.scenarioLoadSuccess').replace('{name}', scenarioName))
   } else {
-    ElMessage.error('加载失败,请重试')
+    ElMessage.error(t('prepaymentCalculator.loadFailed'))
   }
 }
 
@@ -409,13 +412,13 @@ const handleDeleteScenario = (scenarioName: string) => {
   const success = deleteScenario('prepayment', scenarioName)
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 删除成功`)
+    ElMessage.success(t('prepaymentCalculator.scenarioDeleteSuccess').replace('{name}', scenarioName))
     loadScenariosList()
     if (currentScenarioName.value === scenarioName) {
       currentScenarioName.value = ''
     }
   } else {
-    ElMessage.error('删除失败,请重试')
+    ElMessage.error(t('prepaymentCalculator.deleteFailed'))
   }
 }
 
@@ -439,16 +442,16 @@ const chartInstance = ref<any>(null)
 
 // 导出 PDF
 const handleExportPDF = () => {
-  exportToPDF('提前还款计算器')
+  exportToPDF(t('prepaymentCalculator.title'))
 }
 
 // 导出图表
 const handleExportChart = () => {
   if (!chartInstance.value) {
-    ElMessage.error('图表未初始化')
+    ElMessage.error(t('prepaymentCalculator.chartNotInit'))
     return
   }
-  exportChartToImage(chartInstance.value, '提前还款计算器_图表')
+  exportChartToImage(chartInstance.value, t('prepaymentCalculator.title') + '_chart')
 }
 
 // 初始化图表
@@ -472,7 +475,7 @@ const initChart = () => {
       })
     }
 
-    const monthlyPayment = result.value.type === '减少期数'
+    const monthlyPayment = result.value.type === 'reduce_months'
       ? result.value.originalLoan.monthlyPayment
       : result.value.newLoan.monthlyPayment
 
@@ -485,7 +488,7 @@ const initChart = () => {
     }
   }
 
-  const months = yearlyData.map(d => `第${d.year}年`)
+  const months = yearlyData.map(d => `${d.year}${t('prepaymentCalculator.unitYears')}`)
   const remainingPrincipalData = yearlyData.map(d => d.remainingPrincipal)
   const totalPaymentData = yearlyData.map(d => d.totalPayment)
 
@@ -499,12 +502,12 @@ const initChart = () => {
 // 导出 Excel
 const handleExportExcel = () => {
   if (!result.value || !result.value.yearlyData) {
-    ElMessage.error('请先计算')
+    ElMessage.error(t('prepaymentCalculator.pleaseCalculate'))
     return
   }
 
   const data = prepareYearlyDataForExcel(result.value.yearlyData)
-  exportToExcel(data, '提前还款计算器_年度明细', '年度明细')
+  exportToExcel(data, t('prepaymentCalculator.title') + '_yearly', 'yearly')
 }
 
 onMounted(() => {
@@ -533,17 +536,26 @@ onUnmounted(() => {
   clearAutoSaveScene('prepayment')
 })
 
-const rateMarks = {
+const rateMarks = computed(() => ({
   0: '0%',
-  4.9: '房贷',
+  4.9: t('prepaymentCalculator.rateMarkMortgage'),
   10: '10%',
-  18: '信用卡',
+  18: t('prepaymentCalculator.rateMarkCreditCard'),
   20: '20%'
-}
+}))
 
 const investmentBetter = computed(() => {
   if (!result.value) return false
   return result.value.investmentAlternative.amount > result.value.savedInterest
+})
+
+const investmentReturnLabel = computed(() => {
+  if (!result.value) return ''
+  return t('prepaymentCalculator.investmentReturn').replace('{years}', result.value.investmentAlternative.years.toFixed(1))
+})
+
+const adviceHigherText = computed(() => {
+  return t('prepaymentCalculator.adviceHigher').replace('{rate}', String(calculatorForm.annualRate))
 })
 
 // ========== 核心算法 ==========
@@ -668,7 +680,7 @@ function calculatePrepayment(
 
     const newLoan = calculateLoan(newPrincipal, annualRate, newMonths)
 
-    result.type = '减少期数'
+    result.type = 'reduce_months'
     result.newLoan = newLoan
     result.newMonths = newMonths
     result.savedMonths = remainingMonths - newMonths
@@ -677,7 +689,7 @@ function calculatePrepayment(
     // 减少月供(期数不变)
     const newLoan = calculateLoan(newPrincipal, annualRate, remainingMonths)
 
-    result.type = '减少月供'
+    result.type = 'reduce_payment'
     result.newLoan = newLoan
     result.savedPayment = Math.round((originalLoan.monthlyPayment - newLoan.monthlyPayment) * 100) / 100
     result.savedInterest = Math.round((originalLoan.totalInterest - paidInterest - newLoan.totalInterest) * 100) / 100
@@ -690,7 +702,7 @@ function calculatePrepayment(
   result.investmentAlternative = {
     amount: investmentReturn.totalInterest,
     years: investmentYears,
-    comparison: investmentReturn.totalInterest > result.savedInterest ? '投资更划算' : '提前还款更划算'
+    comparison: investmentReturn.totalInterest > result.savedInterest ? t('prepaymentCalculator.investBetter') : t('prepaymentCalculator.prepayBetter')
   }
 
   return result
@@ -778,7 +790,7 @@ const loadExampleData = () => {
   calculatorForm.prepayAmount = prepaymentTutorial.exampleData.prepaymentAmount
   calculatorForm.prepayType = prepaymentTutorial.exampleData.prepaymentType
   result.value = null
-  ElMessage.success('示例数据加载成功，点击"计算"查看结果')
+  ElMessage.success(t('prepaymentCalculator.exampleLoadSuccess'))
 }
 
 function formatCurrency(value: number): string {

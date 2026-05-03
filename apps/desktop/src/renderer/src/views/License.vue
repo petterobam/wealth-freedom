@@ -111,6 +111,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Select, CloseBold, Key } from '@element-plus/icons-vue'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 interface LicenseStatus {
   tier: string
@@ -136,44 +139,44 @@ const renewing = ref(false)
 const onlineCheckNeeded = ref(false)
 const checkingOnline = ref(false)
 
-const plans = [
+const plans = computed(() => [
   {
     key: 'free',
-    name: '免费版',
-    price: 0,
-    period: '',
+    nameLabel: t('license.planFree'),
+    priceLabel: t('license.planFreePrice'),
+    periodLabel: t('license.planFreePeriod'),
     icon: '🆓',
-    features: ['3 个账户', '200 笔交易', 'CSV 导出'],
-    limitations: ['预算管理', '投资追踪', 'PDF 报告', '自动备份', '健康评分'],
+    featureItems: t('license.freeFeatures').split(', '),
+    limitationItems: t('license.freeLimitations').split(', '),
   },
   {
     key: 'basic',
-    name: '基础版',
-    price: 19,
-    period: '/月',
+    nameLabel: t('license.planBasic'),
+    priceLabel: t('license.planBasicPrice'),
+    periodLabel: t('license.planBasicPeriod'),
     icon: '⭐',
-    features: ['无限账户', '无限交易', 'CSV + Excel 导出', '预算管理', '投资追踪', '自动备份', '健康评分'],
-    limitations: ['PDF 综合报告'],
+    featureItems: t('license.basicFeatures').split(', '),
+    limitationItems: t('license.basicLimitations').split(', '),
   },
   {
     key: 'pro',
-    name: '旗舰版',
-    price: 39,
-    period: '/月',
+    nameLabel: t('license.planPro'),
+    priceLabel: t('license.planProPrice'),
+    periodLabel: t('license.planProPeriod'),
     icon: '👑',
-    features: ['全部基础版功能', 'PDF 综合报告', '优先技术支持', '新功能抢先体验'],
-    limitations: [],
+    featureItems: t('license.proFeatures').split(', '),
+    limitationItems: [],
   },
-]
+])
 
 const statusLabel = computed(() => {
   const map: Record<string, string> = {
-    free: '免费版',
-    trial: '试用版',
-    basic: '基础版',
-    pro: '旗舰版',
+    free: t('license.statusFree'),
+    trial: t('license.statusTrial'),
+    basic: t('license.statusBasic'),
+    pro: t('license.statusPro'),
   }
-  return map[licenseStatus.value.tier] || '免费版'
+  return map[licenseStatus.value.tier] || t('license.statusFree')
 })
 
 const statusTagType = computed(() => {
@@ -209,13 +212,13 @@ async function handleOnlineCheck() {
   try {
     const result = await window.electronAPI.license.onlineCheck()
     if (result.revoked) {
-      ElMessage.error('许可证已被撤销，已降级为免费版')
+      ElMessage.error(t('license.revokeMessage'))
     } else {
-      ElMessage.success('在线验证成功')
+      ElMessage.success(t('license.verifySuccess'))
     }
     await refreshStatus()
   } catch (e: any) {
-    ElMessage.error('在线验证失败：' + e.message)
+    ElMessage.error(t('license.verifyFailed') + '：' + e.message)
   } finally {
     checkingOnline.value = false
   }
@@ -223,7 +226,7 @@ async function handleOnlineCheck() {
 
 async function handleActivate() {
   if (!licenseKey.value.trim()) {
-    ElMessage.warning('请输入许可证密钥')
+    ElMessage.warning(t('license.inputKey'))
     return
   }
   activating.value = true
@@ -244,7 +247,7 @@ async function handleActivate() {
       ElMessage.error(result.message)
     }
   } catch (e: any) {
-    ElMessage.error('激活失败：' + e.message)
+    ElMessage.error(t('license.activateFailed') + '：' + e.message)
   } finally {
     activating.value = false
   }
@@ -252,7 +255,7 @@ async function handleActivate() {
 
 async function handleDeactivate() {
   try {
-    await ElMessageBox.confirm('停用后将恢复为免费版，确定要停用吗？', '确认停用', {
+    await ElMessageBox.confirm(t('license.deactivateMessage'), t('license.deactivateTitle'), {
       type: 'warning',
     })
     const result = await window.electronAPI.license.deactivate()
@@ -278,14 +281,14 @@ async function handleRenew() {
       ElMessage.error(result.message)
     }
   } catch (e: any) {
-    ElMessage.error('续期失败：' + e.message)
+    ElMessage.error(t('license.renewFailed') + '：' + e.message)
   } finally {
     renewing.value = false
   }
 }
 
 function handleUpgrade(tier: string) {
-  ElMessage.info(`请联系开发者获取 ${tier === 'basic' ? '基础版' : '旗舰版'} 密钥，或直接输入密钥激活`)
+  ElMessage.info(tier === 'basic' ? t('license.upgradeBasic') : t('license.upgradePro'))
 }
 
 onMounted(() => {

@@ -1,21 +1,21 @@
 <template>
   <div class="ai-advice-page">
     <div class="page-header">
-      <h2>🤖 AI 财务助手</h2>
+      <h2>{{ t('aiAdvice.title') }}</h2>
       <div class="header-actions">
         <el-tag :type="configSet ? 'success' : 'warning'" size="small">
-          {{ configSet ? '已配置' : '未配置 API' }}
+          {{ configSet ? t('aiAdvice.configured') : t('aiAdvice.notConfigured') }}
         </el-tag>
         <el-tag type="info" size="small">
-          今日已用 {{ usage.count }} 次
+          {{ t('aiAdvice.todayUsed', { count: usage.count }) }}
         </el-tag>
-        <el-button size="small" @click="showConfig = true" :icon="Setting">设置</el-button>
+        <el-button size="small" @click="showConfig = true" :icon="Setting">{{ t('aiAdvice.settings') }}</el-button>
       </div>
     </div>
 
     <!-- 快速建议卡片 -->
     <div class="quick-tips" v-if="tips.length > 0">
-      <h3>💡 快速建议</h3>
+      <h3>{{ t('aiAdvice.quickTips') }}</h3>
       <div class="tips-grid">
         <div
           v-for="(tip, i) in tips"
@@ -38,35 +38,35 @@
     <!-- AI 功能 Tabs -->
     <el-tabs v-model="activeTab" class="ai-tabs">
       <!-- 支出分析 -->
-      <el-tab-pane label="📊 支出分析" name="spending">
+      <el-tab-pane :label="t('aiAdvice.tabSpending')" name="spending">
         <div class="tab-content">
-          <p class="tab-desc">基于您的收支数据，AI 将分析支出结构并给出优化建议。</p>
+          <p class="tab-desc">{{ t('aiAdvice.spendingDesc') }}</p>
           <el-button
             type="primary"
             :loading="loading.spending"
             @click="analyzeSpending"
             :disabled="!configSet"
           >
-            {{ loading.spending ? '分析中...' : '开始分析' }}
+            {{ loading.spending ? t('insights.analyzing') : t('aiAdvice.getAdvice') }}
           </el-button>
           <div v-if="results.spending" class="ai-result" v-html="renderMarkdown(results.spending)"></div>
         </div>
       </el-tab-pane>
 
       <!-- 储蓄规划 -->
-      <el-tab-pane label="🎯 储蓄规划" name="savings">
+      <el-tab-pane :label="t('aiAdvice.tabSavings')" name="savings">
         <div class="tab-content">
-          <p class="tab-desc">输入目标金额，AI 将制定储蓄计划并计算达成时间。</p>
+          <p class="tab-desc">{{ t('aiAdvice.savingsDesc') }}</p>
           <div class="savings-form">
-            <el-input-number v-model="savingsTarget" :min="1000" :step="10000" :controls="false" placeholder="目标金额" />
-            <span class="form-label">元</span>
+            <el-input-number v-model="savingsTarget" :min="1000" :step="10000" :controls="false" :placeholder="t('aiAdvice.targetAmount')" />
+            <span class="form-label">{{ t('aiAdvice.yuan') }}</span>
             <el-button
               type="primary"
               :loading="loading.savings"
               @click="planSavings"
               :disabled="!configSet"
             >
-              生成规划
+              {{ t('aiAdvice.generatePlan') }}
             </el-button>
           </div>
           <div v-if="results.savings" class="ai-result" v-html="renderMarkdown(results.savings)"></div>
@@ -74,14 +74,14 @@
       </el-tab-pane>
 
       <!-- 投资建议 -->
-      <el-tab-pane label="📈 投资建议" name="investment">
+      <el-tab-pane :label="t('aiAdvice.tabInvestment')" name="investment">
         <div class="tab-content">
-          <p class="tab-desc">基于您的投资持仓和风险偏好，AI 将提供组合优化建议。</p>
+          <p class="tab-desc">{{ t('aiAdvice.investmentDesc') }}</p>
           <div class="investment-form">
             <el-select v-model="riskLevel" style="width: 160px">
-              <el-option label="保守型" value="conservative" />
-              <el-option label="稳健型" value="moderate" />
-              <el-option label="积极型" value="aggressive" />
+              <el-option :label="t('aiAdvice.conservative')" value="conservative" />
+              <el-option :label="t('aiAdvice.moderate')" value="moderate" />
+              <el-option :label="t('aiAdvice.aggressive')" value="aggressive" />
             </el-select>
             <el-button
               type="primary"
@@ -89,7 +89,7 @@
               @click="getInvestmentAdvice"
               :disabled="!configSet"
             >
-              获取建议
+              {{ t('aiAdvice.getAdvice') }}
             </el-button>
           </div>
           <div v-if="results.investment" class="ai-result" v-html="renderMarkdown(results.investment)"></div>
@@ -97,7 +97,7 @@
       </el-tab-pane>
 
       <!-- 自由问答 -->
-      <el-tab-pane label="💬 自由问答" name="chat">
+      <el-tab-pane :label="t('aiAdvice.tabChat')" name="chat">
         <div class="tab-content">
           <div class="chat-messages" ref="chatContainer">
             <div v-for="(msg, i) in chatHistory" :key="i" class="chat-msg" :class="msg.role">
@@ -108,7 +108,7 @@
           <div class="chat-input">
             <el-input
               v-model="chatInput"
-              placeholder="问我任何财务问题..."
+              :placeholder="t('aiAdvice.chatPlaceholder')"
               @keyup.enter="sendChat"
               :disabled="loading.chat || !configSet"
             />
@@ -118,7 +118,7 @@
               @click="sendChat"
               :disabled="!chatInput.trim() || !configSet"
             >
-              发送
+              {{ t('aiAdvice.send') }}
             </el-button>
           </div>
         </div>
@@ -126,27 +126,27 @@
     </el-tabs>
 
     <!-- 配置弹窗 -->
-    <el-dialog v-model="showConfig" title="AI 配置" width="480px">
+    <el-dialog v-model="showConfig" :title="t('aiAdvice.aiConfig')" width="480px">
       <el-form label-width="100px">
-        <el-form-item label="API Key">
+        <el-form-item :label="t('aiAdvice.apiKey')">
           <el-input v-model="aiConfig.apiKey" type="password" show-password placeholder="sk-..." />
         </el-form-item>
-        <el-form-item label="API 地址">
+        <el-form-item :label="t('aiAdvice.apiUrl')">
           <el-input v-model="aiConfig.baseUrl" placeholder="https://api.openai.com/v1" />
         </el-form-item>
-        <el-form-item label="模型">
+        <el-form-item :label="t('aiAdvice.model')">
           <el-input v-model="aiConfig.model" placeholder="gpt-4o-mini" />
         </el-form-item>
-        <el-form-item label="Max Tokens">
+        <el-form-item :label="t('aiAdvice.maxTokens')">
           <el-input-number v-model="aiConfig.maxTokens" :min="100" :max="4096" />
         </el-form-item>
-        <el-form-item label="Temperature">
+        <el-form-item :label="t('aiAdvice.temperature')">
           <el-slider v-model="aiConfig.temperature" :min="0" :max="1" :step="0.1" show-input />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showConfig = false">取消</el-button>
-        <el-button type="primary" @click="saveConfig">保存</el-button>
+        <el-button @click="showConfig = false">{{ t('aiAdvice.cancel') }}</el-button>
+        <el-button type="primary" @click="saveConfig">{{ t('aiAdvice.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -155,6 +155,9 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, nextTick } from 'vue'
 import { Setting } from '@element-plus/icons-vue'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 const api = (window as any).api
 

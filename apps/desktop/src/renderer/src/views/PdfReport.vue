@@ -2,9 +2,9 @@
   <div class="pdf-report" v-loading="loading" v-if="!isLocked">
     <!-- 浮动工具栏（打印时隐藏） -->
     <div class="toolbar-float">
-      <el-button @click="$router.back()" :icon="ArrowLeft">返回</el-button>
+      <el-button @click="$router.back()" :icon="ArrowLeft">{{ t('pdfReport.goBack') }}</el-button>
       <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
-        导出 PDF
+        {{ t('pdfReport.exportPDF') }}
       </el-button>
     </div>
 
@@ -13,53 +13,53 @@
       <!-- 报告头部 -->
       <header class="report-header">
         <div class="header-left">
-          <h1 class="report-title">💰 个人财务报告</h1>
+          <h1 class="report-title">{{ t('pdfReport.reportTitle') }}</h1>
           <p class="report-date">{{ reportDate }}</p>
         </div>
         <div class="header-right">
           <div class="health-badge" v-if="healthScore">
             <div class="badge-score" :style="{ color: scoreColor }">{{ healthScore.totalScore }}</div>
-            <div class="badge-label">综合评分</div>
+            <div class="badge-label">{{ t('pdfReport.comprehensiveScore') }}</div>
           </div>
         </div>
       </header>
 
       <!-- 一、核心指标概览 -->
       <section class="section">
-        <h2 class="section-title">一、核心指标概览</h2>
+        <h2 class="section-title">{{ t('pdfReport.section1') }}</h2>
         <div class="metrics-grid">
           <div class="metric-card">
-            <div class="metric-label">总资产</div>
+            <div class="metric-label">{{ t('pdfReport.totalAssets') }}</div>
             <div class="metric-value">{{ fmt(dashboard.totalAssets) }}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">总负债</div>
+            <div class="metric-label">{{ t('pdfReport.totalDebts') }}</div>
             <div class="metric-value expense">{{ fmt(dashboard.totalDebts) }}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">净资产</div>
+            <div class="metric-label">{{ t('pdfReport.netWorth') }}</div>
             <div class="metric-value income">{{ fmt(dashboard.netWorth) }}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">月收入</div>
+            <div class="metric-label">{{ t('pdfReport.monthlyIncome') }}</div>
             <div class="metric-value">{{ fmt(monthly.total_income) }}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">月支出</div>
+            <div class="metric-label">{{ t('pdfReport.monthlyExpense') }}</div>
             <div class="metric-value expense">{{ fmt(monthly.total_expense) }}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">月结余</div>
+            <div class="metric-label">{{ t('pdfReport.monthlyBalance') }}</div>
             <div class="metric-value" :class="monthly.net_savings >= 0 ? 'income' : 'expense'">
               {{ fmt(monthly.net_savings) }}
             </div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">储蓄率</div>
+            <div class="metric-label">{{ t('pdfReport.savingsRate') }}</div>
             <div class="metric-value">{{ (monthly.savingsRate ?? 0).toFixed(1) }}%</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">投资收益率</div>
+            <div class="metric-label">{{ t('pdfReport.investmentReturnRate') }}</div>
             <div class="metric-value income">{{ (dashboard.investReturnRate ?? 0).toFixed(2) }}%</div>
           </div>
         </div>
@@ -67,7 +67,7 @@
 
       <!-- 二、财务健康评分 -->
       <section class="section" v-if="healthScore">
-        <h2 class="section-title">二、财务健康评分</h2>
+        <h2 class="section-title">{{ t('pdfReport.section2') }}</h2>
         <div class="health-grid">
           <div class="health-dimension" v-for="dim in dimensions" :key="dim.key">
             <div class="dim-header">
@@ -80,38 +80,38 @@
                 :style="{ width: (dim.value ?? 0) + '%', background: dim.color }"
               />
             </div>
-            <div class="dim-score">{{ dim.value ?? 0 }}分</div>
+            <div class="dim-score">{{ dim.value ?? 0 }}{{ t('pdfReport.scoreUnit') }}</div>
           </div>
         </div>
       </section>
 
       <!-- 三、收支分析 -->
       <section class="section">
-        <h2 class="section-title">三、收支分析（近12个月）</h2>
+        <h2 class="section-title">{{ t('pdfReport.section3') }}</h2>
 
         <!-- 趋势表 -->
         <table class="data-table" v-if="trend.length">
           <thead>
             <tr>
-              <th>月份</th>
-              <th class="right">收入</th>
-              <th class="right">支出</th>
-              <th class="right">结余</th>
-              <th class="right">储蓄率</th>
+              <th>{{ t('pdfReport.month') }}</th>
+              <th class="right">{{ t('pdfReport.income') }}</th>
+              <th class="right">{{ t('pdfReport.expense') }}</th>
+              <th class="right">{{ t('pdfReport.balance') }}</th>
+              <th class="right">{{ t('pdfReport.savingsRate') }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="t in trend" :key="t.month">
-              <td>{{ t.month }}</td>
-              <td class="right income-text">{{ fmt(t.income) }}</td>
-              <td class="right expense-text">{{ fmt(t.expense) }}</td>
-              <td class="right" :class="t.net >= 0 ? 'income-text' : 'expense-text'">{{ fmt(t.net) }}</td>
-              <td class="right">{{ (t.savingsRate ?? 0).toFixed(1) }}%</td>
+            <tr v-for="t_item in trend" :key="t_item.month">
+              <td>{{ t_item.month }}</td>
+              <td class="right income-text">{{ fmt(t_item.income) }}</td>
+              <td class="right expense-text">{{ fmt(t_item.expense) }}</td>
+              <td class="right" :class="t_item.net >= 0 ? 'income-text' : 'expense-text'">{{ fmt(t_item.net) }}</td>
+              <td class="right">{{ (t_item.savingsRate ?? 0).toFixed(1) }}%</td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td><strong>月均</strong></td>
+              <td><strong>{{ t('pdfReport.monthlyAvg') }}</strong></td>
               <td class="right"><strong>{{ fmt(avgIncome) }}</strong></td>
               <td class="right"><strong>{{ fmt(avgExpense) }}</strong></td>
               <td class="right"><strong>{{ fmt(avgIncome - avgExpense) }}</strong></td>
@@ -120,38 +120,38 @@
           </tfoot>
         </table>
 
-        <div v-else class="empty-hint">暂无收支数据</div>
+        <div v-else class="empty-hint">{{ t('pdfReport.noData') }}</div>
 
         <!-- 分类明细 -->
         <div class="category-grid" v-if="monthly.incomeByCategory?.length || monthly.expenseByCategory?.length">
           <div class="category-block">
-            <h3>本月收入分类</h3>
+            <h3>{{ t('pdfReport.incomeCategory') }}</h3>
             <div class="cat-row" v-for="item in monthly.incomeByCategory" :key="item.category">
-              <span>{{ item.category || '未分类' }}</span>
+              <span>{{ item.category || t('pdfReport.uncategorized') }}</span>
               <span class="income-text">{{ fmt(item.amount) }}</span>
             </div>
-            <div class="empty-hint" v-if="!monthly.incomeByCategory?.length">暂无数据</div>
+            <div class="empty-hint" v-if="!monthly.incomeByCategory?.length">{{ t('pdfReport.noData') }}</div>
           </div>
           <div class="category-block">
-            <h3>本月支出分类</h3>
+            <h3>{{ t('pdfReport.expenseCategory') }}</h3>
             <div class="cat-row" v-for="item in monthly.expenseByCategory" :key="item.category">
-              <span>{{ item.category || '未分类' }}</span>
+              <span>{{ item.category || t('pdfReport.uncategorized') }}</span>
               <span class="expense-text">{{ fmt(item.amount) }}</span>
             </div>
-            <div class="empty-hint" v-if="!monthly.expenseByCategory?.length">暂无数据</div>
+            <div class="empty-hint" v-if="!monthly.expenseByCategory?.length">{{ t('pdfReport.noData') }}</div>
           </div>
         </div>
       </section>
 
       <!-- 四、目标进度 -->
       <section class="section">
-        <h2 class="section-title">四、目标进度</h2>
-        <div v-if="goals.length === 0" class="empty-hint">暂无目标</div>
+        <h2 class="section-title">{{ t('pdfReport.section4') }}</h2>
+        <div v-if="goals.length === 0" class="empty-hint">{{ t('pdfReport.noGoals') }}</div>
 
         <div class="goals-list">
           <div v-for="(items, stage) in goalsByStage" :key="stage" class="goal-stage">
             <h3 class="stage-label">
-              {{ stage === 'guarantee' ? '🟢 财务保障' : stage === 'security' ? '🟡 财务安全' : '🔴 财务自由' }}
+              {{ stage === 'guarantee' ? t('pdfReport.stageGuarantee') : stage === 'security' ? t('pdfReport.stageSecurity') : t('pdfReport.stageFreedom') }}
             </h3>
             <div v-for="g in items" :key="g.id" class="goal-row">
               <div class="goal-info">
@@ -163,7 +163,7 @@
               </div>
               <div class="goal-meta-row">
                 <span>{{ fmt(g.current_amount) }} / {{ fmt(g.target_amount) }}</span>
-                <span v-if="g.estimatedMonths">预计 {{ g.estimatedMonths }} 个月（{{ g.estimatedDate }}）</span>
+                <span v-if="g.estimatedMonths">{{ t('pdfReport.estimatedMonths', { months: g.estimatedMonths }) }}（{{ g.estimatedDate }}）</span>
               </div>
             </div>
           </div>
@@ -172,18 +172,18 @@
 
       <!-- 五、投资概况 -->
       <section class="section">
-        <h2 class="section-title">五、投资概况</h2>
+        <h2 class="section-title">{{ t('pdfReport.section5') }}</h2>
         <div class="metrics-grid small">
           <div class="metric-card">
-            <div class="metric-label">投资总额</div>
+            <div class="metric-label">{{ t('pdfReport.investmentTotal') }}</div>
             <div class="metric-value">{{ fmt(dashboard.investTotal ?? 0) }}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">投资收益</div>
+            <div class="metric-label">{{ t('pdfReport.investmentProfit') }}</div>
             <div class="metric-value income">{{ fmt(dashboard.investProfit ?? 0) }}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">收益率</div>
+            <div class="metric-label">{{ t('pdfReport.returnRate') }}</div>
             <div class="metric-value">{{ (dashboard.investReturnRate ?? 0).toFixed(2) }}%</div>
           </div>
         </div>
@@ -191,8 +191,8 @@
 
       <!-- 报告页脚 -->
       <footer class="report-footer">
-        <p>本报告由「财富自由之路」自动生成 · {{ reportDate }}</p>
-        <p>数据仅供参考，不构成投资建议</p>
+        <p>{{ t('pdfReport.footer') }} · {{ reportDate }}</p>
+        <p>{{ t('pdfReport.footerDisclaimer') }}</p>
       </footer>
     </div>
   </div>
@@ -200,13 +200,13 @@
   <div v-if="isLocked" class="feature-gate-overlay">
     <div class="gate-card">
       <div class="gate-icon">🔒</div>
-      <h3>综合报告</h3>
-      <p>一键生成 PDF 财务报告，全面掌握财务状况</p>
+      <h3>{{ t('pdfReport.lockedTitle') }}</h3>
+      <p>{{ t('pdfReport.lockedDesc') }}</p>
       <div class="gate-badges">
-        <span class="badge badge-pro">旗舰版</span>
-        <span class="badge badge-trial">30天免费试用</span>
+        <span class="badge badge-pro">{{ t('pdfReport.proBadge') }}</span>
+        <span class="badge badge-trial">{{ t('pdfReport.trialBadge') }}</span>
       </div>
-      <el-button type="primary" @click="$router.push('/license')">立即升级</el-button>
+      <el-button type="primary" @click="$router.push('/license')">{{ t('pdfReport.upgradeNow') }}</el-button>
     </div>
   </div>
 </template>
@@ -218,6 +218,9 @@ import { Download, ArrowLeft } from '@element-plus/icons-vue'
 import { exportToPDF } from '../utils/export'
 import FeatureGate from '@/components/FeatureGate.vue'
 import { useLicense } from '@/composables/useLicense'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 const { features, status: licenseStatus } = useLicense()
 const isLocked = computed(() => licenseStatus.value.tier !== 'trial' && !features.value.hasPdfReport)
@@ -249,11 +252,11 @@ const scoreColor = computed(() => {
 const dimensions = computed(() => {
   const s = healthScore.value
   return [
-    { key: 'savings', name: '储蓄能力', icon: '🏦', value: s?.savingsScore, color: '#67c23a' },
-    { key: 'debt', name: '负债管理', icon: '💳', value: s?.debtScore, color: '#409eff' },
-    { key: 'invest', name: '投资增值', icon: '📈', value: s?.investScore, color: '#e6a23c' },
-    { key: 'stability', name: '收入稳定', icon: '🔒', value: s?.stabilityScore, color: '#909399' },
-    { key: 'plan', name: '目标规划', icon: '🎯', value: s?.planScore, color: '#f56c6c' },
+    { key: 'savings', name: t('pdfReport.savings'), icon: '🏦', value: s?.savingsScore, color: '#67c23a' },
+    { key: 'debt', name: t('pdfReport.debtManage'), icon: '💳', value: s?.debtScore, color: '#409eff' },
+    { key: 'invest', name: t('pdfReport.investmentGrowth'), icon: '📈', value: s?.investScore, color: '#e6a23c' },
+    { key: 'stability', name: t('pdfReport.incomeStability'), icon: '🔒', value: s?.stabilityScore, color: '#909399' },
+    { key: 'plan', name: t('pdfReport.goalPlanning'), icon: '🎯', value: s?.planScore, color: '#f56c6c' },
   ]
 })
 
@@ -290,7 +293,7 @@ async function handleExportPDF() {
   try {
     await exportToPDF('财务综合报告')
   } catch (e: any) {
-    ElMessage.error('PDF 导出失败: ' + e.message)
+    ElMessage.error('PDF' + ': ' + e.message)
   } finally {
     pdfLoading.value = false
   }

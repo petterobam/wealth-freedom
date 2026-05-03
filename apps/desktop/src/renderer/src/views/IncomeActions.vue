@@ -5,18 +5,18 @@
         <div class="header-left">
           <el-icon :size="32" color="#409EFF"><List /></el-icon>
           <div>
-            <h2>收入行动计划</h2>
-            <p>将策略转化为行动，追踪执行进度</p>
+            <h2>{{ t('incomeActions.title') }}</h2>
+            <p>{{ t('incomeActions.subtitle') }}</p>
           </div>
         </div>
         <div class="header-right">
           <el-button type="primary" @click="openAddAction">
             <el-icon><Plus /></el-icon>
-            新增行动
+            {{ t('incomeActions.newAction') }}
           </el-button>
           <el-button @click="openChangeStrategy">
             <el-icon><Refresh /></el-icon>
-            调整策略
+            {{ t('incomeActions.adjustStrategy') }}
           </el-button>
         </div>
       </div>
@@ -34,11 +34,11 @@
         <div class="strategy-meta">
           <div class="meta-item">
             <el-icon><Clock /></el-icon>
-            <span>预计时间：{{ currentStrategy.estimatedTime }}</span>
+            <span>{{ t('incomeActions.estimatedTime') }}：{{ currentStrategy.estimatedTime }}</span>
           </div>
           <div class="meta-item" v-if="currentStrategy.expectedIncome">
             <el-icon><TrendCharts /></el-icon>
-            <span>预期提升：+¥{{ formatNumber(currentStrategy.expectedIncome) }}/月</span>
+            <span>{{ t('incomeActions.expectedIncrease') }}：+¥{{ formatNumber(currentStrategy.expectedIncome) }}/月</span>
           </div>
         </div>
       </div>
@@ -48,25 +48,25 @@
     <el-card class="actions-card">
       <template #header>
         <div class="card-header">
-          <span class="card-title">📋 行动清单</span>
+          <span class="card-title">{{ t('incomeActions.actionList') }}</span>
           <div class="header-actions">
             <el-radio-group v-model="timeFilter" size="small">
-              <el-radio-button value="month">本月</el-radio-button>
-              <el-radio-button value="quarter">本季度</el-radio-button>
-              <el-radio-button value="year">本年度</el-radio-button>
+              <el-radio-button value="month">{{ t('incomeActions.thisMonth') }}</el-radio-button>
+              <el-radio-button value="quarter">{{ t('incomeActions.thisQuarter') }}</el-radio-button>
+              <el-radio-button value="year">{{ t('incomeActions.thisYear') }}</el-radio-button>
             </el-radio-group>
-            <el-select v-model="statusFilter" size="small" placeholder="状态筛选" style="width: 120px; margin-left: 10px;">
-              <el-option label="全部" value="all" />
-              <el-option label="待完成" value="todo" />
-              <el-option label="进行中" value="in_progress" />
-              <el-option label="已完成" value="completed" />
+            <el-select v-model="statusFilter" size="small" :placeholder="t('incomeActions.statusFilter')" style="width: 120px; margin-left: 10px;">
+              <el-option :label="t('incomeActions.all')" value="all" />
+              <el-option :label="t('incomeActions.todo')" value="todo" />
+              <el-option :label="t('incomeActions.inProgress')" value="in_progress" />
+              <el-option :label="t('incomeActions.completed')" value="completed" />
             </el-select>
           </div>
         </div>
       </template>
 
       <div v-loading="loading">
-        <el-empty v-if="filteredActions.length === 0" description="暂无行动项" />
+        <el-empty v-if="filteredActions.length === 0" :description="t('incomeActions.noActions')" />
 
         <div v-else class="actions-list">
           <div
@@ -98,15 +98,15 @@
               <div class="action-meta">
                 <div class="meta-item" v-if="action.deadline">
                   <el-icon><Calendar /></el-icon>
-                  <span>截止：{{ formatDate(action.deadline) }}</span>
+                  <span>{{ t('incomeActions.deadline') }}：{{ formatDate(action.deadline) }}</span>
                 </div>
                 <div class="meta-item" v-if="action.expectedIncome">
                   <el-icon><TrendCharts /></el-icon>
-                  <span>预期收入：+¥{{ formatNumber(action.expectedIncome) }}</span>
+                  <span>{{ t('incomeActions.expectedIncome') }}：+¥{{ formatNumber(action.expectedIncome) }}</span>
                 </div>
                 <div class="meta-item" v-if="action.completedAt">
                   <el-icon><Check /></el-icon>
-                  <span>完成：{{ formatDate(action.completedAt) }}</span>
+                  <span>{{ t('incomeActions.completedAt') }}：{{ formatDate(action.completedAt) }}</span>
                 </div>
               </div>
             </div>
@@ -116,21 +116,21 @@
                 link
                 @click="startAction(action)"
               >
-                开始
+                {{ t('incomeActions.start') }}
               </el-button>
               <el-button
                 v-if="action.status === 'in_progress'"
                 link
                 @click="completeAction(action)"
               >
-                完成
+                {{ t('incomeActions.completeBtn') }}
               </el-button>
               <el-button
                 link
                 type="danger"
                 @click="deleteAction(action)"
               >
-                删除
+                {{ t('incomeActions.deleteBtn') }}
               </el-button>
             </div>
           </div>
@@ -139,7 +139,7 @@
         <!-- 进度统计 -->
         <div v-if="filteredActions.length > 0" class="progress-section">
           <div class="progress-header">
-            <span>完成进度</span>
+            <span>{{ t('incomeActions.completionProgress') }}</span>
             <span class="progress-text">{{ completedCount }} / {{ totalCount }} ({{ completionPercentage }}%)</span>
           </div>
           <el-progress
@@ -149,11 +149,11 @@
           />
           <div class="progress-summary">
             <div class="summary-item">
-              <span class="label">预期收入提升</span>
+              <span class="label">{{ t('incomeActions.expectedIncomeIncrease') }}</span>
               <span class="value">+¥{{ formatNumber(totalExpectedIncome) }}/月</span>
             </div>
             <div class="summary-item">
-              <span class="label">已完成收入</span>
+              <span class="label">{{ t('incomeActions.completedIncome') }}</span>
               <span class="value">+¥{{ formatNumber(completedExpectedIncome) }}/月</span>
             </div>
           </div>
@@ -164,7 +164,7 @@
     <!-- 新增行动对话框 -->
     <el-dialog
       v-model="showAddAction"
-      title="新增行动"
+      :title="t('incomeActions.actionDialogTitle')"
       width="600px"
       :close-on-click-modal="false"
     >
@@ -174,65 +174,65 @@
         :rules="actionFormRules"
         label-width="100px"
       >
-        <el-form-item label="行动标题" prop="title">
+        <el-form-item :label="t('incomeActions.actionTitle')" prop="title">
           <el-input
             v-model="actionForm.title"
-            placeholder="请输入行动标题"
+            :placeholder="t('incomeActions.actionTitlePlaceholder')"
             maxlength="100"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="行动描述" prop="description">
+        <el-form-item :label="t('incomeActions.actionDesc')" prop="description">
           <el-input
             v-model="actionForm.description"
             type="textarea"
-            placeholder="请详细描述这个行动"
+            :placeholder="t('incomeActions.actionDescPlaceholder')"
             :rows="4"
             maxlength="500"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="优先级" prop="priority">
+        <el-form-item :label="t('incomeActions.priority')" prop="priority">
           <el-radio-group v-model="actionForm.priority">
-            <el-radio-button value="high">高</el-radio-button>
-            <el-radio-button value="medium">中</el-radio-button>
-            <el-radio-button value="low">低</el-radio-button>
+            <el-radio-button value="high">{{ t('incomeActions.high') }}</el-radio-button>
+            <el-radio-button value="medium">{{ t('incomeActions.medium') }}</el-radio-button>
+            <el-radio-button value="low">{{ t('incomeActions.low') }}</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="截止日期">
+        <el-form-item :label="t('incomeActions.deadlineDate')">
           <el-date-picker
             v-model="actionForm.deadline"
             type="date"
-            placeholder="选择截止日期"
+            :placeholder="t('incomeActions.selectDeadline')"
             style="width: 100%;"
             :disabled-date="disabledDate"
           />
         </el-form-item>
-        <el-form-item label="预期收入">
+        <el-form-item :label="t('incomeActions.expectedIncomeLabel')">
           <el-input-number
             v-model="actionForm.expectedIncome"
             :min="0"
             :max="999999"
             :step="1000"
-            placeholder="预期收入提升（元/月）"
+            :placeholder="t('incomeActions.expectedIncomePlaceholder')"
             style="width: 100%;"
           />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showAddAction = false">取消</el-button>
-        <el-button type="primary" @click="submitAddAction">确定</el-button>
+        <el-button @click="showAddAction = false">{{ t('incomeActions.cancel') }}</el-button>
+        <el-button type="primary" @click="submitAddAction">{{ t('incomeActions.confirm') }}</el-button>
       </template>
     </el-dialog>
 
     <!-- 调整策略对话框 -->
     <el-dialog
       v-model="showChangeStrategy"
-      title="调整策略"
+      :title="t('incomeActions.adjustStrategyTitle')"
       width="800px"
     >
       <div class="strategy-select">
-        <p class="strategy-select-tip">选择一个新的策略，系统将根据新策略生成行动计划</p>
+        <p class="strategy-select-tip">{{ t('incomeActions.selectStrategyTip') }}</p>
         <div class="strategy-grid">
           <el-card
             v-for="strategy in strategies"
@@ -260,7 +260,7 @@
               </span>
               <span class="meta-item" v-if="strategy.expectedIncome">
                 <el-icon><TrendCharts /></el-icon>
-                预期 +¥{{ formatNumber(strategy.expectedIncome) }}/月
+                {{ t('incomeActions.expectedIncrease') }} +¥{{ formatNumber(strategy.expectedIncome) }}/月
               </span>
             </div>
             <el-tag
@@ -268,19 +268,19 @@
               type="info"
               class="current-tag"
             >
-              当前策略
+              {{ t('incomeActions.currentStrategy') }}
             </el-tag>
           </el-card>
         </div>
       </div>
       <template #footer>
-        <el-button @click="showChangeStrategy = false">取消</el-button>
+        <el-button @click="showChangeStrategy = false">{{ t('incomeActions.cancel') }}</el-button>
         <el-button
           type="primary"
           :disabled="!selectedStrategyId || selectedStrategyId === currentStrategy?.id"
           @click="applyStrategy"
         >
-          应用策略
+          {{ t('incomeActions.applyStrategy') }}
         </el-button>
       </template>
     </el-dialog>
@@ -293,6 +293,9 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { List, Plus, Refresh, Clock, TrendCharts, Calendar, Check, Star, User, GoldMedal, DataLine, Money } from '@element-plus/icons-vue'
 import { useIncomeStore } from '@/stores/income'
 import { formatNumber, formatDate } from '@/utils/format'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 // 图标映射
 const iconMap = {
@@ -325,13 +328,13 @@ const actionForm = ref({
 })
 const actionFormRules: FormRules = {
   title: [
-    { required: true, message: '请输入行动标题', trigger: 'blur' }
+    { required: true, message: t('incomeActions.actionTitlePlaceholder'), trigger: 'blur' }
   ],
   description: [
-    { required: true, message: '请输入行动描述', trigger: 'blur' }
+    { required: true, message: t('incomeActions.actionDescPlaceholder'), trigger: 'blur' }
   ],
   priority: [
-    { required: true, message: '请选择优先级', trigger: 'change' }
+    { required: true, message: t('incomeActions.priority'), trigger: 'change' }
   ]
 }
 
@@ -419,11 +422,11 @@ function getStrategyTypeColor(type: string) {
 
 function getStrategyTypeName(type: string) {
   const nameMap: Record<string, string> = {
-    expert: '专家定位',
-    product: '产品化',
-    leverage: '杠杆',
-    investment: '投资',
-    passive: '被动收入'
+    expert: t('incomeActions.strategyTypeExpert'),
+    product: t('incomeActions.strategyTypeProduct'),
+    leverage: t('incomeActions.strategyTypeLeverage'),
+    investment: t('incomeActions.strategyTypeInvestment'),
+    passive: t('incomeActions.strategyTypePassive')
   }
   return nameMap[type] || ''
 }
@@ -439,9 +442,9 @@ function getPriorityType(priority: string) {
 
 function getPriorityText(priority: string) {
   const textMap: Record<string, string> = {
-    high: '高',
-    medium: '中',
-    low: '低'
+    high: t('incomeActions.high'),
+    medium: t('incomeActions.medium'),
+    low: t('incomeActions.low')
   }
   return textMap[priority] || ''
 }
@@ -457,20 +460,20 @@ async function toggleActionStatus(action: any) {
     status: newStatus,
     completedAt: newStatus === 'completed' ? new Date() : undefined
   })
-  ElMessage.success(newStatus === 'completed' ? '已完成' : '已取消完成')
+  ElMessage.success(newStatus === 'completed' ? t('incomeActions.completedMsg') : t('incomeActions.cancelledMsg'))
 }
 
 async function startAction(action: any) {
   await incomeStore.updateAction(action.id, {
     status: 'in_progress'
   })
-  ElMessage.success('已开始执行')
+  ElMessage.success(t('incomeActions.startedMsg'))
 }
 
 async function completeAction(action: any) {
   await ElMessageBox.confirm(
-    `确认完成此行动？预计收入提升：¥${formatNumber(action.expectedIncome || 0)}/月`,
-    '完成确认',
+    t('incomeActions.completeConfirm', { amount: formatNumber(action.expectedIncome || 0) }),
+    t('incomeActions.confirm'),
     {
       type: 'warning'
     }
@@ -479,19 +482,19 @@ async function completeAction(action: any) {
     status: 'completed',
     completedAt: new Date()
   })
-  ElMessage.success('已完成')
+  ElMessage.success(t('incomeActions.completedMsg'))
 }
 
 async function deleteAction(action: any) {
   await ElMessageBox.confirm(
-    `确认删除此行动？删除后不可恢复`,
-    '删除确认',
+    t('incomeActions.deleteConfirm'),
+    t('incomeActions.confirm'),
     {
       type: 'warning'
     }
   )
   await incomeStore.deleteAction(action.id)
-  ElMessage.success('已删除')
+  ElMessage.success(t('incomeActions.completedMsg'))
 }
 
 function openAddAction() {
@@ -518,7 +521,7 @@ async function submitAddAction() {
         expectedIncome: actionForm.value.expectedIncome,
         strategyId: currentStrategy.value?.id
       })
-      ElMessage.success('添加成功')
+      ElMessage.success(t('incomeActions.addSuccess'))
       showAddAction.value = false
       actionFormRef.value?.resetFields()
     }
@@ -541,7 +544,7 @@ async function applyStrategy() {
   if (!strategy) return
 
   await incomeStore.applyStrategy(selectedStrategyId.value)
-  ElMessage.success(`已切换策略：${strategy.name}`)
+  ElMessage.success(t('incomeActions.strategySwitched', { name: strategy.name }))
   showChangeStrategy.value = false
 }
 
@@ -552,8 +555,8 @@ onMounted(async () => {
     await incomeStore.loadStrategies()
     await incomeStore.loadActions()
   } catch (error) {
-    console.error('加载数据失败:', error)
-    ElMessage.error('加载数据失败')
+    console.error(t('incomeActions.loadDataFailed'), error)
+    ElMessage.error(t('incomeActions.loadDataFailed'))
   } finally {
     loading.value = false
   }

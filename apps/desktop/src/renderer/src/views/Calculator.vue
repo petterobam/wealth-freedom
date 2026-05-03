@@ -1,16 +1,16 @@
 <template>
   <div class="calculator">
-    <h1 class="page-title">复利计算器</h1>
-    
+    <h1 class="page-title">{{ t('calculator.title') }}</h1>
+
     <!-- 输入参数 -->
     <div class="finance-card input-card">
       <div class="card-header">
-        <span class="card-title">计算参数</span>
-        <el-tag type="info">复利的力量</el-tag>
+        <span class="card-title">{{ t('calculator.calculateParams') }}</span>
+        <el-tag type="info">{{ t('calculator.compoundPower') }}</el-tag>
       </div>
-      
+
       <el-form :model="calculatorForm" label-width="120px" class="calculator-form">
-        <el-form-item label="初始本金">
+        <el-form-item :label="t('calculator.initialPrincipal')">
           <el-input-number
             v-model="calculatorForm.principal"
             :min="0"
@@ -18,11 +18,11 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('calculator.yuan') }}</span>
           <HelpTooltip :content="calculatorTutorial.parameters.principal" />
         </el-form-item>
 
-        <el-form-item label="每月定投">
+        <el-form-item :label="t('calculator.monthlyInvestment')">
           <el-input-number
             v-model="calculatorForm.monthlyContribution"
             :min="0"
@@ -30,22 +30,22 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('calculator.yuan') }}</span>
           <HelpTooltip :content="calculatorTutorial.parameters.monthlyContribution" />
         </el-form-item>
 
-        <el-form-item label="投资年限">
+        <el-form-item :label="t('calculator.investmentYears')">
           <el-input-number
             v-model="calculatorForm.years"
             :min="1"
             :max="50"
             controls-position="right"
           />
-          <span class="unit">年</span>
+          <span class="unit">{{ t('calculator.years') }}</span>
           <HelpTooltip :content="calculatorTutorial.parameters.years" />
         </el-form-item>
 
-        <el-form-item label="年化收益率">
+        <el-form-item :label="t('calculator.annualReturn')">
           <el-slider
             v-model="calculatorForm.annualRate"
             :min="0"
@@ -61,61 +61,61 @@
         <el-form-item>
           <el-button type="primary" @click="handleCalculate">
             <el-icon><TrendCharts /></el-icon>
-            计算
+            {{ t('calculator.calculate') }}
           </el-button>
-          <el-button @click="handleReset">重置</el-button>
+          <el-button @click="handleReset">{{ t('calculator.reset') }}</el-button>
           <el-button type="success" @click="openScenarioDialog">
             <el-icon><FolderOpened /></el-icon>
-            场景管理
+            {{ t('calculator.scenarioManage') }}
           </el-button>
           <el-button type="warning" @click="loadExampleData">
             <el-icon><DocumentCopy /></el-icon>
-            示例数据
+            {{ t('calculator.exampleData') }}
           </el-button>
           <el-button v-if="result" type="info" @click="handleExportPDF">
             <el-icon><Download /></el-icon>
-            导出 PDF
+            {{ t('calculator.exportPDF') }}
           </el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <!-- 场景管理对话框 -->
-    <el-dialog v-model="showScenarioDialog" title="场景管理" width="600px">
+    <el-dialog v-model="showScenarioDialog" :title="t('calculator.scenarioDialogTitle')" width="600px">
       <div class="scenario-actions">
         <el-input
           v-model="currentScenarioName"
-          placeholder="输入场景名称"
+          :placeholder="t('calculator.scenarioNameInput')"
           style="width: 200px"
         />
         <el-button type="primary" @click="handleSaveScenario(currentScenarioName)">
-          保存当前场景
+          {{ t('calculator.saveScenario') }}
         </el-button>
       </div>
 
       <el-divider />
 
       <div class="scenario-list">
-        <el-empty v-if="Object.keys(scenarios).length === 0" description="暂无保存的场景" />
+        <el-empty v-if="Object.keys(scenarios).length === 0" :description="t('calculator.noSavedScenarios')" />
 
         <el-table v-else :data="Object.entries(scenarios).map(([name, data]) => ({ name, ...data }))" style="width: 100%">
-          <el-table-column prop="name" label="场景名称" width="200" />
-          <el-table-column label="参数" width="300">
+          <el-table-column prop="name" :label="t('calculator.scenarioName')" width="200" />
+          <el-table-column :label="t('calculator.params')" width="300">
             <template #default="{ row }">
               <div class="scenario-params">
-                <span>本金: ¥{{ row.data?.principal?.toLocaleString() }}</span>
-                <span>定投: ¥{{ row.data?.monthlyContribution?.toLocaleString() }}/月</span>
-                <span>{{ row.data?.years }}年, {{ row.data?.annualRate }}%</span>
+                <span>{{ t('calculator.initialPrincipal') }}: ¥{{ row.data?.principal?.toLocaleString() }}</span>
+                <span>{{ t('calculator.monthlyInvestment') }}: ¥{{ row.data?.monthlyContribution?.toLocaleString() }}/{{ t('calculator.yuan') }}</span>
+                <span>{{ row.data?.years }}{{ t('calculator.years') }}, {{ row.data?.annualRate }}%</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="120">
+          <el-table-column :label="t('calculator.actions')" width="120">
             <template #default="{ row }">
               <el-button type="primary" link @click="handleLoadScenario(row.name)">
-                加载
+                {{ t('calculator.load') }}
               </el-button>
               <el-button type="danger" link @click="handleDeleteScenario(row.name)">
-                删除
+                {{ t('calculator.delete') }}
               </el-button>
             </template>
           </el-table-column>
@@ -125,96 +125,96 @@
 
     <!-- 计算结果 -->
     <div v-if="result" class="result-section">
-      <div class="section-title">计算结果</div>
-      
+      <div class="section-title">{{ t('calculator.calculationResults') }}</div>
+
       <!-- 核心指标 -->
       <div class="metric-cards">
         <div class="metric-card gradient-primary">
           <div class="metric-icon">💰</div>
           <div class="metric-info">
-            <div class="metric-label">总投入</div>
+            <div class="metric-label">{{ t('calculator.totalInvestment') }}</div>
             <div class="metric-value">{{ formatCurrency(result.totalContribution) }}</div>
           </div>
         </div>
-        
+
         <div class="metric-card gradient-success">
           <div class="metric-icon">📈</div>
           <div class="metric-info">
-            <div class="metric-label">总收益</div>
+            <div class="metric-label">{{ t('calculator.totalReturn') }}</div>
             <div class="metric-value">{{ formatCurrency(result.totalInterest) }}</div>
           </div>
         </div>
-        
+
         <div class="metric-card gradient-info">
           <div class="metric-icon">💎</div>
           <div class="metric-info">
-            <div class="metric-label">总资产</div>
+            <div class="metric-label">{{ t('calculator.totalAssets') }}</div>
             <div class="metric-value">{{ formatCurrency(result.totalFuture) }}</div>
           </div>
         </div>
-        
+
         <div class="metric-card gradient-warning">
           <div class="metric-icon">📊</div>
           <div class="metric-info">
-            <div class="metric-label">收益率</div>
+            <div class="metric-label">{{ t('calculator.returnRate') }}</div>
             <div class="metric-value">{{ result.interestRatio }}%</div>
           </div>
         </div>
       </div>
-      
+
       <!-- 资产增长曲线 -->
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">资产增长曲线</span>
+          <span class="card-title">{{ t('calculator.growthCurve') }}</span>
           <div>
-            <el-tag>复利的力量</el-tag>
+            <el-tag>{{ t('calculator.compoundPower') }}</el-tag>
             <el-button type="primary" text @click="handleExportChart">
               <el-icon><Picture /></el-icon>
-              保存图表
+              {{ t('calculator.saveChart') }}
             </el-button>
           </div>
         </div>
         <div ref="growthChartRef" class="chart-container"></div>
       </div>
-      
+
       <!-- 年度明细表 -->
       <div class="finance-card table-card">
         <div class="card-header">
-          <span class="card-title">年度明细</span>
+          <span class="card-title">{{ t('calculator.yearlyDetail') }}</span>
           <div>
             <el-button text @click="showTable = !showTable">
-              {{ showTable ? '收起' : '展开' }}
+              {{ showTable ? t('calculator.collapse') : t('calculator.expand') }}
               <el-icon><component :is="showTable ? 'ArrowUp' : 'ArrowDown'" /></el-icon>
             </el-button>
             <el-button type="primary" text @click="handleExportExcel" v-if="showTable">
               <el-icon><Document /></el-icon>
-              导出 Excel
+              {{ t('calculator.exportExcel') }}
             </el-button>
           </div>
         </div>
-        
+
         <el-table v-show="showTable" :data="result.yearlyData" stripe>
-          <el-table-column prop="year" label="年份" width="80" align="center">
+          <el-table-column prop="year" :label="t('calculator.year')" width="80" align="center">
             <template #default="{ row }">
-              第{{ row.year }}年
+              {{ row.year }}
             </template>
           </el-table-column>
-          <el-table-column prop="totalAssets" label="总资产" align="right">
+          <el-table-column prop="totalAssets" :label="t('calculator.totalAssets')" align="right">
             <template #default="{ row }">
               {{ formatCurrency(row.totalAssets) }}
             </template>
           </el-table-column>
-          <el-table-column prop="totalContribution" label="总投入" align="right">
+          <el-table-column prop="totalContribution" :label="t('calculator.totalInvestment')" align="right">
             <template #default="{ row }">
               {{ formatCurrency(row.totalContribution) }}
             </template>
           </el-table-column>
-          <el-table-column prop="totalInterest" label="总收益" align="right">
+          <el-table-column prop="totalInterest" :label="t('calculator.totalReturn')" align="right">
             <template #default="{ row }">
               {{ formatCurrency(row.totalInterest) }}
             </template>
           </el-table-column>
-          <el-table-column label="收益率" width="100" align="center">
+          <el-table-column :label="t('calculator.returnRate')" width="100" align="center">
             <template #default="{ row }">
               <el-tag :type="getInterestRateTag(row)">
                 {{ ((row.totalInterest / row.totalContribution) * 100).toFixed(1) }}%
@@ -224,56 +224,56 @@
         </el-table>
       </div>
     </div>
-    
+
     <!-- 财务自由目标计算 -->
     <div class="finance-card goals-card">
       <div class="card-header">
-        <span class="card-title">财务自由三阶段</span>
-        <el-tag type="success">基于当前参数</el-tag>
+        <span class="card-title">{{ t('calculator.financialFreedomStages') }}</span>
+        <el-tag type="success">{{ t('calculator.basedOnCurrent') }}</el-tag>
       </div>
-      
+
       <div class="goals-grid">
         <div class="goal-item">
           <div class="goal-icon">🛡️</div>
-          <div class="goal-title">财务保障</div>
+          <div class="goal-title">{{ t('calculator.guarantee') }}</div>
           <div class="goal-amount">{{ formatCurrency(financialGoals.guarantee) }}</div>
           <div class="goal-time" v-if="goalsTime.security">
             <el-icon><Timer /></el-icon>
-            {{ goalsTime.security.years }}年{{ goalsTime.security.months }}个月
+            {{ goalsTime.security.years }}{{ t('calculator.years') }}{{ goalsTime.security.months }}{{ t('calculator.yuan').charAt(0) }}
           </div>
           <div class="goal-status" v-if="goalsTime.security">
             <el-tag :type="goalsTime.security.totalMonths <= 3 ? 'success' : 'info'">
-              {{ goalsTime.security.totalMonths <= 3 ? '快速达成' : '稳步前进' }}
+              {{ goalsTime.security.totalMonths <= 3 ? t('calculator.fastAchieve') : t('calculator.steadyProgress') }}
             </el-tag>
           </div>
         </div>
 
         <div class="goal-item">
           <div class="goal-icon">🔒</div>
-          <div class="goal-title">财务安全</div>
+          <div class="goal-title">{{ t('calculator.security') }}</div>
           <div class="goal-amount">{{ formatCurrency(financialGoals.safety) }}</div>
           <div class="goal-time" v-if="goalsTime.safety">
             <el-icon><Timer /></el-icon>
-            {{ goalsTime.safety.years }}年{{ goalsTime.safety.months }}个月
+            {{ goalsTime.safety.years }}{{ t('calculator.years') }}{{ goalsTime.safety.months }}{{ t('calculator.yuan').charAt(0) }}
           </div>
           <div class="goal-status" v-if="goalsTime.safety">
             <el-tag :type="goalsTime.safety.years <= 5 ? 'success' : 'info'">
-              {{ goalsTime.safety.years <= 5 ? '快速达成' : '稳步前进' }}
+              {{ goalsTime.safety.years <= 5 ? t('calculator.fastAchieve') : t('calculator.steadyProgress') }}
             </el-tag>
           </div>
         </div>
 
         <div class="goal-item">
           <div class="goal-icon">🚀</div>
-          <div class="goal-title">财务自由</div>
+          <div class="goal-title">{{ t('calculator.freedom') }}</div>
           <div class="goal-amount">{{ formatCurrency(financialGoals.freedom) }}</div>
           <div class="goal-time" v-if="goalsTime.freedom">
             <el-icon><Timer /></el-icon>
-            {{ goalsTime.freedom.years }}年{{ goalsTime.freedom.months }}个月
+            {{ goalsTime.freedom.years }}{{ t('calculator.years') }}{{ goalsTime.freedom.months }}{{ t('calculator.yuan').charAt(0) }}
           </div>
           <div class="goal-status" v-if="goalsTime.freedom">
             <el-tag :type="goalsTime.freedom.years <= 10 ? 'success' : 'info'">
-              {{ goalsTime.freedom.years <= 10 ? '快速达成' : '稳步前进' }}
+              {{ goalsTime.freedom.years <= 10 ? t('calculator.fastAchieve') : t('calculator.steadyProgress') }}
             </el-tag>
           </div>
         </div>
@@ -293,6 +293,9 @@ import { getCalculatorChartConfig } from '../utils/chart-optimizer'
 import { ElMessage } from 'element-plus'
 import HelpTooltip from '../components/HelpTooltip.vue'
 import { calculatorTutorial } from '../utils/tutorial-content'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 // ==================== 复利计算器核心算法 ====================
 
@@ -527,7 +530,7 @@ const loadExampleData = () => {
     safety: null,
     freedom: null
   }
-  ElMessage.success('示例数据加载成功，点击"计算"查看结果')
+  ElMessage.success(t('calculator.exampleLoaded'))
 }
 
 // ==================== 场景管理 ====================
@@ -544,7 +547,7 @@ const loadScenariosList = () => {
 // 保存当前场景
 const handleSaveScenario = (scenarioName: string) => {
   if (!scenarioName.trim()) {
-    ElMessage.error('场景名称不能为空')
+    ElMessage.error(t('calculator.scenarioNameEmpty'))
     return
   }
 
@@ -556,11 +559,11 @@ const handleSaveScenario = (scenarioName: string) => {
   })
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 保存成功`)
+    ElMessage.success(t('calculator.scenarioSaved', { name: scenarioName }))
     currentScenarioName.value = scenarioName
     loadScenariosList()
   } else {
-    ElMessage.error('保存失败，请重试')
+    ElMessage.error(t('calculator.scenarioSaveFailed'))
   }
 }
 
@@ -582,9 +585,9 @@ const handleLoadScenario = (scenarioName: string) => {
       safety: null,
       freedom: null
     }
-    ElMessage.success(`场景 "${scenarioName}" 加载成功`)
+    ElMessage.success(t('calculator.scenarioLoaded', { name: scenarioName }))
   } else {
-    ElMessage.error('加载失败，请重试')
+    ElMessage.error(t('calculator.scenarioLoadFailed'))
   }
 }
 
@@ -593,13 +596,13 @@ const handleDeleteScenario = (scenarioName: string) => {
   const success = deleteScenario('calculator', scenarioName)
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 删除成功`)
+    ElMessage.success(t('calculator.scenarioDeleted', { name: scenarioName }))
     loadScenariosList()
     if (currentScenarioName.value === scenarioName) {
       currentScenarioName.value = ''
     }
   } else {
-    ElMessage.error('删除失败，请重试')
+    ElMessage.error(t('calculator.scenarioDeleteFailed'))
   }
 }
 
@@ -647,7 +650,7 @@ const handleExportPDF = () => {
 // 导出图表
 const handleExportChart = () => {
   if (!growthChartInstance.value) {
-    ElMessage.error('图表未初始化')
+    ElMessage.error(t('calculator.chartNotInit'))
     return
   }
   exportChartToImage(growthChartInstance.value, '复利计算器_资产增长曲线')
@@ -656,7 +659,7 @@ const handleExportChart = () => {
 // 导出 Excel
 const handleExportExcel = () => {
   if (!result.value) {
-    ElMessage.error('请先计算')
+    ElMessage.error(t('calculator.pleaseCalculate'))
     return
   }
 

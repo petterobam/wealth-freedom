@@ -1,27 +1,27 @@
 <template>
   <div class="asset-allocation">
-    <h1 class="page-title">资产配置可视化</h1>
+    <h1 class="page-title">{{ t('assetAllocation.title') }}</h1>
 
     <!-- 财务阶段选择器 -->
     <div class="finance-card stage-selector">
       <div class="card-header">
-        <span class="card-title">财务阶段</span>
-        <HelpTooltip content="根据您的财务状况，系统会推荐最适合的资产配置方案" />
+        <span class="card-title">{{ t('assetAllocation.financialStage') }}</span>
+        <HelpTooltip :content="t('assetAllocation.dragSlider')" />
       </div>
       <el-radio-group v-model="selectedStage" @change="onStageChange" class="stage-radio-group">
         <el-radio-button value="guarantee">
-          <span class="stage-name">财务保障</span>
-          <el-tag v-if="currentStage === 'guarantee'" type="success" size="small">当前阶段</el-tag>
+          <span class="stage-name">{{ t('assetAllocation.stageGuarantee') }}</span>
+          <el-tag v-if="currentStage === 'guarantee'" type="success" size="small">{{ t('assetAllocation.currentStage') }}</el-tag>
           <span class="stage-desc">{{ stageConfigs.guarantee.description }}</span>
         </el-radio-button>
         <el-radio-button value="safety">
-          <span class="stage-name">财务安全</span>
-          <el-tag v-if="currentStage === 'safety'" type="warning" size="small">推荐</el-tag>
+          <span class="stage-name">{{ t('assetAllocation.stageSecurity') }}</span>
+          <el-tag v-if="currentStage === 'safety'" type="warning" size="small">{{ t('assetAllocation.recommended') }}</el-tag>
           <span class="stage-desc">{{ stageConfigs.safety.description }}</span>
         </el-radio-button>
         <el-radio-button value="freedom">
-          <span class="stage-name">财务自由</span>
-          <el-tag v-if="currentStage === 'freedom'" type="info" size="small">未来目标</el-tag>
+          <span class="stage-name">{{ t('assetAllocation.stageFreedom') }}</span>
+          <el-tag v-if="currentStage === 'freedom'" type="info" size="small">{{ t('assetAllocation.futureGoal') }}</el-tag>
           <span class="stage-desc">{{ stageConfigs.freedom.description }}</span>
         </el-radio-button>
       </el-radio-group>
@@ -31,8 +31,8 @@
     <div class="allocation-grid">
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">资产配置饼图</span>
-          <HelpTooltip content="拖拽下方滑块调整配置，实时查看影响" />
+          <span class="card-title">{{ t('assetAllocation.pieChartTitle') }}</span>
+          <HelpTooltip :content="t('assetAllocation.dragSlider')" />
         </div>
         <div ref="pieChartRef" class="chart-container"></div>
 
@@ -40,7 +40,7 @@
         <div class="allocation-sliders">
           <div class="slider-item">
             <div class="slider-header">
-              <span class="label">低风险</span>
+              <span class="label">{{ t('assetAllocation.lowRisk') }}</span>
               <span class="percentage">{{ allocation.low }}%</span>
               <span class="amount">¥{{ formatAmount(allocation.low * totalAssets / 100) }}</span>
             </div>
@@ -56,7 +56,7 @@
 
           <div class="slider-item">
             <div class="slider-header">
-              <span class="label">中风险</span>
+              <span class="label">{{ t('assetAllocation.mediumRisk') }}</span>
               <span class="percentage">{{ allocation.medium }}%</span>
               <span class="amount">¥{{ formatAmount(allocation.medium * totalAssets / 100) }}</span>
             </div>
@@ -72,7 +72,7 @@
 
           <div class="slider-item">
             <div class="slider-header">
-              <span class="label">高风险</span>
+              <span class="label">{{ t('assetAllocation.highRisk') }}</span>
               <span class="percentage">{{ allocation.high }}%</span>
               <span class="amount">¥{{ formatAmount(allocation.high * totalAssets / 100) }}</span>
             </div>
@@ -88,9 +88,9 @@
 
           <!-- 总比例提示 -->
           <div class="total-allocation" :class="{ 'valid': totalPercentage === 100 }">
-            总比例: {{ totalPercentage }}%
+            {{ t('assetAllocation.totalRatio') }}: {{ totalPercentage }}%
             <span v-if="totalPercentage !== 100" class="error-msg">
-              (必须等于 100%)
+              {{ t('assetAllocation.mustEqual100') }}
             </span>
           </div>
         </div>
@@ -99,8 +99,8 @@
       <!-- 风险-收益雷达图 -->
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">风险-收益评估</span>
-          <HelpTooltip content="对比当前配置与推荐配置的多维度表现" />
+          <span class="card-title">{{ t('assetAllocation.riskReturnTitle') }}</span>
+          <HelpTooltip :content="t('assetAllocation.dragSlider')" />
         </div>
         <div ref="radarChartRef" class="chart-container"></div>
       </div>
@@ -109,45 +109,45 @@
     <!-- 配置详情表格 -->
     <div class="finance-card">
       <div class="card-header">
-        <span class="card-title">配置详情</span>
+        <span class="card-title">{{ t('assetAllocation.configDetailsTitle') }}</span>
       </div>
       <el-table :data="assetTypes" border stripe>
-        <el-table-column prop="name" label="资产类型" width="120" />
-        <el-table-column prop="currentPercent" label="当前 %" width="100">
+        <el-table-column prop="name" :label="t('assetAllocation.assetType')" width="120" />
+        <el-table-column prop="currentPercent" :label="t('assetAllocation.currentPercent')" width="100">
           <template #default="scope">
             <span :class="{ 'diff': scope.row.currentPercent !== scope.row.recommendedPercent }">
               {{ scope.row.currentPercent }}%
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="recommendedPercent" label="推荐 %" width="100">
+        <el-table-column prop="recommendedPercent" :label="t('assetAllocation.recommendedPercent')" width="100">
           <template #default="scope">
             <el-tag type="primary" size="small">{{ scope.row.recommendedPercent }}%</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="riskLevel" label="风险等级" width="120">
+        <el-table-column prop="riskLevel" :label="t('assetAllocation.riskLevel')" width="120">
           <template #default="scope">
             <span :class="'risk-' + scope.row.riskLevel">
               {{ '★'.repeat(scope.row.stars) + '☆'.repeat(5 - scope.row.stars) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="expectedReturn" label="预期收益" width="120" />
-        <el-table-column prop="examples" label="投资标的" />
+        <el-table-column prop="expectedReturn" :label="t('assetAllocation.expectedReturn')" width="120" />
+        <el-table-column prop="examples" :label="t('assetAllocation.investmentTarget')" />
       </el-table>
     </div>
 
     <!-- 收益预测曲线 -->
     <div class="finance-card chart-card">
       <div class="card-header">
-        <span class="card-title">收益预测 (未来 10 年)</span>
-        <HelpTooltip content="模拟当前配置下未来 10 年的资产增长，包含最乐观、预期、最悲观三种情况" />
+        <span class="card-title">{{ t('assetAllocation.revenueForecast') }}</span>
+        <HelpTooltip :content="t('assetAllocation.dragSlider')" />
       </div>
       <div class="year-selector">
         <el-radio-group v-model="selectedYears" @change="onYearsChange">
-          <el-radio-button :value="5">5 年</el-radio-button>
-          <el-radio-button :value="10">10 年</el-radio-button>
-          <el-radio-button :value="20">20 年</el-radio-button>
+          <el-radio-button :value="5">5{{ t('assetAllocation.yearsSuffix') }}</el-radio-button>
+          <el-radio-button :value="10">10{{ t('assetAllocation.yearsSuffix') }}</el-radio-button>
+          <el-radio-button :value="20">20{{ t('assetAllocation.yearsSuffix') }}</el-radio-button>
         </el-radio-group>
       </div>
       <div ref="growthChartRef" class="chart-container"></div>
@@ -162,17 +162,17 @@
         :disabled="isAllocationMatchRecommended"
       >
         <el-icon><Check /></el-icon>
-        一键应用推荐配置
+        {{ t('assetAllocation.applyRecommended') }}
       </el-button>
 
       <el-button size="large" @click="exportReport">
         <el-icon><Download /></el-icon>
-        导出配置报告
+        {{ t('assetAllocation.exportReport') }}
       </el-button>
 
       <el-button size="large" @click="saveConfiguration">
         <el-icon><Folder /></el-icon>
-        保存当前配置
+        {{ t('assetAllocation.saveConfiguration') }}
       </el-button>
     </div>
   </div>
@@ -186,40 +186,43 @@ import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
 import HelpTooltip from '@/components/HelpTooltip.vue'
 import { exportToPDF, exportChartToImage, exportMultipleChartsToImage } from '@/utils/export'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 // 财务阶段配置
 const stageConfigs = {
   guarantee: {
-    name: '财务保障',
-    description: '安全第一，随时可用',
+    name: t('assetAllocation.stageGuarantee'),
+    description: t('assetAllocation.guaranteeDesc'),
     allocation: {
       low: 100,
       medium: 0,
       high: 0
     },
-    targetAmount: '月支出 × 6~12',
+    targetAmount: t('assetAllocation.guaranteeDesc'),
     riskLevel: '★☆☆☆☆'
   },
   safety: {
-    name: '财务安全',
-    description: '投资收益覆盖月支出',
+    name: t('assetAllocation.stageSecurity'),
+    description: t('assetAllocation.securityDesc'),
     allocation: {
       low: 40,
       medium: 40,
       high: 20
     },
-    targetAmount: '月支出 × 150',
+    targetAmount: t('assetAllocation.securityDesc'),
     riskLevel: '★★★☆☆'
   },
   freedom: {
-    name: '财务自由',
-    description: '投资收益支撑梦想生活',
+    name: t('assetAllocation.stageFreedom'),
+    description: t('assetAllocation.freedomDesc'),
     allocation: {
       low: 0,
       medium: 50,
       high: 50
     },
-    targetAmount: '梦想月支出 × 150',
+    targetAmount: t('assetAllocation.freedomDesc'),
     riskLevel: '★★★★☆'
   }
 }
@@ -318,7 +321,7 @@ const onYearsChange = () => {
 const updateAssetTypes = () => {
   assetTypes.value = [
     {
-      name: '低风险',
+      name: t('assetAllocation.lowRisk'),
       currentPercent: allocation.value.low,
       recommendedPercent: stageConfigs[selectedStage.value].allocation.low,
       stars: 1,
@@ -327,7 +330,7 @@ const updateAssetTypes = () => {
       examples: '货币基金、债券基金、定期存款'
     },
     {
-      name: '中风险',
+      name: t('assetAllocation.mediumRisk'),
       currentPercent: allocation.value.medium,
       recommendedPercent: stageConfigs[selectedStage.value].allocation.medium,
       stars: 3,
@@ -336,7 +339,7 @@ const updateAssetTypes = () => {
       examples: '指数基金、混合基金、蓝筹股'
     },
     {
-      name: '高风险',
+      name: t('assetAllocation.highRisk'),
       currentPercent: allocation.value.high,
       recommendedPercent: stageConfigs[selectedStage.value].allocation.high,
       stars: 5,
@@ -362,17 +365,17 @@ const updatePieChart = () => {
       trigger: 'item',
       formatter: (params: any) => {
         const amount = formatAmount(params.value * totalAssets.value / 100)
-        return `${params.name}: ${params.value}% (${params.percent}%)<br/>金额: ¥${amount}`
+        return `${params.name}: ${params.value}% (${params.percent}%)<br/>${t('assetAllocation.assetsAmount')}: ¥${amount}`
       }
     },
     legend: {
       orient: 'horizontal',
       bottom: 0,
-      data: ['低风险', '中风险', '高风险']
+      data: [t('assetAllocation.lowRisk'), t('assetAllocation.mediumRisk'), t('assetAllocation.highRisk')]
     },
     series: [
       {
-        name: '资产配置',
+        name: t('assetAllocation.title'),
         type: 'pie',
         radius: ['40%', '70%'],
         center: ['50%', '45%'],
@@ -395,17 +398,17 @@ const updatePieChart = () => {
         },
         data: [
           {
-            name: '低风险',
+            name: t('assetAllocation.lowRisk'),
             value: allocation.value.low,
             itemStyle: { color: '#67c23a' }
           },
           {
-            name: '中风险',
+            name: t('assetAllocation.mediumRisk'),
             value: allocation.value.medium,
             itemStyle: { color: '#e6a23c' }
           },
           {
-            name: '高风险',
+            name: t('assetAllocation.highRisk'),
             value: allocation.value.high,
             itemStyle: { color: '#f56c6c' }
           }
@@ -440,16 +443,16 @@ const updateRadarChart = () => {
       trigger: 'item'
     },
     legend: {
-      data: ['当前配置', '推荐配置'],
+      data: [t('assetAllocation.currentConfig'), t('assetAllocation.recommendedConfig')],
       bottom: 0
     },
     radar: {
       indicator: [
-        { name: '安全性', max: 100 },
-        { name: '收益性', max: 100 },
-        { name: '流动性', max: 100 },
-        { name: '波动性', max: 100 },
-        { name: '分散度', max: 100 }
+        { name: t('assetAllocation.safety'), max: 100 },
+        { name: t('assetAllocation.returnRate'), max: 100 },
+        { name: t('assetAllocation.liquidity'), max: 100 },
+        { name: t('assetAllocation.volatility'), max: 100 },
+        { name: t('assetAllocation.dispersion'), max: 100 }
       ]
     },
     series: [
@@ -459,13 +462,13 @@ const updateRadarChart = () => {
         data: [
           {
             value: calculateMetrics(allocation.value),
-            name: '当前配置',
+            name: t('assetAllocation.currentConfig'),
             areaStyle: { color: 'rgba(103, 194, 58, 0.3)' },
             lineStyle: { color: '#67c23a' }
           },
           {
             value: calculateMetrics(recommendedAllocation.value),
-            name: '推荐配置',
+            name: t('assetAllocation.recommendedConfig'),
             areaStyle: { color: 'rgba(64, 158, 255, 0.3)' },
             lineStyle: { color: '#409eff' }
           }
@@ -524,37 +527,37 @@ const updateGrowthChart = () => {
       axisPointer: { type: 'cross' }
     },
     legend: {
-      data: ['最乐观', '预期', '最悲观'],
+      data: [t('assetAllocation.optimistic'), t('assetAllocation.expected'), t('assetAllocation.pessimistic')],
       bottom: 0
     },
     xAxis: {
       type: 'category',
-      data: data.map(d => `${d.year}年后`)
+      data: data.map(d => `${d.year}${t('assetAllocation.yearsLater')}`)
     },
     yAxis: {
       type: 'value',
-      name: '资产金额（元）',
+      name: t('assetAllocation.assetsAmount'),
       axisLabel: {
         formatter: (value: number) => (value / 10000).toFixed(0) + '万'
       }
     },
     series: [
       {
-        name: '最乐观',
+        name: t('assetAllocation.optimistic'),
         type: 'line',
         data: data.map(d => d.optimistic),
         lineStyle: { color: '#67c23a', type: 'dashed' },
         areaStyle: { color: 'rgba(103, 194, 58, 0.1)' }
       },
       {
-        name: '预期',
+        name: t('assetAllocation.expected'),
         type: 'line',
         data: data.map(d => d.expected),
         lineStyle: { color: '#409eff', width: 3 },
         areaStyle: { color: 'rgba(64, 158, 255, 0.2)' }
       },
       {
-        name: '最悲观',
+        name: t('assetAllocation.pessimistic'),
         type: 'line',
         data: data.map(d => d.pessimistic),
         lineStyle: { color: '#f56c6c', type: 'dashed' },
@@ -575,12 +578,12 @@ const applyRecommendedAllocation = () => {
   allocation.value = { ...stageConfigs[selectedStage.value].allocation }
   updateAssetTypes()
   updateCharts()
-  ElMessage.success('已应用推荐配置！')
+  ElMessage.success(t('assetAllocation.appliedRecommended'))
 }
 
 const exportReport = async () => {
   try {
-    ElMessage.info('正在生成资产配置报告...')
+    ElMessage.info(t('assetAllocation.generatingReport'))
 
     // 确保所有图表都已完全渲染
     await new Promise(resolve => setTimeout(resolve, 1000))
@@ -641,10 +644,10 @@ const exportReport = async () => {
     const stageName = stageConfigs[selectedStage.value].name
     await exportToPDF(`资产配置报告_${stageName}`)
 
-    ElMessage.success('资产配置报告导出成功！')
+    ElMessage.success(t('assetAllocation.exportSuccess'))
   } catch (error) {
-    console.error('导出报告失败:', error)
-    ElMessage.error('导出报告失败，请稍后重试')
+    console.error('Export report failed:', error)
+    ElMessage.error(t('assetAllocation.exportFailed'))
   }
 }
 
@@ -654,7 +657,7 @@ const saveConfiguration = () => {
     allocation: allocation.value,
     savedAt: new Date().toISOString()
   }))
-  ElMessage.success('配置已保存！')
+  ElMessage.success(t('assetAllocation.configSaved'))
 }
 
 // 监听窗口大小变化，调整图表

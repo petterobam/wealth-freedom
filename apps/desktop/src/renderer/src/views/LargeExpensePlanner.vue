@@ -1,24 +1,24 @@
 <template>
   <div class="large-expense-planner">
-    <h1 class="page-title">大额支出规划</h1>
-    
+    <h1 class="page-title">{{ t('largeExpensePlanner.title') }}</h1>
+
     <!-- 输入参数 -->
     <div class="finance-card input-card">
       <div class="card-header">
-        <span class="card-title">规划参数</span>
-        <el-tag type="info">目标清晰，路径明确</el-tag>
+        <span class="card-title">{{ t('largeExpensePlanner.planParameters') }}</span>
+        <el-tag type="info">{{ t('largeExpensePlanner.tagline') }}</el-tag>
       </div>
       
       <el-form :model="plannerForm" label-width="120px" class="planner-form">
-        <el-form-item label="目标名称">
+        <el-form-item :label="t('largeExpensePlanner.goalName')">
           <el-input
             v-model="plannerForm.goalName"
-            placeholder="例如：买房首付、买车、教育基金"
+            :placeholder="t('largeExpensePlanner.goalNamePlaceholder')"
           />
           <HelpTooltip :content="largeExpenseTutorial.parameters.goalName" />
         </el-form-item>
 
-        <el-form-item label="目标金额">
+        <el-form-item :label="t('largeExpensePlanner.targetAmount')">
           <el-input-number
             v-model="plannerForm.targetAmount"
             :min="0"
@@ -26,22 +26,22 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('largeExpensePlanner.unitYuan') }}</span>
           <HelpTooltip :content="largeExpenseTutorial.parameters.targetAmount" />
         </el-form-item>
 
-        <el-form-item label="目标时间">
+        <el-form-item :label="t('largeExpensePlanner.targetTime')">
           <el-input-number
             v-model="plannerForm.yearsToTarget"
             :min="1"
             :max="30"
             controls-position="right"
           />
-          <span class="unit">年</span>
+          <span class="unit">{{ t('largeExpensePlanner.unitYears') }}</span>
           <HelpTooltip :content="largeExpenseTutorial.parameters.yearsToTarget" />
         </el-form-item>
 
-        <el-form-item label="当前储蓄">
+        <el-form-item :label="t('largeExpensePlanner.currentSavings')">
           <el-input-number
             v-model="plannerForm.currentSavings"
             :min="0"
@@ -49,11 +49,11 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('largeExpensePlanner.unitYuan') }}</span>
           <HelpTooltip :content="largeExpenseTutorial.parameters.currentSavings" />
         </el-form-item>
 
-        <el-form-item label="每月储蓄">
+        <el-form-item :label="t('largeExpensePlanner.monthlySavings')">
           <el-input-number
             v-model="plannerForm.monthlySavings"
             :min="0"
@@ -61,11 +61,11 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('largeExpensePlanner.unitYuan') }}</span>
           <HelpTooltip :content="largeExpenseTutorial.parameters.monthlySavings" />
         </el-form-item>
 
-        <el-form-item label="年化收益率">
+        <el-form-item :label="t('largeExpensePlanner.annualReturn')">
           <el-slider
             v-model="plannerForm.annualRate"
             :min="0"
@@ -74,63 +74,63 @@
             :marks="rateMarks"
             show-input
           />
-          <span class="hint">推荐：8%（基于历史数据）</span>
+          <span class="hint">{{ t('largeExpensePlanner.annualReturnHint') }}</span>
           <HelpTooltip :content="largeExpenseTutorial.parameters.annualRate" />
         </el-form-item>
 
         <el-form-item>
           <el-button type="primary" @click="calculatePlan" size="large">
-            计算规划
+            {{ t('largeExpensePlanner.calculate') }}
           </el-button>
-          <el-button @click="resetForm" size="large">重置</el-button>
+          <el-button @click="resetForm" size="large">{{ t('largeExpensePlanner.reset') }}</el-button>
           <el-button type="success" @click="openScenarioDialog" size="large">
             <el-icon><FolderOpened /></el-icon>
-            场景管理
+            {{ t('largeExpensePlanner.scenarioManagement') }}
           </el-button>
           <el-button type="warning" @click="loadExampleData" size="large">
             <el-icon><DocumentCopy /></el-icon>
-            示例数据
+            {{ t('largeExpensePlanner.exampleData') }}
           </el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <!-- 场景管理对话框 -->
-    <el-dialog v-model="showScenarioDialog" title="场景管理" width="600px">
+    <el-dialog v-model="showScenarioDialog" :title="t('largeExpensePlanner.scenarioManagement')" width="600px">
       <div class="scenario-actions">
         <el-input
           v-model="currentScenarioName"
-          placeholder="输入场景名称"
+          :placeholder="t('largeExpensePlanner.scenarioNamePlaceholder')"
           style="width: 200px"
         />
         <el-button type="primary" @click="handleSaveScenario(currentScenarioName)">
-          保存当前场景
+          {{ t('largeExpensePlanner.saveCurrentScenario') }}
         </el-button>
       </div>
 
       <el-divider />
 
       <div class="scenario-list">
-        <el-empty v-if="Object.keys(scenarios).length === 0" description="暂无保存的场景" />
+        <el-empty v-if="Object.keys(scenarios).length === 0" :description="t('largeExpensePlanner.noSavedScenarios')" />
 
         <el-table v-else :data="Object.entries(scenarios).map(([name, data]) => ({ name, ...data }))" style="width: 100%">
-          <el-table-column prop="name" label="场景名称" width="200" />
-          <el-table-column label="参数" width="300">
+          <el-table-column prop="name" :label="t('largeExpensePlanner.scenarioNameCol')" width="200" />
+          <el-table-column :label="t('largeExpensePlanner.parametersCol')" width="300">
             <template #default="{ row }">
               <div class="scenario-params">
                 <span>{{ row.data?.goalName }}</span>
-                <span>目标: ¥{{ row.data?.targetAmount?.toLocaleString() }}</span>
-                <span>{{ row.data?.yearsToTarget }}年, {{ row.data?.annualRate }}%</span>
+                <span>{{ t('largeExpensePlanner.target') }}: ¥{{ row.data?.targetAmount?.toLocaleString() }}</span>
+                <span>{{ row.data?.yearsToTarget }}{{ t('largeExpensePlanner.unitYears') }}, {{ row.data?.annualRate }}%</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="120">
+          <el-table-column :label="t('largeExpensePlanner.operationsCol')" width="120">
             <template #default="{ row }">
               <el-button type="primary" link @click="handleLoadScenario(row.name)">
-                加载
+                {{ t('largeExpensePlanner.load') }}
               </el-button>
               <el-button type="danger" link @click="handleDeleteScenario(row.name)">
-                删除
+                {{ t('largeExpensePlanner.delete') }}
               </el-button>
             </template>
           </el-table-column>
@@ -143,31 +143,31 @@
       <!-- 核心指标 -->
       <div class="metrics-grid">
         <div class="metric-card">
-          <div class="metric-label">目标金额</div>
+          <div class="metric-label">{{ t('largeExpensePlanner.targetAmountResult') }}</div>
           <div class="metric-value">{{ formatMoney(result.targetAmount) }}</div>
-          <div class="metric-sub">{{ result.yearsToTarget }}年后</div>
+          <div class="metric-sub">{{ result.yearsToTarget }}{{ t('largeExpensePlanner.yearsLater') }}</div>
         </div>
-        
+
         <div class="metric-card">
-          <div class="metric-label">未来资产</div>
+          <div class="metric-label">{{ t('largeExpensePlanner.futureAssets') }}</div>
           <div class="metric-value">{{ formatMoney(result.futureAssets) }}</div>
-          <div class="metric-sub">考虑复利增长</div>
+          <div class="metric-sub">{{ t('largeExpensePlanner.compoundGrowth') }}</div>
         </div>
-        
+
         <div class="metric-card" :class="result.isAchievable ? 'success' : 'warning'">
-          <div class="metric-label">是否可达成</div>
+          <div class="metric-label">{{ t('largeExpensePlanner.achievable') }}</div>
           <div class="metric-value">
-            {{ result.isAchievable ? '✅ 是' : '❌ 否' }}
+            {{ result.isAchievable ? t('largeExpensePlanner.yes') : t('largeExpensePlanner.no') }}
           </div>
           <div class="metric-sub">
-            {{ result.isAchievable ? `${result.yearsToAchieve}年达成` : `缺口${formatMoney(result.gap)}` }}
+            {{ result.isAchievable ? `${result.yearsToAchieve}${t('largeExpensePlanner.achievedIn')}` : `${t('largeExpensePlanner.gap')}${formatMoney(result.gap)}` }}
           </div>
         </div>
-        
+
         <div class="metric-card">
-          <div class="metric-label">建议方案</div>
+          <div class="metric-label">{{ t('largeExpensePlanner.suggestion') }}</div>
           <div class="metric-value" :class="result.isAchievable ? 'success-text' : 'warning-text'">
-            {{ result.isAchievable ? '保持现状' : `月存+${formatMoney(result.additionalSavingsNeeded)}` }}
+            {{ result.isAchievable ? t('largeExpensePlanner.keepCurrent') : `${t('largeExpensePlanner.monthlySave')}${formatMoney(result.additionalSavingsNeeded)}` }}
           </div>
           <div class="metric-sub">{{ result.recommendation }}</div>
         </div>
@@ -176,32 +176,32 @@
       <!-- 详细分析 -->
       <div class="finance-card detail-card">
         <div class="card-header">
-          <span class="card-title">详细分析</span>
+          <span class="card-title">{{ t('largeExpensePlanner.detailedAnalysis') }}</span>
         </div>
-        
+
         <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">当前储蓄：</span>
+            <span class="detail-label">{{ t('largeExpensePlanner.currentSavingsLabel') }}</span>
             <span class="detail-value">{{ formatMoney(result.currentSavings) }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">每月储蓄：</span>
+            <span class="detail-label">{{ t('largeExpensePlanner.monthlySavingsLabel') }}</span>
             <span class="detail-value">{{ formatMoney(result.monthlySavings) }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">总投入：</span>
+            <span class="detail-label">{{ t('largeExpensePlanner.totalContribution') }}</span>
             <span class="detail-value">{{ formatMoney(result.futureAssetsDetail.totalContribution) }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">投资收益：</span>
+            <span class="detail-label">{{ t('largeExpensePlanner.investmentReturn') }}</span>
             <span class="detail-value">{{ formatMoney(result.futureAssetsDetail.totalInterest) }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">收益率：</span>
+            <span class="detail-label">{{ t('largeExpensePlanner.returnRate') }}</span>
             <span class="detail-value">{{ result.futureAssetsDetail.interestRatio }}%</span>
           </div>
           <div class="detail-item" v-if="!result.isAchievable">
-            <span class="detail-label">缺口金额：</span>
+            <span class="detail-label">{{ t('largeExpensePlanner.gapAmount') }}</span>
             <span class="detail-value warning-text">{{ formatMoney(result.gap) }}</span>
           </div>
         </div>
@@ -210,25 +210,25 @@
       <!-- 时间计算器 -->
       <div class="finance-card time-calculator-card">
         <div class="card-header">
-          <span class="card-title">时间计算器</span>
-          <el-tag type="info">保持当前储蓄，需要多久？</el-tag>
+          <span class="card-title">{{ t('largeExpensePlanner.timeCalculator') }}</span>
+          <el-tag type="info">{{ t('largeExpensePlanner.timeCalculatorTag') }}</el-tag>
         </div>
-        
+
         <div class="time-result">
           <div class="time-item">
-            <span class="time-label">达成时间：</span>
+            <span class="time-label">{{ t('largeExpensePlanner.achieveTime') }}</span>
             <span class="time-value">
-              {{ timeResult.years }}年{{ timeResult.months }}个月
+              {{ timeResult.years }}{{ t('largeExpensePlanner.unitYears') }}{{ timeResult.months }}
             </span>
           </div>
           <div class="time-item">
-            <span class="time-label">最终金额：</span>
+            <span class="time-label">{{ t('largeExpensePlanner.finalAmount') }}</span>
             <span class="time-value">{{ formatMoney(timeResult.finalAmount) }}</span>
           </div>
           <div class="time-item" v-if="timeResult.years > parseFloat(result.yearsToTarget)">
-            <span class="time-label">延长：</span>
+            <span class="time-label">{{ t('largeExpensePlanner.extended') }}</span>
             <span class="time-value warning-text">
-              {{ (timeResult.years - parseFloat(result.yearsToTarget)).toFixed(1) }}年
+              {{ (timeResult.years - parseFloat(result.yearsToTarget)).toFixed(1) }}{{ t('largeExpensePlanner.unitYears') }}
             </span>
           </div>
         </div>
@@ -237,28 +237,28 @@
       <!-- 建议提示 -->
       <div class="finance-card suggestion-card">
         <div class="card-header">
-          <span class="card-title">💡 建议提示</span>
+          <span class="card-title">{{ t('largeExpensePlanner.suggestionTitle') }}</span>
         </div>
-        
+
         <div class="suggestions">
           <div class="suggestion-item" v-if="result.isAchievable">
             <el-icon class="suggestion-icon"><SuccessFilled /></el-icon>
-            <span>目标可达成！继续按计划储蓄和投资，{{ result.yearsToAchieve }}年后达成目标。</span>
+            <span>{{ suggestionAchievable }}</span>
           </div>
-          
+
           <div class="suggestion-item" v-if="!result.isAchievable">
             <el-icon class="suggestion-icon warning"><WarningFilled /></el-icon>
-            <span>目标不足。建议每月增加{{ formatMoney(result.additionalSavingsNeeded) }}元储蓄，或延长目标时间至{{ timeResult.years }}年{{ timeResult.months }}个月。</span>
+            <span>{{ suggestionNotAchievable }}</span>
           </div>
-          
+
           <div class="suggestion-item">
             <el-icon class="suggestion-icon"><TrendCharts /></el-icon>
-            <span>复利效应显著：{{ result.yearsToTarget }}年投资收益可达{{ formatMoney(result.futureAssetsDetail.totalInterest) }}（收益率{{ result.futureAssetsDetail.interestRatio }}%）。</span>
+            <span>{{ suggestionCompound }}</span>
           </div>
-          
+
           <div class="suggestion-item">
             <el-icon class="suggestion-icon"><InfoFilled /></el-icon>
-            <span>年化收益率8%基于历史数据，实际收益可能波动。建议分散投资降低风险。</span>
+            <span>{{ suggestionRisk }}</span>
           </div>
         </div>
       </div>
@@ -266,12 +266,12 @@
       <!-- 资产增长曲线 -->
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">资产增长曲线</span>
+          <span class="card-title">{{ t('largeExpensePlanner.assetGrowthCurve') }}</span>
           <div>
-            <el-tag>可视化分析</el-tag>
+            <el-tag>{{ t('largeExpensePlanner.visualAnalysis') }}</el-tag>
             <el-button type="primary" text @click="handleExportChart">
               <el-icon><Picture /></el-icon>
-              保存图表
+              {{ t('largeExpensePlanner.saveChart') }}
             </el-button>
           </div>
         </div>
@@ -282,7 +282,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch, computed } from 'vue'
 import { SuccessFilled, WarningFilled, TrendCharts, InfoFilled, FolderOpened, Download, Picture, Document, DocumentCopy } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { saveScenario, loadScenario, getScenarios, deleteScenario, autoSaveScene, loadAutoSaveScene, clearAutoSaveScene } from '../utils/localStorage'
@@ -291,6 +291,9 @@ import { getLargeExpenseChartConfig } from '../utils/chart-optimizer'
 import { ElMessage } from 'element-plus'
 import HelpTooltip from '../components/HelpTooltip.vue'
 import { largeExpenseTutorial } from '../utils/tutorial-content'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 // 表单数据
 const plannerForm = reactive({
@@ -328,7 +331,7 @@ const loadScenariosList = () => {
 // 保存当前场景
 const handleSaveScenario = (scenarioName: string) => {
   if (!scenarioName.trim()) {
-    ElMessage.error('场景名称不能为空')
+    ElMessage.error(t('largeExpensePlanner.scenarioNameEmpty'))
     return
   }
 
@@ -342,11 +345,11 @@ const handleSaveScenario = (scenarioName: string) => {
   })
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 保存成功`)
+    ElMessage.success(t('largeExpensePlanner.scenarioSaveSuccess').replace('{name}', scenarioName))
     currentScenarioName.value = scenarioName
     loadScenariosList()
   } else {
-    ElMessage.error('保存失败，请重试')
+    ElMessage.error(t('largeExpensePlanner.saveFailed'))
   }
 }
 
@@ -365,9 +368,9 @@ const handleLoadScenario = (scenarioName: string) => {
     result.value = null
     timeResult.value = null
     calculatePlan()
-    ElMessage.success(`场景 "${scenarioName}" 加载成功`)
+    ElMessage.success(t('largeExpensePlanner.scenarioLoadSuccess').replace('{name}', scenarioName))
   } else {
-    ElMessage.error('加载失败，请重试')
+    ElMessage.error(t('largeExpensePlanner.loadFailed'))
   }
 }
 
@@ -376,13 +379,13 @@ const handleDeleteScenario = (scenarioName: string) => {
   const success = deleteScenario('largeExpense', scenarioName)
 
   if (success) {
-    ElMessage.success(`场景 "${scenarioName}" 删除成功`)
+    ElMessage.success(t('largeExpensePlanner.scenarioDeleteSuccess').replace('{name}', scenarioName))
     loadScenariosList()
     if (currentScenarioName.value === scenarioName) {
       currentScenarioName.value = ''
     }
   } else {
-    ElMessage.error('删除失败，请重试')
+    ElMessage.error(t('largeExpensePlanner.deleteFailed'))
   }
 }
 
@@ -491,9 +494,9 @@ function planLargeExpense(targetAmount: number, monthsToTarget: number, currentS
   let recommendation = ''
   if (isAchievable) {
     const yearsToAchieve = (monthsToAchieve! / 12).toFixed(1)
-    recommendation = `目标可达成！预计 ${yearsToAchieve} 年后达成`
+    recommendation = yearsToAchieve
   } else {
-    recommendation = `目标不足，需要每月增加 ${additionalSavingsNeeded.toLocaleString()} 元储蓄`
+    recommendation = additionalSavingsNeeded.toLocaleString()
   }
   
   return {
@@ -600,8 +603,35 @@ const loadExampleData = () => {
   plannerForm.annualRate = largeExpenseTutorial.exampleData.annualRate
   result.value = null
   timeResult.value = null
-  ElMessage.success('示例数据加载成功，点击"计算规划"查看结果')
+  ElMessage.success(t('largeExpensePlanner.exampleLoadSuccess'))
 }
+
+// 建议提示的计算属性
+const suggestionAchievable = computed(() => {
+  if (!result.value) return ''
+  const yearsStr = result.value.yearsToAchieve
+  return `${yearsStr}${t('largeExpensePlanner.achievedIn')}`
+})
+
+const suggestionNotAchievable = computed(() => {
+  if (!result.value || !timeResult.value) return ''
+  const amount = formatMoney(result.value.additionalSavingsNeeded)
+  const years = timeResult.value.years
+  const months = timeResult.value.months
+  return `${amount} / ${years}${t('largeExpensePlanner.unitYears')}${months}`
+})
+
+const suggestionCompound = computed(() => {
+  if (!result.value) return ''
+  const years = result.value.yearsToTarget
+  const interest = formatMoney(result.value.futureAssetsDetail.totalInterest)
+  const rate = result.value.futureAssetsDetail.interestRatio
+  return `${years}${t('largeExpensePlanner.unitYears')} ${interest} (${rate}%)`
+})
+
+const suggestionRisk = computed(() => {
+  return '8%'
+})
 
 // 格式化金额
 function formatMoney(value: number) {
@@ -617,27 +647,27 @@ const chartInstance = ref<any>(null)
 
 // 导出 PDF
 const handleExportPDF = () => {
-  exportToPDF('大额支出规划')
+  exportToPDF(t('largeExpensePlanner.title'))
 }
 
 // 导出图表
 const handleExportChart = () => {
   if (!chartInstance.value) {
-    ElMessage.error('图表未初始化')
+    ElMessage.error(t('largeExpensePlanner.chartNotInit'))
     return
   }
-  exportChartToImage(chartInstance.value, '大额支出规划_图表')
+  exportChartToImage(chartInstance.value, t('largeExpensePlanner.title') + '_chart')
 }
 
 // 导出 Excel
 const handleExportExcel = () => {
   if (!result.value) {
-    ElMessage.error('请先计算')
+    ElMessage.error(t('largeExpensePlanner.chartNotInit'))
     return
   }
 
   const data = prepareYearlyDataForExcel(result.value.yearlyData)
-  exportToExcel(data, '大额支出规划_年度明细', '年度明细')
+  exportToExcel(data, t('largeExpensePlanner.title') + '_yearly', 'yearly')
 }
 
 // 初始化图表
@@ -652,7 +682,7 @@ const initChart = () => {
   const assetsData = []
 
   for (let year = 1; year <= plannerForm.yearsToTarget; year++) {
-    years.push(`第${year}年`)
+    years.push(`${year}${t('largeExpensePlanner.unitYears')}`)
 
     // 目标金额（不变）
     targetData.push(plannerForm.targetAmount)

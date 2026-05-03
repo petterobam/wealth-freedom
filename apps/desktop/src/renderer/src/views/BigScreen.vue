@@ -4,16 +4,16 @@
     <header class="bs-header">
       <div class="bs-title">
         <span class="bs-title-icon">💰</span>
-        <h1>财富自由之路 · 数据大屏</h1>
+        <h1>{{ t('bigScreen.title') }}</h1>
       </div>
       <div class="bs-header-right">
         <span class="bs-time">{{ currentTime }}</span>
         <el-button-group>
           <el-button size="small" @click="toggleAutoRotate" :type="autoRotate ? 'primary' : ''">
-            {{ autoRotate ? '⏸ 停止轮播' : '▶ 自动轮播' }}
+            {{ autoRotate ? t('bigScreen.stopRotate') : t('bigScreen.autoRotate') }}
           </el-button>
-          <el-button size="small" @click="exportScreenshot">📷 截图</el-button>
-          <el-button size="small" @click="goBack">✕ 退出</el-button>
+          <el-button size="small" @click="exportScreenshot">{{ t('bigScreen.screenshot') }}</el-button>
+          <el-button size="small" @click="goBack">{{ t('bigScreen.exit') }}</el-button>
         </el-button-group>
       </div>
     </header>
@@ -21,18 +21,18 @@
     <!-- 三阶段进度条 -->
     <div class="bs-stage-bar">
       <div class="stage" :class="{ active: currentStage === 1 }">
-        <span class="stage-label">财务保障</span>
-        <span class="stage-value">6-12月储备金</span>
+        <span class="stage-label">{{ t('bigScreen.stageGuarantee') }}</span>
+        <span class="stage-value">{{ t('bigScreen.stageGuaranteeDesc') }}</span>
       </div>
       <div class="stage-divider"></div>
       <div class="stage" :class="{ active: currentStage === 2 }">
-        <span class="stage-label">财务安全</span>
-        <span class="stage-value">利息覆盖支出</span>
+        <span class="stage-label">{{ t('bigScreen.stageSecurity') }}</span>
+        <span class="stage-value">{{ t('bigScreen.stageSecurityDesc') }}</span>
       </div>
       <div class="stage-divider"></div>
       <div class="stage" :class="{ active: currentStage === 3 }">
-        <span class="stage-label">财务自由</span>
-        <span class="stage-value">利息实现梦想</span>
+        <span class="stage-label">{{ t('bigScreen.stageFreedom') }}</span>
+        <span class="stage-value">{{ t('bigScreen.stageFreedomDesc') }}</span>
       </div>
     </div>
 
@@ -40,18 +40,18 @@
     <div class="bs-grid">
       <!-- 1. 净资产翻牌器 -->
       <div class="bs-card bs-card-networth" :class="{ highlight: highlightedCard === 0 }">
-        <div class="bs-card-title">净资产总览</div>
+        <div class="bs-card-title">{{ t('bigScreen.netWorthOverview') }}</div>
         <div class="flip-numbers">
           <div class="flip-item">
-            <div class="flip-label">总资产</div>
+            <div class="flip-label">{{ t('bigScreen.totalAssets') }}</div>
             <div class="flip-value positive">¥{{ formatMoney(netWorth.totalAssets) }}</div>
           </div>
           <div class="flip-item">
-            <div class="flip-label">总负债</div>
+            <div class="flip-label">{{ t('bigScreen.totalDebts') }}</div>
             <div class="flip-value negative">¥{{ formatMoney(netWorth.totalDebts) }}</div>
           </div>
           <div class="flip-item flip-main">
-            <div class="flip-label">净资产</div>
+            <div class="flip-label">{{ t('bigScreen.netWorth') }}</div>
             <div class="flip-value grand">¥{{ formatMoney(netWorth.netWorth) }}</div>
           </div>
         </div>
@@ -59,25 +59,25 @@
 
       <!-- 2. 收支趋势 -->
       <div class="bs-card bs-card-trend" :class="{ highlight: highlightedCard === 1 }">
-        <div class="bs-card-title">收支趋势（近12月）</div>
+        <div class="bs-card-title">{{ t('bigScreen.incomeExpenseTrend') }}</div>
         <div ref="trendChartRef" class="bs-chart"></div>
       </div>
 
       <!-- 3. 资产配置 -->
       <div class="bs-card bs-card-asset" :class="{ highlight: highlightedCard === 2 }">
-        <div class="bs-card-title">资产配置</div>
+        <div class="bs-card-title">{{ t('bigScreen.assetAllocation') }}</div>
         <div ref="assetChartRef" class="bs-chart"></div>
       </div>
 
       <!-- 4. 预算执行 -->
       <div class="bs-card bs-card-budget" :class="{ highlight: highlightedCard === 3 }">
-        <div class="bs-card-title">预算执行</div>
+        <div class="bs-card-title">{{ t('bigScreen.budgetExecution') }}</div>
         <div ref="budgetChartRef" class="bs-chart"></div>
       </div>
 
       <!-- 5. 储蓄进度 -->
       <div class="bs-card bs-card-savings" :class="{ highlight: highlightedCard === 4 }">
-        <div class="bs-card-title">储蓄进度</div>
+        <div class="bs-card-title">{{ t('bigScreen.savingsProgress') }}</div>
         <div class="savings-progress-list">
           <div v-for="goal in savingsGoals" :key="goal.name" class="savings-item">
             <div class="savings-item-header">
@@ -94,7 +94,7 @@
 
       <!-- 6. 投资收益 -->
       <div class="bs-card bs-card-invest" :class="{ highlight: highlightedCard === 5 }">
-        <div class="bs-card-title">投资持仓</div>
+        <div class="bs-card-title">{{ t('bigScreen.investmentHoldings') }}</div>
         <div ref="investChartRef" class="bs-chart"></div>
       </div>
     </div>
@@ -105,6 +105,9 @@
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 const router = useRouter()
 
@@ -122,9 +125,9 @@ function updateTime() {
 // Data
 const netWorth = ref({ totalAssets: 1250000, totalDebts: 280000, netWorth: 970000 })
 const savingsGoals = ref([
-  { name: '财务保障金', current: 82000, target: 120000, percent: 68, color: '#409EFF' },
-  { name: '财务安全金', current: 350000, target: 1500000, percent: 23, color: '#67C23A' },
-  { name: '财务自由金', current: 350000, target: 5000000, percent: 7, color: '#E6A23C' },
+  { name: t('bigScreen.stageGuarantee'), current: 82000, target: 120000, percent: 68, color: '#409EFF' },
+  { name: t('bigScreen.stageSecurity'), current: 350000, target: 1500000, percent: 23, color: '#67C23A' },
+  { name: t('bigScreen.stageFreedom'), current: 350000, target: 5000000, percent: 7, color: '#E6A23C' },
 ])
 const currentStage = computed(() => {
   const p = savingsGoals.value[0].percent
@@ -175,8 +178,8 @@ function exportScreenshot() {
   // Use built-in approach: open print dialog
   const w = window.open('', '_blank')
   if (!w) return
-  w.document.write(`<html><head><title>财富自由大屏截图</title><style>body{margin:0;background:#0a0e27;display:flex;justify-content:center;align-items:center;min-height:100vh}</style></head><body>`)
-  w.document.write(`<p style="color:#fff;font-size:24px">截图提示：按 Ctrl+Shift+S (Mac: Cmd+Shift+4) 截取屏幕区域</p>`)
+  w.document.write(`<html><head><title>${t('bigScreen.title')}</title><style>body{margin:0;background:#0a0e27;display:flex;justify-content:center;align-items:center;min-height:100vh}</style></head><body>`)
+  w.document.write(`<p style="color:#fff;font-size:24px">${t('bigScreen.screenshot')} (Ctrl+Shift+S / Mac: Cmd+Shift+4)</p>`)
   w.document.write('</body></html>')
   w.document.close()
 }

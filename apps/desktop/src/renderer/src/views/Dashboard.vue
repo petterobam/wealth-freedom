@@ -276,29 +276,30 @@ const handleResize = () => {
 }
 
 // 财富洞察数据库
-const wealthInsights = [
-  { text: '战胜债务的最佳方式是积累财富，而不是节省开支。', source: '博多·舍费尔' },
-  { text: '整天工作的人没有时间赚钱。', source: '约翰·D·洛克菲勒' },
-  { text: '惊人的好运通常只是多年准备的结果。', source: '博多·舍费尔' },
-  { text: '目标越清晰，机会感知越强，解决路径越短。', source: '财富自由法则' },
-  { text: '74% 的百万富翁是企业家。构建系统，而非出卖时间。', source: '《邻家的百万富翁》' },
-  { text: '复利是世界第八大奇迹。', source: '爱因斯坦' },
-  { text: '不要把所有鸡蛋放在同一个篮子里。', source: '投资铁律' },
-  { text: '资产是能把钱放进你口袋的东西，负债是把钱从你口袋拿走的东西。', source: '罗伯特·清崎' },
-  { text: '财务自由不是拥有多少钱，而是有多少时间自由。', source: '财富哲学' },
-  { text: '先支付给自己。收入的至少 10% 用于投资。', source: '《巴比伦最富有的人》' },
-  { text: '时间价值 > 金钱价值。用金钱买时间，而非用时间换金钱。', source: '富人思维' },
-  { text: '投资的关键不是智商，而是情绪稳定性。', source: '沃伦·巴菲特' },
-  { text: '被动收入 = 本金 × 收益率。积累本金，提升收益率。', source: '财富公式' },
-  { text: '储蓄率决定你何时财务自由，而非收入多少。', source: 'FIRE 运动' },
-  { text: '你的净资产 = 真正的财富水平，总资产只是表面数字。', source: '财务真相' }
-]
+const wealthInsights = computed(() => [
+  { text: t('dashboard.wealthInsight1'), source: t('dashboard.wealthInsight1Source') },
+  { text: t('dashboard.wealthInsight2'), source: t('dashboard.wealthInsight2Source') },
+  { text: t('dashboard.wealthInsight3'), source: t('dashboard.wealthInsight3Source') },
+  { text: t('dashboard.wealthInsight4'), source: t('dashboard.wealthInsight4Source') },
+  { text: t('dashboard.wealthInsight5'), source: t('dashboard.wealthInsight5Source') },
+  { text: t('dashboard.wealthInsight6'), source: t('dashboard.wealthInsight6Source') },
+  { text: t('dashboard.wealthInsight7'), source: t('dashboard.wealthInsight7Source') },
+  { text: t('dashboard.wealthInsight8'), source: t('dashboard.wealthInsight8Source') },
+  { text: t('dashboard.wealthInsight9'), source: t('dashboard.wealthInsight9Source') },
+  { text: t('dashboard.wealthInsight10'), source: t('dashboard.wealthInsight10Source') },
+  { text: t('dashboard.wealthInsight11'), source: t('dashboard.wealthInsight11Source') },
+  { text: t('dashboard.wealthInsight12'), source: t('dashboard.wealthInsight12Source') },
+  { text: t('dashboard.wealthInsight13'), source: t('dashboard.wealthInsight13Source') },
+  { text: t('dashboard.wealthInsight14'), source: t('dashboard.wealthInsight14Source') },
+  { text: t('dashboard.wealthInsight15'), source: t('dashboard.wealthInsight15Source') },
+])
 
 // 每日洞察（基于日期随机选择，每天固定显示同一条）
 const dailyInsight = computed(() => {
   const today = dayjs().format('YYYYMMDD')
-  const index = parseInt(today) % wealthInsights.length
-  return wealthInsights[index]
+  const insights = wealthInsights.value
+  const index = parseInt(today) % insights.length
+  return insights[index]
 })
 
 const metrics = computed(() => ({
@@ -331,10 +332,10 @@ const formatCurrency = (value: number, fromCurrency?: string) => {
 }
 
 const categoryLabels: Record<string, string> = {
-  food: '餐饮', transport: '交通', shopping: '购物', entertainment: '娱乐',
-  housing: '住房', health: '医疗', education: '教育', other: '其他',
-  salary: '工资', parttime: '兼职', investment: '投资收益', dividend: '分红',
-  interest: '利息', product: '产品收入', rental: '租金', royalty: '版税', passive: '其他被动'
+  food: t('transactions.categories.food'), transport: t('transactions.categories.transport'), shopping: t('transactions.categories.shopping'), entertainment: t('transactions.categories.entertainment'),
+  housing: t('transactions.categories.other'), health: t('transactions.categories.other'), education: t('transactions.categories.other'), other: t('transactions.categories.other'),
+  salary: t('transactions.categories.salary'), parttime: t('transactions.categories.parttime'), investment: t('transactions.categories.investment'), dividend: t('transactions.categories.dividend'),
+  interest: t('transactions.categories.interest'), product: t('transactions.categories.product'), rental: t('transactions.categories.rental'), royalty: t('transactions.categories.royalty'), passive: t('transactions.categories.passiveOther')
 }
 
 const initCharts = () => {
@@ -388,7 +389,7 @@ const initCharts = () => {
     const assetData = [
       { value: accountStore.byType('cash').reduce((s, a) => s + a.balance, 0), name: t('accounts.cash') },
       { value: accountStore.byType('investment').reduce((s, a) => s + a.balance, 0), name: t('accounts.investment') },
-      { value: accountStore.byType('fixed').reduce((s, a) => s + a.balance, 0), name: 'Fixed' }
+      { value: accountStore.byType('fixed').reduce((s, a) => s + a.balance, 0), name: t('dashboard.accountsFixed') }
     ]
     chart.setOption({
       tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
@@ -411,7 +412,7 @@ const initCharts = () => {
 
     for (let i = 5; i >= 0; i--) {
       const m = dayjs().subtract(i, 'month')
-      months.push(m.format('MM月'))
+      months.push(t('dashboard.monthFormat', { month: m.format('MM') }))
       const start = m.startOf('month').format('YYYY-MM-DD')
       const end = m.endOf('month').format('YYYY-MM-DD')
       const monthTxs = transactions.filter(t => t.date >= start && t.date <= end)

@@ -23,15 +23,15 @@
           </div>
           <div class="progress-info">
             <div class="info-item">
-              <span class="label">目标金额</span>
+              <span class="label">{{ t('goals.targetAmount') }}</span>
               <span class="value">{{ formatCurrency(securityGoal?.targetAmount || 0) }}</span>
             </div>
             <div class="info-item">
-              <span class="label">当前储备</span>
+              <span class="label">{{ t('goals.currentReserve') }}</span>
               <span class="value highlight">{{ formatCurrency(netWorth) }}</span>
             </div>
             <div class="info-item">
-              <span class="label">差距</span>
+              <span class="label">{{ t('goals.gap') }}</span>
               <span class="value">{{ formatCurrency(securityGap) }}</span>
             </div>
           </div>
@@ -41,13 +41,13 @@
         <div class="theory-insight" v-if="securityProgress < 100">
           <el-icon><Sunny /></el-icon>
           <div class="insight-content">
-            <strong>为什么需要 6-12 个月的储备金？</strong>
-            <p>这是你财务安全的第一道防线。失业、生病、意外——有了这笔钱，你不会被迫接受糟糕的选择。</p>
+            <strong>{{ t('goals.securityInsightTitle') }}</strong>
+            <p>{{ t('goals.securityInsightDesc') }}</p>
           </div>
         </div>
         <div class="achievement-tip" v-else>
           <el-icon><SuccessFilled /></el-icon>
-          <span>🎉 太棒了！你已经拥有了财务保障！接下来向财务安全进发。</span>
+          <span>{{ t('goals.securityAchieved') }}</span>
         </div>
       </div>
 
@@ -70,21 +70,21 @@
           </div>
           <div class="progress-info">
             <div class="info-item">
-              <span class="label">目标金额</span>
+              <span class="label">{{ t('goals.targetAmount') }}</span>
               <span class="value">{{ formatCurrency(safetyGoal?.targetAmount || 0) }}</span>
             </div>
             <div class="info-item">
-              <span class="label">当前可投资资产</span>
+              <span class="label">{{ t('goals.currentInvestable') }}</span>
               <span class="value highlight">{{ formatCurrency(netWorth) }}</span>
             </div>
             <div class="info-item">
-              <span class="label">预计达成</span>
+              <span class="label">{{ t('goals.estimatedArrival') }}</span>
               <span class="value">{{ calculateETA(safetyGoal) }}</span>
             </div>
           </div>
           <div class="goal-formula">
             <el-icon><InfoFilled /></el-icon>
-            公式：月支出 × 150 = 所需本金（基于 8% 年化收益）
+            {{ t('goals.formula') }}
           </div>
         </div>
 
@@ -92,13 +92,13 @@
         <div class="theory-insight" v-if="safetyProgress < 100">
           <el-icon><Sunny /></el-icon>
           <div class="insight-content">
-            <strong>为什么是 150 倍月支出？</strong>
-            <p>150 × 月支出 ÷ 12个月 × 8% = 月支出。这意味着你的投资收益足以覆盖基本生活，你不再需要为生存而工作。</p>
+            <strong>{{ t('goals.safetyInsightTitle') }}</strong>
+            <p>{{ t('goals.safetyInsightDesc') }}</p>
           </div>
         </div>
         <div class="achievement-tip" v-else>
           <el-icon><SuccessFilled /></el-icon>
-          <span>🎉 恭喜！你已经实现了财务安全！你可以选择继续工作，也可以选择不工作。</span>
+          <span>{{ t('goals.safetyAchieved') }}</span>
         </div>
       </div>
 
@@ -107,8 +107,8 @@
         <div class="goal-header">
           <div class="goal-icon">✨</div>
           <div class="goal-info">
-            <h2>财务自由</h2>
-            <p>靠利息实现梦想生活，本金永不动用</p>
+            <h2>{{ t('goals.freedom') }}</h2>
+            <p>{{ t('goals.freedomDesc') }}</p>
           </div>
         </div>
         <div class="goal-progress">
@@ -121,22 +121,22 @@
           </div>
           <div class="progress-info">
             <div class="info-item">
-              <span class="label">目标金额</span>
+              <span class="label">{{ t('goals.targetAmount') }}</span>
               <span class="value">{{ formatCurrency(freedomGoal?.targetAmount || 0) }}</span>
             </div>
             <div class="info-item">
-              <span class="label">当前资产</span>
+              <span class="label">{{ t('goals.currentAssets') }}</span>
               <span class="value highlight">{{ formatCurrency(freedomGoal?.currentAmount || 0) }}</span>
             </div>
             <div class="info-item">
-              <span class="label">梦想月支出</span>
+              <span class="label">{{ t('goals.dreamMonthlyExpense') }}</span>
               <span class="value">{{ formatCurrency((freedomGoal?.targetAmount || 0) / 150) }}</span>
             </div>
           </div>
           <div class="goal-actions">
             <el-button type="primary" @click="$router.push('/dreams')">
               <el-icon><PictureFilled /></el-icon>
-              编辑梦想图册
+              {{ t('goals.editDreamBoard') }}
             </el-button>
           </div>
         </div>
@@ -145,13 +145,13 @@
         <div class="theory-insight" v-if="freedomProgress < 100">
           <el-icon><Sunny /></el-icon>
           <div class="insight-content">
-            <strong>本金永不动用的智慧</strong>
-            <p>财务自由的本质不是拥有多少本金，而是本金产生的被动收入能否支撑你的梦想生活。本金是鹅，利息是金蛋——永远不要杀鹅取卵。</p>
+            <strong>{{ t('goals.freedomInsightTitle') }}</strong>
+            <p>{{ t('goals.freedomInsightDesc') }}</p>
           </div>
         </div>
         <div class="achievement-tip" v-else>
           <el-icon><SuccessFilled /></el-icon>
-          <span>🎊 传奇！你已经实现了财务自由！你的被动收入足以支撑你的梦想生活，而本金永远不会减少。</span>
+          <span>{{ t('goals.freedomAchieved') }}</span>
         </div>
       </div>
     </div>
@@ -160,9 +160,9 @@
     <div class="timeline-section" v-if="timelineResult">
       <h2 class="section-title">
         <el-icon><Clock /></el-icon>
-        财务自由时间路径
+        {{ t('goals.timelineTitle') }}
       </h2>
-      <p class="section-desc">基于当前储蓄率和 8% 年化收益的预测</p>
+      <p class="section-desc">{{ t('goals.timelineDesc') }}</p>
       
       <div class="timeline-cards">
         <div class="timeline-card" v-for="(milestone, key) in timelineResult.milestones" :key="key">
@@ -172,12 +172,12 @@
           </div>
           <div class="timeline-body">
             <div class="timeline-time">
-              <span class="time-value" v-if="milestone.years > 0">{{ milestone.years }} 年</span>
-              <span class="time-value" v-if="milestone.months > 0">{{ milestone.months }} 个月</span>
-              <span class="time-value" v-if="milestone.totalMonths === 0">已达成 ✅</span>
+              <span class="time-value" v-if="milestone.years > 0">{{ milestone.years }} {{ t('goals.yearUnit') }}</span>
+              <span class="time-value" v-if="milestone.months > 0">{{ milestone.months }} {{ t('goals.monthUnit') }}</span>
+              <span class="time-value" v-if="milestone.totalMonths === 0">{{ t('goals.achieved') }}</span>
             </div>
             <div class="timeline-amount">
-              目标: {{ formatCurrency(milestone.targetAmount) }}
+              {{ t('goals.targetLabel') }}{{ formatCurrency(milestone.targetAmount) }}
             </div>
             <el-progress 
               :percentage="Math.round(milestone.currentProgress * 100)" 
@@ -191,57 +191,57 @@
       <!-- 关键指标 -->
       <div class="key-metrics">
         <div class="metric">
-          <span class="metric-label">第一个 10 万</span>
-          <span class="metric-value">{{ timelineResult.keyMetrics.first100k.years }}年{{ timelineResult.keyMetrics.first100k.months }}个月</span>
+          <span class="metric-label">{{ t('goals.first100k') }}</span>
+          <span class="metric-value">{{ timelineResult.keyMetrics.first100k.years }}{{ t('goals.yearUnit') }}{{ timelineResult.keyMetrics.first100k.months }}{{ t('goals.monthUnit') }}</span>
         </div>
         <div class="metric">
-          <span class="metric-label">资产首次翻倍</span>
-          <span class="metric-value">{{ timelineResult.keyMetrics.firstDoubling.years }}年{{ timelineResult.keyMetrics.firstDoubling.months }}个月</span>
+          <span class="metric-label">{{ t('goals.firstDoubling') }}</span>
+          <span class="metric-value">{{ timelineResult.keyMetrics.firstDoubling.years }}{{ t('goals.yearUnit') }}{{ timelineResult.keyMetrics.firstDoubling.months }}{{ t('goals.monthUnit') }}</span>
         </div>
         <div class="metric">
-          <span class="metric-label">自由时被动收入</span>
-          <span class="metric-value">{{ formatCurrency(timelineResult.keyMetrics.passiveIncomeAtFreedom) }}/月</span>
+          <span class="metric-label">{{ t('goals.passiveIncomeAtFreedom') }}</span>
+          <span class="metric-value">{{ formatCurrency(timelineResult.keyMetrics.passiveIncomeAtFreedom) }}{{ t('goals.perMonth') }}</span>
         </div>
       </div>
 
       <!-- 参数调节 -->
       <div class="params-adjust">
         <div class="param-item">
-          <span class="param-label">储蓄率</span>
+          <span class="param-label">{{ t('goals.savingsRateLabel') }}</span>
           <el-slider v-model="timelineParams.savingsRate" :min="10" :max="60" :step="5" :format-tooltip="(v: number) => `${v}%`" />
         </div>
         <div class="param-item">
-          <span class="param-label">年化收益</span>
+          <span class="param-label">{{ t('goals.annualReturnLabel') }}</span>
           <el-slider v-model="timelineParams.annualReturnRate" :min="4" :max="15" :step="1" :format-tooltip="(v: number) => `${v}%`" />
         </div>
-        <el-button type="primary" size="small" @click="recalculateTimeline">重新计算</el-button>
+        <el-button type="primary" size="small" @click="recalculateTimeline">{{ t('goals.recalculate') }}</el-button>
       </div>
     </div>
 
     <!-- 更新目标 -->
     <div class="update-section">
-      <el-button @click="showUpdateDialog = true">更新目标进度</el-button>
+      <el-button @click="showUpdateDialog = true">{{ t('goals.updateProgress') }}</el-button>
     </div>
 
-    <el-dialog v-model="showUpdateDialog" title="更新目标" width="500px">
+    <el-dialog v-model="showUpdateDialog" :title="t('goals.updateGoal')" width="500px">
       <el-form :model="updateForm" label-width="120px">
-        <el-form-item label="选择阶段">
-          <el-select v-model="updateForm.stage" placeholder="选择要更新的目标">
-            <el-option label="财务保障" value="security" />
-            <el-option label="财务安全" value="safety" />
-            <el-option label="财务自由" value="freedom" />
+        <el-form-item :label="t('goals.selectStage')">
+          <el-select v-model="updateForm.stage" :placeholder="t('goals.selectStagePlaceholder')">
+            <el-option :label="t('goals.security')" value="security" />
+            <el-option :label="t('goals.safety')" value="safety" />
+            <el-option :label="t('goals.freedom')" value="freedom" />
           </el-select>
         </el-form-item>
-        <el-form-item label="当前金额">
+        <el-form-item :label="t('goals.currentAmount')">
           <el-input-number v-model="updateForm.currentAmount" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="目标日期">
-          <el-date-picker v-model="updateForm.targetDate" type="date" placeholder="选择目标日期" />
+        <el-form-item :label="t('goals.targetDate')">
+          <el-date-picker v-model="updateForm.targetDate" type="date" :placeholder="t('goals.selectTargetDate')" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showUpdateDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleUpdateGoal">保存</el-button>
+        <el-button @click="showUpdateDialog = false">{{ t('dashboard.cancel') }}</el-button>
+        <el-button type="primary" @click="handleUpdateGoal">{{ t('dashboard.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -323,12 +323,12 @@ const formatCurrency = (value: number) => {
 const calculateETA = (goal: { targetAmount: number; currentAmount: number } | null) => {
   if (!goal) return '—'
   const gap = goal.targetAmount - netWorth.value
-  if (gap <= 0) return '已达成 ✅'
+  if (gap <= 0) return t('goals.achieved')
 
   // 假设每月储蓄 20000（基于用户的月结余）
   const months = Math.ceil(gap / 20000)
-  if (months > 120) return `${Math.round(months / 12)} 年`
-  return `${months} 个月`
+  if (months > 120) return `${Math.round(months / 12)} ${t('goals.yearUnit')}`
+  return `${months} ${t('goals.monthUnit')}`
 }
 
 const handleUpdateGoal = async () => {

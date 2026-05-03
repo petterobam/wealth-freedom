@@ -5,14 +5,14 @@
     <!-- 分析时间范围选择 -->
     <div class="time-range-selector">
       <el-radio-group v-model="timeRange" @change="loadAnalysisData">
-        <el-radio-button value="1m">近 1 个月</el-radio-button>
-        <el-radio-button value="3m">近 3 个月</el-radio-button>
-        <el-radio-button value="6m">近 6 个月</el-radio-button>
-        <el-radio-button value="1y">近 1 年</el-radio-button>
+        <el-radio-button value="1m">{{ t('incomeAnalysis.last1Month') }}</el-radio-button>
+        <el-radio-button value="3m">{{ t('incomeAnalysis.last3Months') }}</el-radio-button>
+        <el-radio-button value="6m">{{ t('incomeAnalysis.last6Months') }}</el-radio-button>
+        <el-radio-button value="1y">{{ t('incomeAnalysis.last1Year') }}</el-radio-button>
       </el-radio-group>
       <el-button @click="loadAnalysisData" :loading="loading">
         <el-icon><Refresh /></el-icon>
-        刷新数据
+        {{ t('incomeAnalysis.refreshData') }}
       </el-button>
     </div>
 
@@ -21,10 +21,10 @@
       <div class="metric-card gradient-primary">
         <div class="metric-icon">💰</div>
         <div class="metric-info">
-          <div class="metric-label">总收入</div>
+          <div class="metric-label">{{ t('incomeAnalysis.totalIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(analysis.totalIncome) }}</div>
           <div class="metric-change" :class="analysis.totalGrowthRate >= 0 ? 'positive' : 'negative'">
-            {{ analysis.totalGrowthRate >= 0 ? '▲' : '▼' }} {{ Math.abs(analysis.totalGrowthRate) }}% 同比
+            {{ analysis.totalGrowthRate >= 0 ? '▲' : '▼' }} {{ Math.abs(analysis.totalGrowthRate) }}% {{ t('incomeAnalysis.yoyChange') }}
           </div>
         </div>
       </div>
@@ -32,7 +32,7 @@
       <div class="metric-card gradient-success">
         <div class="metric-icon">🏃</div>
         <div class="metric-info">
-          <div class="metric-label">主动收入</div>
+          <div class="metric-label">{{ t('incomeAnalysis.activeIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(analysis.activeIncome) }}</div>
           <div class="metric-change">{{ analysis.activePercentage }}%</div>
         </div>
@@ -41,7 +41,7 @@
       <div class="metric-card gradient-warning">
         <div class="metric-icon">🌴</div>
         <div class="metric-info">
-          <div class="metric-label">被动收入</div>
+          <div class="metric-label">{{ t('incomeAnalysis.passiveIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(analysis.passiveIncome) }}</div>
           <div class="metric-change">{{ analysis.passivePercentage }}%</div>
         </div>
@@ -50,9 +50,9 @@
       <div class="metric-card gradient-info">
         <div class="metric-icon">📈</div>
         <div class="metric-info">
-          <div class="metric-label">月均收入</div>
+          <div class="metric-label">{{ t('incomeAnalysis.avgMonthlyIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(analysis.avgMonthlyIncome) }}</div>
-          <div class="metric-change">{{ analysis.months }} 个月平均</div>
+          <div class="metric-change">{{ analysis.months }} {{ t('incomeAnalysis.monthsAverage') }}</div>
         </div>
       </div>
     </div>
@@ -61,14 +61,14 @@
     <div class="charts-row">
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">主动收入 vs 被动收入</span>
+          <span class="card-title">{{ t('incomeAnalysis.activeVsPassive') }}</span>
         </div>
         <div ref="incomeTypeChartRef" class="chart-container"></div>
       </div>
 
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">收入来源分布</span>
+          <span class="card-title">{{ t('incomeAnalysis.incomeSourceDistribution') }}</span>
         </div>
         <div ref="incomeSourceChartRef" class="chart-container"></div>
       </div>
@@ -77,17 +77,17 @@
     <!-- 收入趋势分析 -->
     <div class="finance-card">
       <div class="card-header">
-        <span class="card-title">收入趋势</span>
+        <span class="card-title">{{ t('incomeAnalysis.incomeTrend') }}</span>
       </div>
       <div ref="incomeTrendChartRef" class="chart-container-large"></div>
     </div>
 
     <!-- 收入结构详情 -->
-    <div class="section-title">收入结构详情</div>
+    <div class="section-title">{{ t('incomeAnalysis.incomeStructureDetail') }}</div>
     <div class="income-structure">
       <div class="structure-item">
         <div class="structure-header">
-          <span class="structure-label">主动收入占比</span>
+          <span class="structure-label">{{ t('incomeAnalysis.activeIncomeRatio') }}</span>
           <span class="structure-value">{{ analysis.activePercentage }}%</span>
         </div>
         <el-progress
@@ -96,13 +96,13 @@
           :stroke-width="20"
         />
         <div class="structure-tip">
-          主动收入需要持续投入时间和精力，建议逐步提高被动收入占比
+          {{ t('incomeAnalysis.activeIncomeTip') }}
         </div>
       </div>
 
       <div class="structure-item">
         <div class="structure-header">
-          <span class="structure-label">被动收入占比</span>
+          <span class="structure-label">{{ t('incomeAnalysis.passiveIncomeRatio') }}</span>
           <span class="structure-value">{{ analysis.passivePercentage }}%</span>
         </div>
         <el-progress
@@ -111,13 +111,13 @@
           :stroke-width="20"
         />
         <div class="structure-tip">
-          被动收入是财务自由的关键，目标：50% → 100%
+          {{ t('incomeAnalysis.passiveIncomeTip') }}
         </div>
       </div>
 
       <div class="structure-item">
         <div class="structure-header">
-          <span class="structure-label">主要收入来源</span>
+          <span class="structure-label">{{ t('incomeAnalysis.mainIncomeSource') }}</span>
           <span class="structure-value">{{ analysis.mainSource || '-' }}</span>
         </div>
         <el-progress
@@ -126,13 +126,13 @@
           :stroke-width="20"
         />
         <div class="structure-tip" :class="analysis.sourceConcentration > 70 ? 'warning' : ''">
-          {{ analysis.sourceConcentration > 70 ? '⚠️ 收入来源过于集中，建议分散收入来源' : '✅ 收入来源较为分散' }}
+          {{ analysis.sourceConcentration > 70 ? t('incomeAnalysis.incomeConcentrated') : t('incomeAnalysis.incomeDispersed') }}
         </div>
       </div>
 
       <div class="structure-item">
         <div class="structure-header">
-          <span class="structure-label">收入稳定性评分</span>
+          <span class="structure-label">{{ t('incomeAnalysis.incomeStabilityScore') }}</span>
           <span class="structure-value">{{ analysis.stabilityRating }}/5</span>
         </div>
         <el-rate
@@ -148,7 +148,7 @@
     </div>
 
     <!-- 收入增长率分析 -->
-    <div class="section-title">收入增长率分析</div>
+    <div class="section-title">{{ t('incomeAnalysis.incomeGrowthAnalysis') }}</div>
     <div class="growth-analysis">
       <div v-for="item in analysis.growthRates" :key="item.type" class="growth-item">
         <div class="growth-header">
@@ -158,15 +158,15 @@
           </span>
         </div>
         <div class="growth-detail">
-          上期：{{ formatCurrency(item.previousAmount) }} → 本期：{{ formatCurrency(item.currentAmount) }}
+          {{ t('incomeAnalysis.previousPeriod') }}{{ formatCurrency(item.previousAmount) }} → {{ t('incomeAnalysis.currentPeriod') }}{{ formatCurrency(item.currentAmount) }}
         </div>
       </div>
     </div>
 
     <!-- 收入优化建议 -->
-    <div class="section-title">收入优化建议</div>
+    <div class="section-title">{{ t('incomeAnalysis.optimizationSuggestions') }}</div>
     <div class="optimization-suggestions">
-      <el-empty v-if="analysis.suggestions.length === 0" description="暂无优化建议，您的收入结构很健康！" />
+      <el-empty v-if="analysis.suggestions.length === 0" :description="t('incomeAnalysis.noSuggestions')" />
       <el-card
         v-for="suggestion in analysis.suggestions"
         :key="suggestion.id"
@@ -193,7 +193,7 @@
           <div class="suggestion-description">{{ suggestion.description }}</div>
 
           <div class="suggestion-actions" v-if="suggestion.actions && suggestion.actions.length > 0">
-            <div class="actions-title">建议行动：</div>
+            <div class="actions-title">{{ t('incomeAnalysis.suggestedActions') }}</div>
             <ul class="actions-list">
               <li v-for="(action, index) in suggestion.actions" :key="index">
                 {{ action }}
@@ -204,11 +204,11 @@
           <div class="suggestion-footer">
             <el-button type="primary" size="small" @click="applySuggestion(suggestion)">
               <el-icon><Check /></el-icon>
-              应用此建议
+              {{ t('incomeAnalysis.applySuggestion') }}
             </el-button>
             <el-button size="small" @click="dismissSuggestion(suggestion)">
               <el-icon><Close /></el-icon>
-              暂不处理
+              {{ t('incomeAnalysis.dismiss') }}
             </el-button>
           </div>
         </div>
@@ -216,7 +216,7 @@
     </div>
 
     <!-- 高增长收入来源 -->
-    <div v-if="analysis.highestGrowthSource" class="section-title">高增长收入来源</div>
+    <div v-if="analysis.highestGrowthSource" class="section-title">{{ t('incomeAnalysis.highGrowthSource') }}</div>
     <div v-if="analysis.highestGrowthSource" class="growth-sources">
       <div class="growth-source-card">
         <div class="growth-source-icon">🚀</div>
@@ -226,13 +226,13 @@
             ▲ {{ analysis.highestGrowthSource.growthRate }}%
           </div>
           <div class="growth-source-amount">
-            上期：{{ formatCurrency(analysis.highestGrowthSource.previousAmount) }} →
-            本期：{{ formatCurrency(analysis.highestGrowthSource.currentAmount) }}
+            {{ t('incomeAnalysis.previousPeriod') }}{{ formatCurrency(analysis.highestGrowthSource.previousAmount) }} →
+            {{ t('incomeAnalysis.currentPeriod') }}{{ formatCurrency(analysis.highestGrowthSource.currentAmount) }}
           </div>
         </div>
       </div>
       <div class="growth-source-tip">
-        建议加大对该收入来源的投入，复制成功经验到其他领域
+        {{ t('incomeAnalysis.suggestInvestMore') }}
       </div>
     </div>
   </div>
@@ -294,11 +294,11 @@ const formatCurrency = (amount: number): string => {
 // 获取稳定性提示
 const getStabilityTip = (rating: number): string => {
   const tips = {
-    1: '⚠️ 收入极不稳定，建议建立应急基金，寻找稳定的收入来源',
-    2: '⚠️ 收入不稳定，建议减少不稳定收入来源的依赖',
-    3: 'ℹ️ 收入稳定性一般，建议逐步提高稳定性',
-    4: '✅ 收入较为稳定，继续保持',
-    5: '✅ 收入非常稳定，财务安全性高'
+    1: t('incomeAnalysis.stability1'),
+    2: t('incomeAnalysis.stability2'),
+    3: t('incomeAnalysis.stability3'),
+    4: t('incomeAnalysis.stability4'),
+    5: t('incomeAnalysis.stability5')
   }
   return tips[rating] || tips[3]
 }
@@ -315,11 +315,11 @@ const getPriorityTag = (priority: string): string => {
 
 const getPriorityLabel = (priority: string): string => {
   const labels = {
-    high: '高优先级',
-    medium: '中优先级',
-    low: '低优先级'
+    high: t('incomeAnalysis.highPriority'),
+    medium: t('incomeAnalysis.mediumPriority'),
+    low: t('incomeAnalysis.lowPriority')
   }
-  return labels[priority] || '普通'
+  return labels[priority] || t('incomeAnalysis.mediumPriority')
 }
 
 // 获取类别标签
@@ -335,17 +335,17 @@ const getCategoryTag = (category: string): string => {
 
 const getCategoryLabel = (category: string): string => {
   const labels = {
-    passive_income: '被动收入',
-    diversification: '多元化',
-    growth: '增长',
-    stability: '稳定性'
+    passive_income: t('incomeAnalysis.categoryPassiveIncome'),
+    diversification: t('incomeAnalysis.categoryDiversification'),
+    growth: t('incomeAnalysis.categoryGrowth'),
+    stability: t('incomeAnalysis.categoryStability')
   }
   return labels[category] || category
 }
 
 // 应用建议
 const applySuggestion = (suggestion: any) => {
-  ElMessage.success(`已应用建议：${suggestion.title}`)
+  ElMessage.success(`${t('incomeAnalysis.suggestionApplied')}${suggestion.title}`)
   // 这里可以触发相应的操作，比如打开策略库、创建目标等
 }
 
@@ -354,7 +354,7 @@ const dismissSuggestion = (suggestion: any) => {
   const index = analysis.value.suggestions.findIndex((s: any) => s.id === suggestion.id)
   if (index !== -1) {
     analysis.value.suggestions.splice(index, 1)
-    ElMessage.info('已忽略此建议')
+    ElMessage.info(t('incomeAnalysis.suggestionDismissed'))
   }
 }
 
@@ -380,9 +380,9 @@ const loadAnalysisData = async () => {
       stabilityRating: 4,
       months: 6,
       growthRates: [
-        { type: 'total', label: '总收入', previousAmount: 160000, currentAmount: 180000, rate: 12.5 },
-        { type: 'active', label: '主动收入', previousAmount: 112000, currentAmount: 126000, rate: 12.5 },
-        { type: 'passive', label: '被动收入', previousAmount: 48000, currentAmount: 54000, rate: 12.5 }
+        { type: 'total', label: t('incomeAnalysis.totalIncome'), previousAmount: 160000, currentAmount: 180000, rate: 12.5 },
+        { type: 'active', label: t('incomeAnalysis.activeIncome'), previousAmount: 112000, currentAmount: 126000, rate: 12.5 },
+        { type: 'passive', label: t('incomeAnalysis.passiveIncome'), previousAmount: 48000, currentAmount: 54000, rate: 12.5 }
       ],
       suggestions: [
         {
@@ -423,7 +423,7 @@ const loadAnalysisData = async () => {
     renderCharts()
   } catch (error) {
     console.error('加载分析数据失败:', error)
-    ElMessage.error('加载分析数据失败')
+    ElMessage.error(t('incomeAnalysis.loadDataFailed'))
   } finally {
     loading.value = false
   }
@@ -445,7 +445,7 @@ const renderCharts = () => {
       },
       series: [
         {
-          name: '收入类型',
+          name: t('incomeAnalysis.activeVsPassive'),
           type: 'pie',
           radius: ['40%', '70%'],
           avoidLabelOverlap: false,
@@ -466,8 +466,8 @@ const renderCharts = () => {
             }
           },
           data: [
-            { value: analysis.value.activeIncome, name: '主动收入', itemStyle: { color: '#67C23A' } },
-            { value: analysis.value.passiveIncome, name: '被动收入', itemStyle: { color: '#E6A23C' } }
+            { value: analysis.value.activeIncome, name: t('incomeAnalysis.activeIncome'), itemStyle: { color: '#67C23A' } },
+            { value: analysis.value.passiveIncome, name: t('incomeAnalysis.passiveIncome'), itemStyle: { color: '#E6A23C' } }
           ]
         }
       ]
@@ -488,15 +488,15 @@ const renderCharts = () => {
       },
       series: [
         {
-          name: '收入来源',
+          name: t('incomeAnalysis.incomeSourceDistribution'),
           type: 'pie',
           radius: '50%',
           data: [
-            { value: 108000, name: '工资收入', itemStyle: { color: '#409EFF' } },
-            { value: 18000, name: '兼职收入', itemStyle: { color: '#67C23A' } },
-            { value: 30000, name: '投资收益', itemStyle: { color: '#E6A23C' } },
-            { value: 12000, name: '产品收入', itemStyle: { color: '#F56C6C' } },
-            { value: 12000, name: '其他收入', itemStyle: { color: '#909399' } }
+            { value: 108000, name: t('transactions.categories.salary'), itemStyle: { color: '#409EFF' } },
+            { value: 18000, name: t('transactions.categories.parttime'), itemStyle: { color: '#67C23A' } },
+            { value: 30000, name: t('transactions.categories.investment'), itemStyle: { color: '#E6A23C' } },
+            { value: 12000, name: t('transactions.categories.product'), itemStyle: { color: '#F56C6C' } },
+            { value: 12000, name: t('transactions.categories.other'), itemStyle: { color: '#909399' } }
           ],
           emphasis: {
             itemStyle: {
@@ -518,7 +518,7 @@ const renderCharts = () => {
         trigger: 'axis'
       },
       legend: {
-        data: ['总收入', '主动收入', '被动收入']
+        data: [t('incomeAnalysis.totalIncome'), t('incomeAnalysis.activeIncome'), t('incomeAnalysis.passiveIncome')]
       },
       grid: {
         left: '3%',
@@ -539,7 +539,7 @@ const renderCharts = () => {
       },
       series: [
         {
-          name: '总收入',
+          name: t('incomeAnalysis.totalIncome'),
           type: 'line',
           data: [25000, 27000, 28000, 29000, 30000, 30000],
           itemStyle: { color: '#409EFF' },
@@ -551,13 +551,13 @@ const renderCharts = () => {
           }
         },
         {
-          name: '主动收入',
+          name: t('incomeAnalysis.activeIncome'),
           type: 'line',
           data: [17500, 18900, 19600, 20300, 21000, 21000],
           itemStyle: { color: '#67C23A' }
         },
         {
-          name: '被动收入',
+          name: t('incomeAnalysis.passiveIncome'),
           type: 'line',
           data: [7500, 8100, 8400, 8700, 9000, 9000],
           itemStyle: { color: '#E6A23C' }

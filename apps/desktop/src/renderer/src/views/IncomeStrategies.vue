@@ -5,14 +5,14 @@
         <div class="header-left">
           <el-icon :size="32" color="#409EFF"><Trophy /></el-icon>
           <div>
-            <h2>收入提升策略库</h2>
-            <p>选择适合你的策略，系统化提升收入</p>
+            <h2>{{ t('incomeStrategies.title') }}</h2>
+            <p>{{ t('incomeStrategies.subtitle') }}</p>
           </div>
         </div>
         <div class="header-right">
           <el-button type="primary" @click="showRecommendations = true">
             <el-icon><Guide /></el-icon>
-            获取推荐策略
+            {{ t('incomeStrategies.getRecommendations') }}
           </el-button>
         </div>
       </div>
@@ -24,7 +24,7 @@
         <div class="card-header">
           <span class="card-title">
             <el-icon><Star /></el-icon>
-            推荐策略
+            {{ t('incomeStrategies.recommendedStrategies') }}
           </span>
           <el-button link @click="showRecommendations = false">
             <el-icon><Close /></el-icon>
@@ -46,7 +46,7 @@
               </el-icon>
             </div>
             <div class="strategy-title">{{ strategy.name }}</div>
-            <el-tag type="success" size="small">推荐</el-tag>
+            <el-tag type="success" size="small">{{ t('incomeStrategies.recommended') }}</el-tag>
           </div>
           <div class="strategy-desc">{{ strategy.shortDesc }}</div>
           <div class="strategy-meta">
@@ -56,7 +56,7 @@
             </span>
             <span class="meta-item" v-if="strategy.expectedIncome">
               <el-icon><TrendCharts /></el-icon>
-              预期 +¥{{ formatNumber(strategy.expectedIncome) }}/月
+              {{ t('incomeStrategies.expectedIncome', { amount: formatNumber(strategy.expectedIncome) }) }}
             </span>
           </div>
         </el-card>
@@ -67,21 +67,21 @@
     <el-card class="strategies-card">
       <template #header>
         <div class="card-header">
-          <span class="card-title">所有策略</span>
+          <span class="card-title">{{ t('incomeStrategies.allStrategies') }}</span>
           <div class="filter-tabs">
             <el-radio-group v-model="activeFilter" size="small">
-              <el-radio-button value="all">全部</el-radio-button>
-              <el-radio-button value="expert">专家定位</el-radio-button>
-              <el-radio-button value="product">产品化</el-radio-button>
-              <el-radio-button value="leverage">杠杆</el-radio-button>
-              <el-radio-button value="investment">投资</el-radio-button>
+              <el-radio-button value="all">{{ t('incomeStrategies.filterAll') }}</el-radio-button>
+              <el-radio-button value="expert">{{ t('incomeStrategies.filterExpert') }}</el-radio-button>
+              <el-radio-button value="product">{{ t('incomeStrategies.filterProduct') }}</el-radio-button>
+              <el-radio-button value="leverage">{{ t('incomeStrategies.filterLeverage') }}</el-radio-button>
+              <el-radio-button value="investment">{{ t('incomeStrategies.filterInvestment') }}</el-radio-button>
             </el-radio-group>
           </div>
         </div>
       </template>
 
       <div class="strategies-grid" v-loading="loading">
-        <el-empty v-if="filteredStrategies.length === 0" description="暂无策略" />
+        <el-empty v-if="filteredStrategies.length === 0" :description="t('incomeStrategies.noStrategies')" />
         <el-card
           v-for="strategy in filteredStrategies"
           :key="strategy.id"
@@ -98,7 +98,7 @@
             </div>
             <div class="strategy-info">
               <div class="strategy-title">{{ strategy.name }}</div>
-              <el-tag v-if="strategy.isActive" type="success" size="small">已应用</el-tag>
+              <el-tag v-if="strategy.isActive" type="success" size="small">{{ t('incomeStrategies.applied') }}</el-tag>
             </div>
           </div>
           <div class="strategy-desc">{{ strategy.shortDesc }}</div>
@@ -109,7 +109,7 @@
             </span>
             <span class="meta-item" v-if="strategy.expectedIncome">
               <el-icon><TrendCharts /></el-icon>
-              预期 +¥{{ formatNumber(strategy.expectedIncome) }}/月
+              {{ t('incomeStrategies.expectedIncome', { amount: formatNumber(strategy.expectedIncome) }) }}
             </span>
           </div>
         </el-card>
@@ -128,7 +128,7 @@
         <div class="detail-section">
           <h3>
             <el-icon><Lightning /></el-icon>
-            核心思想
+            {{ t('incomeStrategies.coreIdea') }}
           </h3>
           <p>{{ selectedStrategy.coreIdea }}</p>
         </div>
@@ -137,7 +137,7 @@
         <div class="detail-section" v-if="selectedStrategy.scenario || selectedStrategy.advantages">
           <h3>
             <el-icon><Compass /></el-icon>
-            {{ selectedStrategy.scenario ? '适用场景' : '优势' }}
+            {{ selectedStrategy.scenario ? t('incomeStrategies.applicableScenario') : t('incomeStrategies.advantages') }}
           </h3>
           <p>{{ selectedStrategy.scenario || selectedStrategy.advantages }}</p>
         </div>
@@ -146,7 +146,7 @@
         <div class="detail-section">
           <h3>
             <el-icon><List /></el-icon>
-            执行步骤
+            {{ t('incomeStrategies.executionSteps') }}
           </h3>
           <el-steps :active="selectedStrategy.isActive ? selectedStrategy.steps.length : 0" finish-status="success" align-center>
             <el-step
@@ -161,7 +161,7 @@
         <div class="detail-section" v-if="selectedStrategy.cases || selectedStrategy.productTypes || selectedStrategy.leverageTypes">
           <h3>
             <el-icon><Document /></el-icon>
-            {{ selectedStrategy.cases ? '案例参考' : (selectedStrategy.productTypes ? '产品类型' : '杠杆类型') }}
+            {{ selectedStrategy.cases ? t('incomeStrategies.caseReference') : (selectedStrategy.productTypes ? t('incomeStrategies.productTypes') : t('incomeStrategies.leverageTypes')) }}
           </h3>
           <div v-if="selectedStrategy.cases" class="cases-list">
             <div v-for="(item, index) in selectedStrategy.cases" :key="index" class="case-item">
@@ -193,7 +193,7 @@
         <div class="detail-section" v-if="selectedStrategy.executionPlan">
           <h3>
             <el-icon><Calendar /></el-icon>
-            执行计划
+            {{ t('incomeStrategies.executionPlan') }}
           </h3>
           <el-timeline>
             <el-timeline-item
@@ -209,13 +209,13 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="closeDialog">关闭</el-button>
+          <el-button @click="closeDialog">{{ t('incomeStrategies.close') }}</el-button>
           <el-button
             type="primary"
             @click="applyStrategy"
             :loading="applying"
           >
-            {{ selectedStrategy?.isActive ? '继续执行' : '应用此策略' }}
+            {{ selectedStrategy?.isActive ? t('incomeStrategies.continueExecution') : t('incomeStrategies.applyThisStrategy') }}
           </el-button>
         </div>
       </template>
@@ -224,12 +224,12 @@
     <!-- 推荐策略对话框 -->
     <el-dialog
       v-model="showRecommendations"
-      title="智能推荐策略"
+      :title="t('incomeStrategies.recommendationDialog')"
       width="600px"
     >
       <div class="recommendations-content">
         <el-alert
-          title="基于您的财务状况、技能背景和兴趣爱好，为您推荐以下策略"
+          :title="t('incomeStrategies.recommendationAlert')"
           type="info"
           :closable="false"
           show-icon
@@ -250,7 +250,7 @@
               </div>
               <div class="strategy-title">{{ strategy.name }}</div>
               <el-tag :type="strategy.recommendationLevel === 'high' ? 'success' : 'warning'" size="small">
-                {{ strategy.recommendationLevel === 'high' ? '强烈推荐' : '推荐' }}
+                {{ strategy.recommendationLevel === 'high' ? t('incomeStrategies.highlyRecommended') : t('incomeStrategies.recommended') }}
               </el-tag>
             </div>
             <div class="strategy-desc">{{ strategy.shortDesc }}</div>
@@ -261,7 +261,7 @@
               </span>
               <span class="meta-item" v-if="strategy.expectedIncome">
                 <el-icon><TrendCharts /></el-icon>
-                预期 +¥{{ formatNumber(strategy.expectedIncome) }}/月
+                {{ t('incomeStrategies.expectedIncome', { amount: formatNumber(strategy.expectedIncome) }) }}
               </span>
             </div>
             <div class="strategy-reason" v-if="strategy.recommendationReason">
@@ -278,6 +278,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import useI18n from "../i18n"
 import {
   Trophy,
   Guide,
@@ -301,6 +302,7 @@ import { formatNumber } from '@/utils/format'
 import { useIncomeStore } from '@/stores/income'
 
 const incomeStore = useIncomeStore()
+const { t } = useI18n()
 
 const loading = ref(false)
 const dialogVisible = ref(false)
@@ -485,14 +487,14 @@ const applyStrategy = async () => {
   applying.value = true
   try {
     if (selectedStrategy.value.isActive) {
-      ElMessage.success('继续执行策略！')
+      ElMessage.success(t('incomeStrategies.continueSuccess'))
     } else {
       await ElMessageBox.confirm(
-        `确定要应用"${selectedStrategy.value.name}"策略吗？\n\n预期收入提升：+¥${formatNumber(selectedStrategy.value.expectedIncome)}/月`,
-        '确认应用策略',
+        t('incomeStrategies.confirmApplyStrategy', { name: selectedStrategy.value.name, amount: formatNumber(selectedStrategy.value.expectedIncome) }),
+        t('incomeStrategies.confirmApplyTitle'),
         {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+          confirmButtonText: t('incomeStrategies.confirmBtn'),
+          cancelButtonText: t('incomeStrategies.cancelBtn'),
           type: 'warning'
         }
       )
@@ -504,7 +506,7 @@ const applyStrategy = async () => {
       // TODO: 调用 API 保存策略应用记录
       await incomeStore.applyStrategy(selectedStrategy.value.id)
 
-      ElMessage.success(`已成功应用"${selectedStrategy.value.name}"策略！`)
+      ElMessage.success(t('incomeStrategies.appliedSuccess', { name: selectedStrategy.value.name }))
       closeDialog()
     }
   } catch (error) {

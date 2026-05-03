@@ -22,8 +22,14 @@ function getNestedValue(obj: any, path: string): string {
 }
 
 export function createI18n() {
-  const t = (key: string): string => {
-    return getNestedValue(messages[state.locale], key)
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    let value = getNestedValue(messages[state.locale], key)
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        value = value.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v))
+      })
+    }
+    return value
   }
 
   const setLocale = (locale: Locale) => {

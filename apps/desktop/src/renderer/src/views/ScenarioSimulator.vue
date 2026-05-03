@@ -1,26 +1,26 @@
 <template>
   <div class="scenario-simulator">
-    <h1 class="page-title">情景模拟</h1>
+    <h1 class="page-title">{{ t('scenarioSimulator.title') }}</h1>
 
     <!-- 场景管理按钮 -->
     <div class="scenario-actions">
       <el-button type="primary" @click="openScenarioDialog" :icon="FolderOpened">
-        场景管理
+        {{ t('scenarioSimulator.scenarioManagement') }}
       </el-button>
       <el-button type="warning" @click="loadExampleData" :icon="DocumentCopy">
-        示例数据
+        {{ t('scenarioSimulator.exampleData') }}
       </el-button>
     </div>
 
     <!-- 当前场景输入 -->
     <div class="finance-card input-card">
       <div class="card-header">
-        <span class="card-title">当前场景</span>
-        <el-tag type="info">你的财务现状</el-tag>
+        <span class="card-title">{{ t('scenarioSimulator.currentScenario') }}</span>
+        <el-tag type="info">{{ t('scenarioSimulator.yourFinancialStatus') }}</el-tag>
       </div>
 
       <el-form :model="currentScenario" label-width="120px" class="scenario-form">
-        <el-form-item label="净资产">
+        <el-form-item :label="t('scenarioSimulator.netAssets')">
           <el-input-number
             v-model="currentScenario.netAssets"
             :min="0"
@@ -28,11 +28,11 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('scenarioSimulator.unitYuan') }}</span>
           <HelpTooltip :content="scenarioTutorial.parameters.netAssets" />
         </el-form-item>
 
-        <el-form-item label="月收入">
+        <el-form-item :label="t('scenarioSimulator.monthlyIncome')">
           <el-input-number
             v-model="currentScenario.monthlyIncome"
             :min="0"
@@ -40,11 +40,11 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('scenarioSimulator.unitYuan') }}</span>
           <HelpTooltip :content="scenarioTutorial.parameters.monthlyIncome" />
         </el-form-item>
 
-        <el-form-item label="月支出">
+        <el-form-item :label="t('scenarioSimulator.monthlyExpense')">
           <el-input-number
             v-model="currentScenario.monthlyExpense"
             :min="0"
@@ -52,11 +52,11 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('scenarioSimulator.unitYuan') }}</span>
           <HelpTooltip :content="scenarioTutorial.parameters.monthlyExpense" />
         </el-form-item>
 
-        <el-form-item label="年化收益率">
+        <el-form-item :label="t('scenarioSimulator.annualReturn')">
           <el-slider
             v-model="currentScenario.annualReturn"
             :min="0"
@@ -65,11 +65,11 @@
             show-input
             :show-input-controls="false"
           />
-          <span class="unit">%</span>
+          <span class="unit">{{ t('scenarioSimulator.unitPercent') }}</span>
           <HelpTooltip :content="scenarioTutorial.parameters.annualReturn" />
         </el-form-item>
 
-        <el-form-item label="财务自由目标">
+        <el-form-item :label="t('scenarioSimulator.freedomTarget')">
           <el-input-number
             v-model="currentScenario.financialFreedomTarget"
             :min="100000"
@@ -77,7 +77,7 @@
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元</span>
+          <span class="unit">{{ t('scenarioSimulator.unitYuan') }}</span>
           <HelpTooltip :content="scenarioTutorial.parameters.financialFreedomTarget" />
         </el-form-item>
       </el-form>
@@ -86,75 +86,75 @@
     <!-- 新场景输入 -->
     <div class="finance-card input-card">
       <div class="card-header">
-        <span class="card-title">新场景（可选）</span>
-        <el-tag type="success">模拟变化</el-tag>
+        <span class="card-title">{{ t('scenarioSimulator.newScenario') }}</span>
+        <el-tag type="success">{{ t('scenarioSimulator.simulateChanges') }}</el-tag>
       </div>
       
       <el-form :model="newScenario" label-width="120px" class="scenario-form">
-        <el-form-item label="净资产">
-          <el-input-number 
-            v-model="newScenario.netAssets" 
-            :min="0" 
+        <el-form-item :label="t('scenarioSimulator.netAssets')">
+          <el-input-number
+            v-model="newScenario.netAssets"
+            :min="0"
             :step="10000"
             :precision="0"
             controls-position="right"
-            :placeholder="'留空表示不变'"
+            :placeholder="t('scenarioSimulator.leaveEmptyUnchanged')"
           />
-          <span class="unit">元（留空表示不变）</span>
+          <span class="unit">{{ t('scenarioSimulator.leaveEmptyUnchanged') }}</span>
         </el-form-item>
-        
-        <el-form-item label="月收入">
-          <el-input-number 
-            v-model="newScenario.monthlyIncome" 
-            :min="0" 
+
+        <el-form-item :label="t('scenarioSimulator.monthlyIncome')">
+          <el-input-number
+            v-model="newScenario.monthlyIncome"
+            :min="0"
             :step="1000"
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元（留空表示不变）</span>
+          <span class="unit">{{ t('scenarioSimulator.leaveEmptyUnchanged') }}</span>
         </el-form-item>
-        
-        <el-form-item label="月支出">
-          <el-input-number 
-            v-model="newScenario.monthlyExpense" 
-            :min="0" 
+
+        <el-form-item :label="t('scenarioSimulator.monthlyExpense')">
+          <el-input-number
+            v-model="newScenario.monthlyExpense"
+            :min="0"
             :step="1000"
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元（留空表示不变）</span>
+          <span class="unit">{{ t('scenarioSimulator.leaveEmptyUnchanged') }}</span>
         </el-form-item>
-        
-        <el-form-item label="年化收益率">
-          <el-slider 
-            v-model="newScenario.annualReturn" 
-            :min="0" 
+
+        <el-form-item :label="t('scenarioSimulator.annualReturn')">
+          <el-slider
+            v-model="newScenario.annualReturn"
+            :min="0"
             :max="20"
             :step="0.5"
             show-input
             :show-input-controls="false"
           />
-          <span class="unit">%</span>
+          <span class="unit">{{ t('scenarioSimulator.unitPercent') }}</span>
         </el-form-item>
-        
-        <el-form-item label="财务自由目标">
-          <el-input-number 
-            v-model="newScenario.financialFreedomTarget" 
-            :min="100000" 
+
+        <el-form-item :label="t('scenarioSimulator.freedomTarget')">
+          <el-input-number
+            v-model="newScenario.financialFreedomTarget"
+            :min="100000"
             :step="100000"
             :precision="0"
             controls-position="right"
           />
-          <span class="unit">元（留空表示不变）</span>
+          <span class="unit">{{ t('scenarioSimulator.leaveEmptyUnchanged') }}</span>
         </el-form-item>
       </el-form>
-      
+
       <div class="button-group">
         <el-button type="primary" @click="simulate" size="large">
-          开始模拟
+          {{ t('scenarioSimulator.startSimulation') }}
         </el-button>
         <el-button @click="reset" size="large">
-          重置
+          {{ t('scenarioSimulator.reset') }}
         </el-button>
       </div>
     </div>
@@ -164,25 +164,25 @@
       <!-- 核心指标对比 -->
       <div class="finance-card">
         <div class="card-header">
-          <span class="card-title">对比结果</span>
-          <el-tag type="warning">变化分析</el-tag>
+          <span class="card-title">{{ t('scenarioSimulator.comparisonResult') }}</span>
+          <el-tag type="warning">{{ t('scenarioSimulator.changeAnalysis') }}</el-tag>
         </div>
-        
+
         <div class="metrics-grid">
           <div class="metric-card">
-            <div class="metric-label">月结余</div>
+            <div class="metric-label">{{ t('scenarioSimulator.monthlyBalance') }}</div>
             <div class="metric-value">
               ¥{{ simulationResult.current.monthlySavings.toLocaleString() }}
             </div>
-            <div v-if="simulationResult.changes.monthlySavings !== 0" 
+            <div v-if="simulationResult.changes.monthlySavings !== 0"
                  :class="['metric-change', simulationResult.changes.monthlySavings > 0 ? 'positive' : 'negative']">
               {{ simulationResult.changes.monthlySavings > 0 ? '+' : '' }}
               ¥{{ simulationResult.changes.monthlySavings.toLocaleString() }}
             </div>
           </div>
-          
+
           <div class="metric-card">
-            <div class="metric-label">储蓄率</div>
+            <div class="metric-label">{{ t('scenarioSimulator.savingsRate') }}</div>
             <div class="metric-value">
               {{ simulationResult.current.savingsRate }}%
             </div>
@@ -192,30 +192,30 @@
               {{ simulationResult.changes.savingsRate }}%
             </div>
           </div>
-          
+
           <div class="metric-card">
-            <div class="metric-label">财务自由时间</div>
+            <div class="metric-label">{{ t('scenarioSimulator.financialFreedomTime') }}</div>
             <div class="metric-value">
-              {{ simulationResult.current.yearsToFinancialFreedom }}年
-              {{ simulationResult.current.remainingMonthsToFinancialFreedom }}个月
+              {{ simulationResult.current.yearsToFinancialFreedom }}{{ t('scenarioSimulator.unitYuan').charAt(0) }}
+              {{ simulationResult.current.remainingMonthsToFinancialFreedom }}{{ t('scenarioSimulator.monthsUnit') }}
             </div>
             <div v-if="simulationResult.changes.financialFreedomMonths !== 0"
                  :class="['metric-change', simulationResult.changes.financialFreedomMonths > 0 ? 'positive' : 'negative']">
-              {{ simulationResult.changes.financialFreedomMonths > 0 ? '提前' : '推迟' }}
-              {{ Math.abs(simulationResult.changes.financialFreedomMonths) }}个月
+              {{ simulationResult.changes.financialFreedomMonths > 0 ? t('scenarioSimulator.advance') : t('scenarioSimulator.delay') }}
+              {{ Math.abs(simulationResult.changes.financialFreedomMonths) }}{{ t('scenarioSimulator.monthsUnit') }}
             </div>
           </div>
-          
+
           <div class="metric-card">
-            <div class="metric-label">财务保障</div>
+            <div class="metric-label">{{ t('scenarioSimulator.financialSecurity') }}</div>
             <div class="metric-value">
-              {{ Math.floor(simulationResult.current.monthsToGuarantee / 12) }}年
-              {{ simulationResult.current.monthsToGuarantee % 12 }}个月
+              {{ Math.floor(simulationResult.current.monthsToGuarantee / 12) }}{{ t('scenarioSimulator.unitYuan').charAt(0) }}
+              {{ simulationResult.current.monthsToGuarantee % 12 }}{{ t('scenarioSimulator.monthsUnit') }}
             </div>
             <div v-if="simulationResult.changes.guaranteeMonths !== 0"
                  :class="['metric-change', simulationResult.changes.guaranteeMonths > 0 ? 'positive' : 'negative']">
-              {{ simulationResult.changes.guaranteeMonths > 0 ? '提前' : '推迟' }}
-              {{ Math.abs(simulationResult.changes.guaranteeMonths) }}个月
+              {{ simulationResult.changes.guaranteeMonths > 0 ? t('scenarioSimulator.advance') : t('scenarioSimulator.delay') }}
+              {{ Math.abs(simulationResult.changes.guaranteeMonths) }}{{ t('scenarioSimulator.monthsUnit') }}
             </div>
           </div>
         </div>
@@ -224,8 +224,8 @@
       <!-- 洞察提示 -->
       <div class="finance-card">
         <div class="card-header">
-          <span class="card-title">洞察提示</span>
-          <el-tag type="info">智能分析</el-tag>
+          <span class="card-title">{{ t('scenarioSimulator.insightTitle') }}</span>
+          <el-tag type="info">{{ t('scenarioSimulator.smartAnalysis') }}</el-tag>
         </div>
         
         <div class="insights-list">
@@ -240,23 +240,23 @@
       <!-- 详细对比 -->
       <div class="finance-card">
         <div class="card-header">
-          <span class="card-title">详细对比</span>
-          <el-tag>场景数据</el-tag>
+          <span class="card-title">{{ t('scenarioSimulator.detailedComparison') }}</span>
+          <el-tag>{{ t('scenarioSimulator.scenarioData') }}</el-tag>
         </div>
         
         <el-table :data="comparisonData" border style="width: 100%">
-          <el-table-column prop="metric" label="指标" width="180" />
-          <el-table-column prop="current" label="当前场景">
+          <el-table-column prop="metric" :label="t('scenarioSimulator.metricCol')" width="180" />
+          <el-table-column prop="current" :label="t('scenarioSimulator.currentScenarioCol')">
             <template #default="scope">
               {{ scope.row.current }}
             </template>
           </el-table-column>
-          <el-table-column prop="new" label="新场景">
+          <el-table-column prop="new" :label="t('scenarioSimulator.newScenarioCol')">
             <template #default="scope">
               {{ scope.row.new }}
             </template>
           </el-table-column>
-          <el-table-column prop="change" label="变化">
+          <el-table-column prop="change" :label="t('scenarioSimulator.changeCol')">
             <template #default="scope">
               <span :style="{ color: scope.row.changeColor }">
                 {{ scope.row.change }}
@@ -269,12 +269,12 @@
       <!-- 财务自由路径对比 -->
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">财务自由路径对比</span>
+          <span class="card-title">{{ t('scenarioSimulator.freedomPathComparison') }}</span>
           <div>
-            <el-tag>可视化分析</el-tag>
+            <el-tag>{{ t('scenarioSimulator.visualAnalysis') }}</el-tag>
             <el-button type="primary" text @click="handleExportChart">
               <el-icon><Picture /></el-icon>
-              保存图表
+              {{ t('scenarioSimulator.saveChart') }}
             </el-button>
           </div>
         </div>
@@ -285,24 +285,24 @@
     <!-- 场景管理对话框 -->
     <el-dialog
       v-model="scenarioDialogVisible"
-      title="场景管理"
+      :title="t('scenarioSimulator.scenarioManagement')"
       width="600px"
     >
       <!-- 保存场景表单 -->
       <el-form :model="{ name: currentScenarioName, description: currentScenarioDescription }" label-width="100px">
-        <el-form-item label="场景名称">
+        <el-form-item :label="t('scenarioSimulator.scenarioName')">
           <el-input
             v-model="currentScenarioName"
-            placeholder="请输入场景名称"
+            :placeholder="t('scenarioSimulator.scenarioNamePlaceholder')"
             maxlength="50"
             show-word-limit
           />
         </el-form-item>
-        <el-form-item label="场景描述">
+        <el-form-item :label="t('scenarioSimulator.scenarioDescription')">
           <el-input
             v-model="currentScenarioDescription"
             type="textarea"
-            placeholder="请输入场景描述（可选）"
+            :placeholder="t('scenarioSimulator.scenarioDescPlaceholder')"
             :rows="2"
             maxlength="200"
             show-word-limit
@@ -310,7 +310,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="saveCurrentScenario" :icon="Plus">
-            保存当前场景
+            {{ t('scenarioSimulator.saveCurrentScenario') }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -319,11 +319,11 @@
       <el-divider />
 
       <div v-if="savedScenarios.length === 0" class="empty-scenarios">
-        暂无已保存的场景
+        {{ t('scenarioSimulator.noSavedScenarios') }}
       </div>
       <div v-else>
         <div class="scenarios-header">
-          <span>已保存场景（{{ savedScenarios.length }}）</span>
+          <span>{{ t('scenarioSimulator.savedScenarios', { count: savedScenarios.length }) }}</span>
         </div>
         <el-scrollbar max-height="400px">
           <div
@@ -337,17 +337,17 @@
                 {{ scenario.description }}
               </div>
               <div class="scenario-meta">
-                净资产：¥{{ scenario.data?.current?.netAssets?.toLocaleString() }} ·
-                月收入：¥{{ scenario.data?.current?.monthlyIncome?.toLocaleString() }} ·
-                更新于 {{ formatDate(scenario.updatedAt) }}
+                {{ t('scenarioSimulator.netAssetsLabel', { amount: scenario.data?.current?.netAssets?.toLocaleString() }) }} ·
+                {{ t('scenarioSimulator.monthlyIncomeLabel', { amount: scenario.data?.current?.monthlyIncome?.toLocaleString() }) }} ·
+                {{ t('scenarioSimulator.updated', { date: formatDate(scenario.updatedAt) }) }}
               </div>
             </div>
             <div class="scenario-actions">
               <el-button type="primary" size="small" @click="loadSavedScenario(scenario.name)" :icon="Download">
-                加载
+                {{ t('scenarioSimulator.load') }}
               </el-button>
               <el-button type="danger" size="small" @click="confirmDeleteScenario(scenario.name)" :icon="Delete">
-                删除
+                {{ t('scenarioSimulator.delete') }}
               </el-button>
             </div>
           </div>
@@ -368,6 +368,9 @@ import { exportToPDF, exportChartToImage, exportToExcel, prepareYearlyDataForExc
 import { getScenarioChartConfig } from '../utils/chart-optimizer'
 import HelpTooltip from '../components/HelpTooltip.vue'
 import { scenarioTutorial } from '../utils/tutorial-content'
+import useI18n from '../i18n'
+
+const { t } = useI18n()
 
 // 工具名称（用于存储）
 const TOOL_NAME = 'scenario-simulator'
@@ -507,42 +510,56 @@ function simulateScenario(current: any, newParams: any) {
 // 生成洞察
 function generateInsight(currentPath: any, newPath: any, changes: any) {
   const insights: string[] = []
-  
+
   // 财务自由时间变化
   if (changes.financialFreedomMonths > 0) {
-    const years = Math.floor(changes.financialFreedomMonths / 12)
-    const months = changes.financialFreedomMonths % 12
-    if (years > 0) {
-      insights.push(`🎉 新场景将使财务自由提前${years}年${months > 0 ? months + '个月' : ''}达成！`)
+    const y = Math.floor(changes.financialFreedomMonths / 12)
+    const m = changes.financialFreedomMonths % 12
+    if (y > 0) {
+      const monthStr = m > 0 ? m + t('scenarioSimulator.unitMonth') : ''
+      insights.push(t('scenarioSimulator.insightAdvanceYears').replace('{years}', String(y)).replace('{months}', monthStr))
     } else {
-      insights.push(`🎉 新场景将使财务自由提前${months}个月达成！`)
+      insights.push(t('scenarioSimulator.insightAdvanceMonths').replace('{months}', String(m)))
     }
   } else if (changes.financialFreedomMonths < 0) {
-    const years = Math.floor(Math.abs(changes.financialFreedomMonths) / 12)
-    const months = Math.abs(changes.financialFreedomMonths) % 12
-    if (years > 0) {
-      insights.push(`⚠️ 新场景将使财务自由推迟${years}年${months > 0 ? months + '个月' : ''}达成。`)
+    const y = Math.floor(Math.abs(changes.financialFreedomMonths) / 12)
+    const m = Math.abs(changes.financialFreedomMonths) % 12
+    if (y > 0) {
+      const monthStr = m > 0 ? m + t('scenarioSimulator.unitMonth') : ''
+      insights.push(t('scenarioSimulator.insightDelayYears').replace('{years}', String(y)).replace('{months}', monthStr))
     } else {
-      insights.push(`⚠️ 新场景将使财务自由推迟${months}个月达成。`)
+      insights.push(t('scenarioSimulator.insightDelayMonths').replace('{months}', String(m)))
     }
   } else {
-    insights.push('新场景对财务自由时间没有影响。')
+    insights.push(t('scenarioSimulator.insightNoEffect'))
   }
-  
+
   // 储蓄率变化
   if (parseFloat(changes.savingsRate) > 0) {
-    insights.push(`📈 储蓄率从${currentPath.savingsRate}%提升到${newPath.savingsRate}%（+${changes.savingsRate}%）`)
+    insights.push(t('scenarioSimulator.insightSavingsRateUp')
+      .replace('{current}', String(currentPath.savingsRate))
+      .replace('{new}', String(newPath.savingsRate))
+      .replace('{change}', String(changes.savingsRate)))
   } else if (parseFloat(changes.savingsRate) < 0) {
-    insights.push(`📉 储蓄率从${currentPath.savingsRate}%下降到${newPath.savingsRate}%（${changes.savingsRate}%）`)
+    insights.push(t('scenarioSimulator.insightSavingsRateDown')
+      .replace('{current}', String(currentPath.savingsRate))
+      .replace('{new}', String(newPath.savingsRate))
+      .replace('{change}', String(changes.savingsRate)))
   }
-  
+
   // 月结余变化
   if (changes.monthlySavings > 0) {
-    insights.push(`💰 每月结余增加¥${changes.monthlySavings.toLocaleString()}（¥${currentPath.monthlySavings.toLocaleString()} → ¥${newPath.monthlySavings.toLocaleString()}）`)
+    insights.push(t('scenarioSimulator.insightMonthlySavingsUp')
+      .replace('{change}', changes.monthlySavings.toLocaleString())
+      .replace('{current}', currentPath.monthlySavings.toLocaleString())
+      .replace('{new}', newPath.monthlySavings.toLocaleString()))
   } else if (changes.monthlySavings < 0) {
-    insights.push(`💸 每月结余减少¥${Math.abs(changes.monthlySavings).toLocaleString()}（¥${currentPath.monthlySavings.toLocaleString()} → ¥${newPath.monthlySavings.toLocaleString()}）`)
+    insights.push(t('scenarioSimulator.insightMonthlySavingsDown')
+      .replace('{change}', Math.abs(changes.monthlySavings).toLocaleString())
+      .replace('{current}', currentPath.monthlySavings.toLocaleString())
+      .replace('{new}', newPath.monthlySavings.toLocaleString()))
   }
-  
+
   return insights
 }
 
@@ -550,17 +567,17 @@ function generateInsight(currentPath: any, newPath: any, changes: any) {
 function simulate() {
   // 验证当前场景数据
   if (currentScenario.value.monthlyIncome <= 0) {
-    ElMessage.warning('请输入月收入')
+    ElMessage.warning(t('scenarioSimulator.pleaseInputIncome'))
     return
   }
 
   if (currentScenario.value.monthlyExpense <= 0) {
-    ElMessage.warning('请输入月支出')
+    ElMessage.warning(t('scenarioSimulator.pleaseInputExpense'))
     return
   }
 
   if (currentScenario.value.monthlyExpense >= currentScenario.value.monthlyIncome) {
-    ElMessage.warning('月支出不能大于或等于月收入')
+    ElMessage.warning(t('scenarioSimulator.expenseGteIncome'))
     return
   }
 
@@ -572,7 +589,7 @@ function simulate() {
     initChart()
   }, 100)
 
-  ElMessage.success('模拟完成！')
+  ElMessage.success(t('scenarioSimulator.simulationComplete'))
 }
 
 // 重置
@@ -608,7 +625,7 @@ const loadExampleData = () => {
     financialFreedomTarget: scenarioTutorial.exampleData.financialFreedomTarget
   }
   simulationResult.value = null
-  ElMessage.success('示例数据加载成功，点击"模拟"查看结果')
+  ElMessage.success(t('scenarioSimulator.exampleLoadSuccess'))
 }
 
 // 场景管理函数
@@ -627,7 +644,7 @@ function loadSavedScenarios() {
 
 function saveCurrentScenario() {
   if (!currentScenarioName.value.trim()) {
-    ElMessage.warning('请输入场景名称')
+    ElMessage.warning(t('scenarioSimulator.pleaseInputName'))
     return
   }
 
@@ -638,11 +655,11 @@ function saveCurrentScenario() {
   }
 
   if (saveScenario(TOOL_NAME, currentScenarioName.value, scenarioData)) {
-    ElMessage.success('场景保存成功')
+    ElMessage.success(t('scenarioSimulator.scenarioSaveSuccess'))
     loadSavedScenarios()
     scenarioDialogVisible.value = false
   } else {
-    ElMessage.error('场景保存失败')
+    ElMessage.error(t('scenarioSimulator.scenarioSaveFailed'))
   }
 }
 
@@ -654,28 +671,28 @@ function loadSavedScenario(scenarioName: string) {
     currentScenarioName.value = scenarioName
     currentScenarioDescription.value = data.description || ''
     simulationResult.value = null
-    ElMessage.success('场景加载成功')
+    ElMessage.success(t('scenarioSimulator.scenarioLoadSuccess'))
     scenarioDialogVisible.value = false
   } else {
-    ElMessage.error('场景加载失败')
+    ElMessage.error(t('scenarioSimulator.scenarioLoadFailed'))
   }
 }
 
 function confirmDeleteScenario(scenarioName: string) {
   ElMessageBox.confirm(
-    `确定要删除场景"${scenarioName}"吗？`,
-    '删除确认',
+    t('scenarioSimulator.deleteConfirm').replace('{name}', scenarioName),
+    t('scenarioSimulator.deleteConfirmTitle'),
     {
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
+      confirmButtonText: t('scenarioSimulator.delete'),
+      cancelButtonText: t('scenarioSimulator.delete'),
       type: 'warning'
     }
   ).then(() => {
     if (deleteScenario(TOOL_NAME, scenarioName)) {
-      ElMessage.success('场景删除成功')
+      ElMessage.success(t('scenarioSimulator.scenarioDeleteSuccess'))
       loadSavedScenarios()
     } else {
-      ElMessage.error('场景删除失败')
+      ElMessage.error(t('scenarioSimulator.scenarioDeleteFailed'))
     }
   }).catch(() => {
     // 用户取消删除
@@ -690,10 +707,10 @@ function formatDate(date: Date): string {
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
 
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes}分钟前`
-  if (hours < 24) return `${hours}小时前`
-  if (days < 7) return `${days}天前`
+  if (minutes < 1) return t('scenarioSimulator.justNow')
+  if (minutes < 60) return t('scenarioSimulator.minutesAgo', { minutes })
+  if (hours < 24) return t('scenarioSimulator.hoursAgo', { hours })
+  if (days < 7) return t('scenarioSimulator.daysAgo', { days })
   return date.toLocaleDateString('zh-CN')
 }
 
@@ -705,74 +722,74 @@ const comparisonData = computed(() => {
   
   return [
     {
-      metric: '净资产',
+      metric: t('scenarioSimulator.metricNetAssets'),
       current: `¥${result.current.netAssets.toLocaleString()}`,
       new: `¥${result.new.netAssets.toLocaleString()}`,
-      change: result.changes.netAssets >= 0 
-        ? `+¥${result.changes.netAssets.toLocaleString()}` 
+      change: result.changes.netAssets >= 0
+        ? `+¥${result.changes.netAssets.toLocaleString()}`
         : `-¥${Math.abs(result.changes.netAssets).toLocaleString()}`,
       changeColor: result.changes.netAssets >= 0 ? '#67C23A' : '#F56C6C'
     },
     {
-      metric: '月收入',
+      metric: t('scenarioSimulator.metricMonthlyIncome'),
       current: `¥${result.current.monthlyIncome.toLocaleString()}`,
       new: `¥${result.new.monthlyIncome.toLocaleString()}`,
-      change: result.changes.monthlyIncome >= 0 
-        ? `+¥${result.changes.monthlyIncome.toLocaleString()}` 
+      change: result.changes.monthlyIncome >= 0
+        ? `+¥${result.changes.monthlyIncome.toLocaleString()}`
         : `-¥${Math.abs(result.changes.monthlyIncome).toLocaleString()}`,
       changeColor: result.changes.monthlyIncome >= 0 ? '#67C23A' : '#F56C6C'
     },
     {
-      metric: '月支出',
+      metric: t('scenarioSimulator.metricMonthlyExpense'),
       current: `¥${result.current.monthlyExpense.toLocaleString()}`,
       new: `¥${result.new.monthlyExpense.toLocaleString()}`,
-      change: result.changes.monthlyExpense >= 0 
-        ? `+¥${result.changes.monthlyExpense.toLocaleString()}` 
+      change: result.changes.monthlyExpense >= 0
+        ? `+¥${result.changes.monthlyExpense.toLocaleString()}`
         : `-¥${Math.abs(result.changes.monthlyExpense).toLocaleString()}`,
       changeColor: result.changes.monthlyExpense <= 0 ? '#67C23A' : '#F56C6C'
     },
     {
-      metric: '月结余',
+      metric: t('scenarioSimulator.metricMonthlyBalance'),
       current: `¥${result.current.monthlySavings.toLocaleString()}`,
       new: `¥${result.new.monthlySavings.toLocaleString()}`,
-      change: result.changes.monthlySavings >= 0 
-        ? `+¥${result.changes.monthlySavings.toLocaleString()}` 
+      change: result.changes.monthlySavings >= 0
+        ? `+¥${result.changes.monthlySavings.toLocaleString()}`
         : `-¥${Math.abs(result.changes.monthlySavings).toLocaleString()}`,
       changeColor: result.changes.monthlySavings >= 0 ? '#67C23A' : '#F56C6C'
     },
     {
-      metric: '储蓄率',
+      metric: t('scenarioSimulator.metricSavingsRate'),
       current: `${result.current.savingsRate}%`,
       new: `${result.new.savingsRate}%`,
-      change: parseFloat(result.changes.savingsRate) >= 0 
-        ? `+${result.changes.savingsRate}%` 
+      change: parseFloat(result.changes.savingsRate) >= 0
+        ? `+${result.changes.savingsRate}%`
         : `${result.changes.savingsRate}%`,
       changeColor: parseFloat(result.changes.savingsRate) >= 0 ? '#67C23A' : '#F56C6C'
     },
     {
-      metric: '财务自由时间',
-      current: `${result.current.yearsToFinancialFreedom}年${result.current.remainingMonthsToFinancialFreedom}个月`,
-      new: `${result.new.yearsToFinancialFreedom}年${result.new.remainingMonthsToFinancialFreedom}个月`,
-      change: result.changes.financialFreedomMonths > 0 
-        ? `提前${result.changes.financialFreedomMonths}个月` 
-        : result.changes.financialFreedomMonths < 0 
-          ? `推迟${Math.abs(result.changes.financialFreedomMonths)}个月`
-          : '无变化',
+      metric: t('scenarioSimulator.metricFreedomTime'),
+      current: `${result.current.yearsToFinancialFreedom}${t('scenarioSimulator.unitYuan').charAt(0)}${result.current.remainingMonthsToFinancialFreedom}${t('scenarioSimulator.monthsUnit')}`,
+      new: `${result.new.yearsToFinancialFreedom}${t('scenarioSimulator.unitYuan').charAt(0)}${result.new.remainingMonthsToFinancialFreedom}${t('scenarioSimulator.monthsUnit')}`,
+      change: result.changes.financialFreedomMonths > 0
+        ? t('scenarioSimulator.advanceMonths', { months: result.changes.financialFreedomMonths })
+        : result.changes.financialFreedomMonths < 0
+          ? t('scenarioSimulator.delayMonths', { months: Math.abs(result.changes.financialFreedomMonths) })
+          : t('scenarioSimulator.noChange'),
       changeColor: result.changes.financialFreedomMonths >= 0 ? '#67C23A' : '#F56C6C'
     },
     {
-      metric: '财务保障时间',
-      current: `${Math.floor(result.current.monthsToGuarantee / 12)}年${result.current.monthsToGuarantee % 12}个月`,
-      new: `${Math.floor(result.new.monthsToGuarantee / 12)}年${result.new.monthsToGuarantee % 12}个月`,
-      change: result.changes.guaranteeMonths > 0 
-        ? `提前${result.changes.guaranteeMonths}个月` 
-        : result.changes.guaranteeMonths < 0 
-          ? `推迟${Math.abs(result.changes.guaranteeMonths)}个月`
-          : '无变化',
+      metric: t('scenarioSimulator.metricSecurityTime'),
+      current: `${Math.floor(result.current.monthsToGuarantee / 12)}${t('scenarioSimulator.unitYuan').charAt(0)}${result.current.monthsToGuarantee % 12}${t('scenarioSimulator.monthsUnit')}`,
+      new: `${Math.floor(result.new.monthsToGuarantee / 12)}${t('scenarioSimulator.unitYuan').charAt(0)}${result.new.monthsToGuarantee % 12}${t('scenarioSimulator.monthsUnit')}`,
+      change: result.changes.guaranteeMonths > 0
+        ? t('scenarioSimulator.advanceMonths', { months: result.changes.guaranteeMonths })
+        : result.changes.guaranteeMonths < 0
+          ? t('scenarioSimulator.delayMonths', { months: Math.abs(result.changes.guaranteeMonths) })
+          : t('scenarioSimulator.noChange'),
       changeColor: result.changes.guaranteeMonths >= 0 ? '#67C23A' : '#F56C6C'
     },
     {
-      metric: '年化收益率',
+      metric: t('scenarioSimulator.metricAnnualReturn'),
       current: `${result.current.annualReturn}%`,
       new: `${result.new.annualReturn}%`,
       change: `${(result.new.annualReturn - result.current.annualReturn).toFixed(1)}%`,
@@ -790,27 +807,27 @@ const chartInstance = ref<any>(null)
 
 // 导出 PDF
 const handleExportPDF = () => {
-  exportToPDF('情景模拟')
+  exportToPDF(t('scenarioSimulator.title'))
 }
 
 // 导出图表
 const handleExportChart = () => {
   if (!chartInstance.value) {
-    ElMessage.error('图表未初始化')
+    ElMessage.error(t('scenarioSimulator.chartNotInit'))
     return
   }
-  exportChartToImage(chartInstance.value, '情景模拟_图表')
+  exportChartToImage(chartInstance.value, t('scenarioSimulator.exportChartName'))
 }
 
 // 导出 Excel
 const handleExportExcel = () => {
   if (!simulationResult.value) {
-    ElMessage.error('请先模拟')
+    ElMessage.error(t('scenarioSimulator.pleaseSimulate'))
     return
   }
 
   const data = prepareYearlyDataForExcel(simulationResult.value.yearlyData)
-  exportToExcel(data, '情景模拟_年度明细', '年度明细')
+  exportToExcel(data, t('scenarioSimulator.exportExcelName'), t('scenarioSimulator.exportExcelSheet'))
 }
 
 // 初始化图表
@@ -831,7 +848,7 @@ const initChart = () => {
 
   for (let month = 0; month <= maxYears; month++) {
     if (month % 12 === 0) {
-      years.push(`第${month / 12}年`)
+      years.push(t('scenarioSimulator.chartYearLabel').replace('{year}', String(month / 12)))
     }
 
     // 计算当前场景的资产
@@ -870,7 +887,7 @@ onMounted(() => {
   if (autoSaved) {
     currentScenario.value = { ...autoSaved.current }
     newScenario.value = { ...autoSaved.new }
-    ElMessage.info('已恢复上次编辑的场景')
+    ElMessage.info(t('scenarioSimulator.restoredScene'))
   }
 
   simulate()

@@ -1,16 +1,16 @@
 <template>
   <div class="income-dashboard">
-    <h1 class="page-title">收入看板</h1>
+    <h1 class="page-title">{{ t('incomeDashboard.title') }}</h1>
 
     <!-- 核心指标卡片 -->
     <div class="metric-cards">
       <div class="metric-card gradient-primary">
         <div class="metric-icon">💰</div>
         <div class="metric-info">
-          <div class="metric-label">本月总收入</div>
+          <div class="metric-label">{{ t('incomeDashboard.monthlyTotalIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.totalIncome) }}</div>
           <div class="metric-change" :class="metrics.incomeChange >= 0 ? 'positive' : 'negative'">
-            {{ metrics.incomeChange >= 0 ? '▲' : '▼' }} {{ Math.abs(metrics.incomeChange) }}% vs 上月
+            {{ metrics.incomeChange >= 0 ? '▲' : '▼' }} {{ Math.abs(metrics.incomeChange) }}% {{ t('incomeDashboard.vsLastMonth') }}
           </div>
         </div>
       </div>
@@ -18,7 +18,7 @@
       <div class="metric-card gradient-success">
         <div class="metric-icon">🏃</div>
         <div class="metric-info">
-          <div class="metric-label">主动收入</div>
+          <div class="metric-label">{{ t('incomeDashboard.activeIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.activeIncome) }}</div>
           <div class="metric-change">{{ metrics.activePercentage }}%</div>
         </div>
@@ -27,7 +27,7 @@
       <div class="metric-card gradient-warning">
         <div class="metric-icon">🌴</div>
         <div class="metric-info">
-          <div class="metric-label">被动收入</div>
+          <div class="metric-label">{{ t('incomeDashboard.passiveIncome') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.passiveIncome) }}</div>
           <div class="metric-change">{{ metrics.passivePercentage }}%</div>
         </div>
@@ -36,15 +36,15 @@
       <div class="metric-card gradient-info">
         <div class="metric-icon">🎯</div>
         <div class="metric-info">
-          <div class="metric-label">距离财务安全</div>
+          <div class="metric-label">{{ t('incomeDashboard.gapToFinancialSafety') }}</div>
           <div class="metric-value">{{ formatCurrency(metrics.gapToFinancialSafety) }}</div>
-          <div class="metric-change">每月所需</div>
+          <div class="metric-change">{{ t('incomeDashboard.monthlyNeeded') }}</div>
         </div>
       </div>
     </div>
 
     <!-- 收入来源分布 -->
-    <div class="section-title">收入来源分布</div>
+    <div class="section-title">{{ t('incomeDashboard.incomeSourceDistribution') }}</div>
     <div class="income-sources">
       <div v-for="source in incomeSources" :key="source.category" class="income-source-item">
         <div class="source-header">
@@ -64,25 +64,25 @@
     <div class="charts-row">
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">近6个月收入趋势</span>
+          <span class="card-title">{{ t('incomeDashboard.last6MonthsTrend') }}</span>
         </div>
         <div ref="incomeTrendChartRef" class="chart-container"></div>
       </div>
 
       <div class="finance-card chart-card">
         <div class="card-header">
-          <span class="card-title">主动收入 vs 被动收入</span>
+          <span class="card-title">{{ t('incomeDashboard.activeVsPassive') }}</span>
         </div>
         <div ref="incomeTypeChartRef" class="chart-container"></div>
       </div>
     </div>
 
     <!-- 财务自由进度 -->
-    <div class="section-title">财务自由进度</div>
+    <div class="section-title">{{ t('incomeDashboard.freedomProgress') }}</div>
     <div class="freedom-progress">
       <div class="progress-item">
         <div class="progress-header">
-          <span class="progress-label">被动收入占比目标</span>
+          <span class="progress-label">{{ t('incomeDashboard.passiveIncomeTarget') }}</span>
           <span class="progress-value">{{ metrics.passivePercentage }}% / 100%</span>
         </div>
         <el-progress
@@ -92,25 +92,24 @@
         />
       </div>
       <div class="progress-tip">
-        当前被动收入覆盖 {{ metrics.passiveCoverageRatio }}% 月支出，距离财务安全还需
-        {{ formatCurrency(metrics.gapToFinancialSafety) }}/月
+        {{ t('incomeDashboard.progressTip').replace('{coverage}', metrics.passiveCoverageRatio).replace('{gap}', formatCurrency(metrics.gapToFinancialSafety)) }}
       </div>
     </div>
 
     <!-- 快捷操作 -->
-    <div class="section-title">快捷操作</div>
+    <div class="section-title">{{ t('incomeDashboard.quickActions') }}</div>
     <div class="quick-actions">
       <el-button type="primary" @click="$router.push('/income-goals')">
         <el-icon><Flag /></el-icon>
-        设定收入目标
+        {{ t('incomeDashboard.setIncomeGoal') }}
       </el-button>
       <el-button @click="$router.push('/income-analysis')">
         <el-icon><TrendCharts /></el-icon>
-        收入结构分析
+        {{ t('incomeDashboard.incomeAnalysis') }}
       </el-button>
       <el-button @click="$router.push('/income-strategies')">
         <el-icon><Star /></el-icon>
-        收入提升策略
+        {{ t('incomeDashboard.incomeStrategies') }}
       </el-button>
     </div>
   </div>
@@ -122,8 +121,10 @@ import { Flag, TrendCharts, Star } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { useIncomeStore } from '@/stores/income'
 import { formatCurrency } from '@/utils/format'
+import useI18n from "../i18n"
 
 const incomeStore = useIncomeStore()
+const { t } = useI18n()
 
 const incomeTrendChartRef = ref<HTMLElement>()
 const incomeTypeChartRef = ref<HTMLElement>()
@@ -213,7 +214,7 @@ const initIncomeTrendChart = () => {
       }
     },
     legend: {
-      data: ['主动收入', '被动收入', '总收入'],
+      data: [t('incomeDashboard.activeIncome'), t('incomeDashboard.passiveIncome'), t('incomeDashboard.monthlyTotalIncome')],
       bottom: 0
     },
     grid: {
@@ -234,21 +235,21 @@ const initIncomeTrendChart = () => {
     },
     series: [
       {
-        name: '主动收入',
+        name: t('incomeDashboard.activeIncome'),
         type: 'bar',
         stack: 'income',
         data: activeData,
         itemStyle: { color: '#5470c6' }
       },
       {
-        name: '被动收入',
+        name: t('incomeDashboard.passiveIncome'),
         type: 'bar',
         stack: 'income',
         data: passiveData,
         itemStyle: { color: '#91cc75' }
       },
       {
-        name: '总收入',
+        name: t('incomeDashboard.monthlyTotalIncome'),
         type: 'line',
         data: totalData,
         itemStyle: { color: '#fac858' },
@@ -282,7 +283,7 @@ const initIncomeTypeChart = () => {
       }
     },
     legend: {
-      data: ['主动收入', '被动收入'],
+      data: [t('incomeDashboard.activeIncome'), t('incomeDashboard.passiveIncome')],
       bottom: 0
     },
     grid: {
@@ -303,13 +304,13 @@ const initIncomeTypeChart = () => {
     },
     series: [
       {
-        name: '主动收入',
+        name: t('incomeDashboard.activeIncome'),
         type: 'bar',
         data: activeData,
         itemStyle: { color: '#5470c6' }
       },
       {
-        name: '被动收入',
+        name: t('incomeDashboard.passiveIncome'),
         type: 'bar',
         data: passiveData,
         itemStyle: { color: '#91cc75' }

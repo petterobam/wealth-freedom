@@ -1,16 +1,16 @@
 <template>
   <div class="income-goals">
-    <h1 class="page-title">收入目标</h1>
+    <h1 class="page-title">{{ t('incomeGoals.title') }}</h1>
 
     <!-- 快捷操作 -->
     <div class="quick-actions">
       <el-button type="primary" @click="showCreateDialog = true">
         <el-icon><Plus /></el-icon>
-        新增目标
+        {{ t('incomeGoals.addGoal') }}
       </el-button>
       <el-button @click="showStrategies = true">
         <el-icon><TrendCharts /></el-icon>
-        查看提升策略
+        {{ t('incomeGoals.viewStrategies') }}
       </el-button>
     </div>
 
@@ -19,28 +19,28 @@
       <div class="summary-card">
         <div class="summary-icon">🎯</div>
         <div class="summary-info">
-          <div class="summary-label">活跃目标</div>
+          <div class="summary-label">{{ t('incomeGoals.activeGoals') }}</div>
           <div class="summary-value">{{ activeGoals.length }}</div>
         </div>
       </div>
       <div class="summary-card">
         <div class="summary-icon">✅</div>
         <div class="summary-info">
-          <div class="summary-label">已达成</div>
+          <div class="summary-label">{{ t('incomeGoals.achieved') }}</div>
           <div class="summary-value">{{ achievedGoals.length }}</div>
         </div>
       </div>
       <div class="summary-card">
         <div class="summary-icon">⏰</div>
         <div class="summary-info">
-          <div class="summary-label">进行中</div>
+          <div class="summary-label">{{ t('incomeGoals.inProgress') }}</div>
           <div class="summary-value">{{ inProgressGoals.length }}</div>
         </div>
       </div>
       <div class="summary-card">
         <div class="summary-icon">⚠️</div>
         <div class="summary-info">
-          <div class="summary-label">即将到期</div>
+          <div class="summary-label">{{ t('incomeGoals.expiringSoon') }}</div>
           <div class="summary-value">{{ upcomingGoals.length }}</div>
         </div>
       </div>
@@ -54,9 +54,9 @@
             <div class="header-left">
               <el-tag :type="getGoalTypeTag(goal.type)" size="small">{{ getGoalTypeLabel(goal.type) }}</el-tag>
               <span class="goal-title">{{ goal.name }}</span>
-              <el-tag v-if="isGoalAchieved(goal)" type="success" size="small">已达成</el-tag>
-              <el-tag v-else-if="isGoalOverdue(goal)" type="danger" size="small">已逾期</el-tag>
-              <el-tag v-else-if="isGoalUpcoming(goal)" type="warning" size="small">即将到期</el-tag>
+              <el-tag v-if="isGoalAchieved(goal)" type="success" size="small">{{ t('incomeGoals.achievedTag') }}</el-tag>
+              <el-tag v-else-if="isGoalOverdue(goal)" type="danger" size="small">{{ t('incomeGoals.overdueTag') }}</el-tag>
+              <el-tag v-else-if="isGoalUpcoming(goal)" type="warning" size="small">{{ t('incomeGoals.expiringTag') }}</el-tag>
             </div>
             <div class="header-right">
               <el-button size="small" text @click="editGoal(goal)">
@@ -72,7 +72,7 @@
         <div class="goal-content">
           <!-- 目标金额 -->
           <div class="goal-metric">
-            <div class="metric-label">目标金额</div>
+            <div class="metric-label">{{ t('incomeGoals.targetAmount') }}</div>
             <div class="metric-value">{{ formatCurrency(goal.targetAmount) }}</div>
             <div class="metric-period">/ {{ getPeriodLabel(goal.period) }}</div>
           </div>
@@ -80,7 +80,7 @@
           <!-- 当前进度 -->
           <div class="goal-progress">
             <div class="progress-header">
-              <span class="progress-label">当前达成</span>
+              <span class="progress-label">{{ t('incomeGoals.currentProgress') }}</span>
               <span class="progress-value">{{ formatCurrency(goal.currentAmount) }} ({{ getProgressPercentage(goal) }}%)</span>
             </div>
             <el-progress
@@ -92,7 +92,7 @@
 
           <!-- 剩余金额 -->
           <div class="goal-remaining">
-            <span class="remaining-label">还需</span>
+            <span class="remaining-label">{{ t('incomeGoals.stillNeeded') }}</span>
             <span class="remaining-value">{{ formatCurrency(goal.targetAmount - goal.currentAmount) }}</span>
             <span class="remaining-diff" :class="getDiffClass(goal)">
               {{ getRemainingText(goal) }}
@@ -101,48 +101,48 @@
 
           <!-- 截止日期 -->
           <div class="goal-deadline">
-            <span class="deadline-label">截止日期</span>
+            <span class="deadline-label">{{ t('incomeGoals.deadline') }}</span>
             <span class="deadline-value">{{ formatDate(goal.deadline) }}</span>
             <span class="deadline-days">{{ getDaysRemaining(goal) }}</span>
           </div>
 
           <!-- 备注 -->
           <div v-if="goal.notes" class="goal-notes">
-            <div class="notes-label">备注</div>
+            <div class="notes-label">{{ t('incomeGoals.notes') }}</div>
             <div class="notes-text">{{ goal.notes }}</div>
           </div>
         </div>
       </el-card>
 
       <!-- 空状态 -->
-      <el-empty v-if="goals.length === 0" description="暂无收入目标，点击'新增目标'开始设定目标" />
+      <el-empty v-if="goals.length === 0" :description="t('incomeGoals.noGoals')" />
     </div>
 
     <!-- 创建/编辑目标对话框 -->
     <el-dialog
       v-model="showCreateDialog"
-      :title="editingGoal ? '编辑目标' : '新增目标'"
+      :title="editingGoal ? t('incomeGoals.editGoal') : t('incomeGoals.createGoal')"
       width="600px"
       @close="resetForm"
     >
       <el-form :model="goalForm" :rules="goalRules" ref="goalFormRef" label-width="120px">
-        <el-form-item label="目标名称" prop="name">
-          <el-input v-model="goalForm.name" placeholder="例如：月度总收入目标" />
+        <el-form-item :label="t('incomeGoals.goalName')" prop="name">
+          <el-input v-model="goalForm.name" :placeholder="t('incomeGoals.goalNamePlaceholder')" />
         </el-form-item>
 
-        <el-form-item label="目标类型" prop="type">
-          <el-select v-model="goalForm.type" placeholder="选择目标类型" style="width: 100%">
-            <el-option label="总收入目标" value="total" />
-            <el-option label="主动收入目标" value="active" />
-            <el-option label="被动收入目标" value="passive" />
-            <el-option label="工资收入目标" value="salary" />
-            <el-option label="兼职收入目标" value="freelance" />
-            <el-option label="投资收益目标" value="investment" />
-            <el-option label="产品收入目标" value="product" />
+        <el-form-item :label="t('incomeGoals.goalType')" prop="type">
+          <el-select v-model="goalForm.type" :placeholder="t('incomeGoals.selectGoalType')" style="width: 100%">
+            <el-option :label="t('incomeGoals.typeTotal')" value="total" />
+            <el-option :label="t('incomeGoals.typeActive')" value="active" />
+            <el-option :label="t('incomeGoals.typePassive')" value="passive" />
+            <el-option :label="t('incomeGoals.typeSalary')" value="salary" />
+            <el-option :label="t('incomeGoals.typeFreelance')" value="freelance" />
+            <el-option :label="t('incomeGoals.typeInvestment')" value="investment" />
+            <el-option :label="t('incomeGoals.typeProduct')" value="product" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="目标金额" prop="targetAmount">
+        <el-form-item :label="t('incomeGoals.goalAmount')" prop="targetAmount">
           <el-input-number
             v-model="goalForm.targetAmount"
             :min="0"
@@ -151,66 +151,66 @@
             controls-position="right"
             style="width: 100%"
           />
-          <div class="form-tip">当前{{ goalForm.type === 'total' ? '总收入' : getGoalTypeLabel(goalForm.type) }}：{{ formatCurrency(getCurrentAmount(goalForm.type)) }}</div>
+          <div class="form-tip">{{ goalForm.type === 'total' ? t('incomeGoals.currentTotalIncome') : getGoalTypeLabel(goalForm.type) }}：{{ formatCurrency(getCurrentAmount(goalForm.type)) }}</div>
         </el-form-item>
 
-        <el-form-item label="周期" prop="period">
+        <el-form-item :label="t('incomeGoals.period')" prop="period">
           <el-radio-group v-model="goalForm.period">
-            <el-radio value="monthly">月度</el-radio>
-            <el-radio value="quarterly">季度</el-radio>
-            <el-radio value="yearly">年度</el-radio>
+            <el-radio value="monthly">{{ t('incomeGoals.periodMonthly') }}</el-radio>
+            <el-radio value="quarterly">{{ t('incomeGoals.periodQuarterly') }}</el-radio>
+            <el-radio value="yearly">{{ t('incomeGoals.periodYearly') }}</el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="截止日期" prop="deadline">
+        <el-form-item :label="t('incomeGoals.goalDeadline')" prop="deadline">
           <el-date-picker
             v-model="goalForm.deadline"
             type="date"
-            placeholder="选择截止日期"
+            :placeholder="t('incomeGoals.selectDeadline')"
             style="width: 100%"
           />
         </el-form-item>
 
-        <el-form-item label="备注" prop="notes">
+        <el-form-item :label="t('incomeGoals.goalNotes')" prop="notes">
           <el-input
             v-model="goalForm.notes"
             type="textarea"
             :rows="3"
-            placeholder="添加备注信息（可选）"
+            :placeholder="t('incomeGoals.notesPlaceholder')"
           />
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="showCreateDialog = false">取消</el-button>
+        <el-button @click="showCreateDialog = false">{{ t('incomeGoals.cancel') }}</el-button>
         <el-button type="primary" @click="submitGoal" :loading="submitting">
-          {{ editingGoal ? '保存' : '创建' }}
+          {{ editingGoal ? t('incomeGoals.save') : t('incomeGoals.create') }}
         </el-button>
       </template>
     </el-dialog>
 
     <!-- 策略对话框 -->
-    <el-dialog v-model="showStrategies" title="收入提升策略" width="80%" top="5vh">
+    <el-dialog v-model="showStrategies" :title="t('incomeGoals.strategyDialog')" width="80%" top="5vh">
       <div class="strategies-content">
         <div class="strategy-category">
-          <h3>🏆 专家定位策略</h3>
-          <p>成为某个细分领域的专家，获得溢价收入</p>
-          <el-button type="primary" @click="applyStrategy('expert')">应用此策略</el-button>
+          <h3>{{ t('incomeGoals.expertStrategy') }}</h3>
+          <p>{{ t('incomeGoals.expertStrategyDesc') }}</p>
+          <el-button type="primary" @click="applyStrategy('expert')">{{ t('incomeGoals.applyStrategy') }}</el-button>
         </div>
         <div class="strategy-category">
-          <h3>💎 产品化策略</h3>
-          <p>将技能或知识转化为可重复销售的产品</p>
-          <el-button type="primary" @click="applyStrategy('product')">应用此策略</el-button>
+          <h3>{{ t('incomeGoals.productStrategy') }}</h3>
+          <p>{{ t('incomeGoals.productStrategyDesc') }}</p>
+          <el-button type="primary" @click="applyStrategy('product')">{{ t('incomeGoals.applyStrategy') }}</el-button>
         </div>
         <div class="strategy-category">
-          <h3>🚀 杠杆策略</h3>
-          <p>利用杠杆放大收入，而非出卖时间</p>
-          <el-button type="primary" @click="applyStrategy('leverage')">应用此策略</el-button>
+          <h3>{{ t('incomeGoals.leverageStrategy') }}</h3>
+          <p>{{ t('incomeGoals.leverageStrategyDesc') }}</p>
+          <el-button type="primary" @click="applyStrategy('leverage')">{{ t('incomeGoals.applyStrategy') }}</el-button>
         </div>
         <div class="strategy-category">
-          <h3>💰 投资策略</h3>
-          <p>通过投资产生被动收入，用钱生钱</p>
-          <el-button type="primary" @click="applyStrategy('investment')">应用此策略</el-button>
+          <h3>{{ t('incomeGoals.investmentStrategy') }}</h3>
+          <p>{{ t('incomeGoals.investmentStrategyDesc') }}</p>
+          <el-button type="primary" @click="applyStrategy('investment')">{{ t('incomeGoals.applyStrategy') }}</el-button>
         </div>
       </div>
     </el-dialog>
@@ -224,8 +224,10 @@ import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
 import { useIncomeStore } from '@/stores/income'
 import { formatCurrency, formatDate } from '@/utils/format'
 import type { IncomeGoal } from '@wealth-freedom/shared'
+import useI18n from "../i18n"
 
 const incomeStore = useIncomeStore()
+const { t } = useI18n()
 
 // 加载目标数据
 onMounted(async () => {
@@ -251,11 +253,11 @@ const goalForm = ref({
 
 // 表单验证规则
 const goalRules = {
-  name: [{ required: true, message: '请输入目标名称', trigger: 'blur' }],
-  type: [{ required: true, message: '请选择目标类型', trigger: 'change' }],
-  targetAmount: [{ required: true, message: '请输入目标金额', trigger: 'blur' }],
-  period: [{ required: true, message: '请选择周期', trigger: 'change' }],
-  deadline: [{ required: true, message: '请选择截止日期', trigger: 'change' }]
+  name: [{ required: true, message: t('incomeGoals.nameRequired'), trigger: 'blur' }],
+  type: [{ required: true, message: t('incomeGoals.typeRequired'), trigger: 'change' }],
+  targetAmount: [{ required: true, message: t('incomeGoals.amountRequired'), trigger: 'blur' }],
+  period: [{ required: true, message: t('incomeGoals.periodRequired'), trigger: 'change' }],
+  deadline: [{ required: true, message: t('incomeGoals.deadlineRequired'), trigger: 'change' }]
 }
 
 // 目标列表
@@ -338,13 +340,13 @@ const getCurrentAmount = (type: string): number => {
 // 获取目标类型标签
 const getGoalTypeLabel = (type: string): string => {
   const labels: Record<string, string> = {
-    total: '总收入',
-    active: '主动收入',
-    passive: '被动收入',
-    salary: '工资收入',
-    freelance: '兼职收入',
-    investment: '投资收益',
-    product: '产品收入'
+    total: t('incomeGoals.typeTotal'),
+    active: t('incomeGoals.typeActive'),
+    passive: t('incomeGoals.typePassive'),
+    salary: t('incomeGoals.typeSalary'),
+    freelance: t('incomeGoals.typeFreelance'),
+    investment: t('incomeGoals.typeInvestment'),
+    product: t('incomeGoals.typeProduct')
   }
   return labels[type] || type
 }
@@ -366,9 +368,9 @@ const getGoalTypeTag = (type: string): string => {
 // 获取周期标签
 const getPeriodLabel = (period: string): string => {
   const labels: Record<string, string> = {
-    monthly: '月',
-    quarterly: '季度',
-    yearly: '年'
+    monthly: t('incomeGoals.periodMonthly'),
+    quarterly: t('incomeGoals.periodQuarterly'),
+    yearly: t('incomeGoals.periodYearly')
   }
   return labels[period] || period
 }
@@ -392,10 +394,10 @@ const getProgressStatus = (goal: IncomeGoal): string | undefined => {
 // 获取剩余文本
 const getRemainingText = (goal: IncomeGoal): string => {
   const daysRemaining = getDaysRemainingNumber(goal)
-  if (daysRemaining < 0) return '已逾期'
-  if (daysRemaining === 0) return '今天截止'
-  if (daysRemaining === 1) return '明天截止'
-  if (daysRemaining <= 7) return `${daysRemaining}天后截止`
+  if (daysRemaining < 0) return t('incomeGoals.overdue')
+  if (daysRemaining === 0) return t('incomeGoals.dueToday')
+  if (daysRemaining === 1) return t('incomeGoals.dueTomorrow')
+  if (daysRemaining <= 7) return t('incomeGoals.dueInDays').replace('{days}', String(daysRemaining))
   return ''
 }
 
@@ -409,10 +411,10 @@ const getDiffClass = (goal: IncomeGoal): string => {
 // 获取剩余天数
 const getDaysRemaining = (goal: IncomeGoal): string => {
   const days = getDaysRemainingNumber(goal)
-  if (days < 0) return `已逾期 ${Math.abs(days)} 天`
-  if (days === 0) return '今天截止'
-  if (days === 1) return '明天截止'
-  return `剩余 ${days} 天`
+  if (days < 0) return t('incomeGoals.overdueDays').replace('{days}', String(Math.abs(days)))
+  if (days === 0) return t('incomeGoals.dueToday')
+  if (days === 1) return t('incomeGoals.dueTomorrow')
+  return t('incomeGoals.remainingDays').replace('{days}', String(days))
 }
 
 // 获取剩余天数数值
@@ -457,19 +459,19 @@ const editGoal = (goal: IncomeGoal) => {
 // 删除目标
 const deleteGoal = (goal: IncomeGoal) => {
   ElMessageBox.confirm(
-    `确定要删除目标"${goal.name}"吗？`,
-    '确认删除',
+    t('incomeGoals.confirmDeleteGoal').replace('{name}', goal.name),
+    t('incomeGoals.confirmDelete'),
     {
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
+      confirmButtonText: t('incomeGoals.deleteBtn'),
+      cancelButtonText: t('incomeGoals.cancel'),
       type: 'warning'
     }
   ).then(async () => {
     try {
       await incomeStore.deleteGoal(goal.id)
-      ElMessage.success('删除成功')
+      ElMessage.success(t('incomeGoals.deleteSuccess'))
     } catch (error) {
-      ElMessage.error('删除失败')
+      ElMessage.error(t('incomeGoals.deleteFailed'))
     }
   })
 }
@@ -489,7 +491,7 @@ const submitGoal = async () => {
           ...goalForm.value,
           deadline: goalForm.value.deadline as string
         })
-        ElMessage.success('更新成功')
+        ElMessage.success(t('incomeGoals.updateSuccess'))
       } else {
         // 创建目标
         await incomeStore.createGoal({
@@ -497,11 +499,11 @@ const submitGoal = async () => {
           deadline: goalForm.value.deadline as string,
           currentAmount: getCurrentAmount(goalForm.value.type)
         })
-        ElMessage.success('创建成功')
+        ElMessage.success(t('incomeGoals.createSuccess'))
       }
       showCreateDialog.value = false
     } catch (error) {
-      ElMessage.error(editingGoal.value ? '更新失败' : '创建失败')
+      ElMessage.error(editingGoal.value ? t('incomeGoals.updateFailed') : t('incomeGoals.createFailed'))
     } finally {
       submitting.value = false
     }
@@ -510,7 +512,7 @@ const submitGoal = async () => {
 
 // 应用策略
 const applyStrategy = (strategy: string) => {
-  ElMessage.success(`已应用"${strategy}"策略，系统将自动生成相关目标`)
+  ElMessage.success(t('incomeGoals.strategyApplied').replace('{strategy}', strategy))
   showStrategies.value = false
 }
 
