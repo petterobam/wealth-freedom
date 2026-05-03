@@ -106,6 +106,7 @@ import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
 import useI18n from '../i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 const { t } = useI18n()
 
@@ -263,9 +264,11 @@ function initInvestChart() {
   })
 }
 
+const { safeCall } = useErrorHandler()
+
 // Load real data from DB
 async function loadData() {
-  try {
+  await safeCall(async () => {
     const data = await (window as any).api?.dashboard?.getSummary()
     if (data) {
       netWorth.value = {
@@ -284,9 +287,7 @@ async function loadData() {
         color: ['#409EFF','#67C23A','#E6A23C','#F56C6C','#909399'][goals.indexOf(g) % 5]
       }))
     }
-  } catch (e) {
-    // Use demo data
-  }
+  })
 }
 
 // Resize handler

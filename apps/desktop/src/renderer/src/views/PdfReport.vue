@@ -219,6 +219,9 @@ import { exportToPDF } from '../utils/export'
 import FeatureGate from '@/components/FeatureGate.vue'
 import { useLicense } from '@/composables/useLicense'
 import useI18n from '../i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
@@ -290,20 +293,17 @@ function fmt(val: number) {
 
 async function handleExportPDF() {
   pdfLoading.value = true
-  try {
+  await safeCall(async () => {
     await exportToPDF('财务综合报告')
-  } catch (e: any) {
-    ElMessage.error('PDF' + ': ' + e.message)
-  } finally {
-    pdfLoading.value = false
-  }
+  })
+  pdfLoading.value = false
 }
 
 // 加载数据
 async function loadAll() {
   if (!window.electronAPI) return
   loading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     const uid = { userId: user.id }
@@ -322,11 +322,8 @@ async function loadAll() {
     if (trendRes.status === 'fulfilled') trend.value = trendRes.value?.trend ?? []
     if (goalsRes.status === 'fulfilled') goals.value = goalsRes.value?.goals ?? []
     if (healthRes.status === 'fulfilled') healthScore.value = healthRes.value ?? null
-  } catch (e: any) {
-    console.error('加载报告数据失败:', e)
-  } finally {
-    loading.value = false
-  }
+  })
+  loading.value = false
 }
 
 onMounted(loadAll)

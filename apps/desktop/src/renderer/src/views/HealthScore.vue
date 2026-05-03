@@ -72,6 +72,7 @@
 import { ref, computed, onMounted } from 'vue'
 import FeatureGate from '@/components/FeatureGate.vue'
 import { useI18n } from '@/i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 const { t } = useI18n()
 
@@ -159,16 +160,15 @@ function formatDimValue(key: string, dim: Dimension) {
 
 async function loadScore() {
   if (!window.electronAPI) return
+const { safeCall } = useErrorHandler()
+
   loading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     score.value = await window.electronAPI.report.healthScore(user.id)
-  } catch (e) {
-    console.error(t('healthScore.loadFailed'), e)
-  } finally {
-    loading.value = false
-  }
+  })
+  loading.value = false
 }
 
 onMounted(loadScore)

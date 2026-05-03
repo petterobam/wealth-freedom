@@ -252,6 +252,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, MoreFilled } from '@element-plus/icons-vue'
 import FeatureGate from '@/components/FeatureGate.vue'
 import { useI18n } from '@/i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
@@ -364,7 +367,7 @@ function formatFrequency(rule: RecurringRule): string {
 async function loadRules() {
   if (!window.electronAPI) return
   loading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     const [ruleList, accList] = await Promise.all([
@@ -373,11 +376,8 @@ async function loadRules() {
     ])
     rules.value = ruleList || []
     accounts.value = accList || []
-  } catch (e: any) {
-    ElMessage.error(t('recurring.loadFailed') + ': ' + e.message)
-  } finally {
-    loading.value = false
-  }
+  })
+  loading.value = false
 }
 
 function openCreateDialog() {
@@ -405,7 +405,7 @@ async function saveRule() {
     return
   }
   saving.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
 
@@ -435,11 +435,8 @@ async function saveRule() {
     }
     showDialog.value = false
     await loadRules()
-  } catch (e: any) {
-    ElMessage.error(t('recurring.saveFailed') + ': ' + e.message)
-  } finally {
-    saving.value = false
-  }
+  })
+  saving.value = false
 }
 
 function resetForm() {

@@ -304,6 +304,9 @@ import { Download } from '@element-plus/icons-vue'
 import HealthScore from './HealthScore.vue'
 import { exportToPDF } from '../utils/export'
 import { useI18n } from '@/i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
@@ -312,13 +315,10 @@ const pdfLoading = ref(false)
 
 async function handleExportPDF() {
   pdfLoading.value = true
-  try {
+  await safeCall(async () => {
     await exportToPDF(t('report.title'))
-  } catch (e: any) {
-    ElMessage.error(t('report.exportPDFFailed') + ': ' + e.message)
-  } finally {
-    pdfLoading.value = false
-  }
+  })
+  pdfLoading.value = false
 }
 
 // ==================== 月度报表 ====================
@@ -329,16 +329,13 @@ const monthly = ref<any>({})
 async function loadMonthlyReport() {
   if (!window.electronAPI) return
   monthlyLoading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     const [year, month] = monthlyPeriod.value.split('-').map(Number)
     monthly.value = await window.electronAPI.report.monthlySummary({ userId: user.id, year, month })
-  } catch (e: any) {
-    ElMessage.error(t('report.loadMonthlyFailed') + ': ' + e.message)
-  } finally {
-    monthlyLoading.value = false
-  }
+  })
+  monthlyLoading.value = false
 }
 
 // ==================== 年度报表 ====================
@@ -349,18 +346,15 @@ const yearly = ref<any>({})
 async function loadYearlyReport() {
   if (!window.electronAPI) return
   yearlyLoading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     yearly.value = await window.electronAPI.report.yearlySummary({
       userId: user.id,
       year: parseInt(yearlyPeriod.value)
     })
-  } catch (e: any) {
-    ElMessage.error(t('report.loadYearlyFailed') + ': ' + e.message)
-  } finally {
-    yearlyLoading.value = false
-  }
+  })
+  yearlyLoading.value = false
 }
 
 // ==================== 收支趋势 ====================
@@ -384,7 +378,7 @@ const avgSavingsRate = computed(() => {
 async function loadTrend() {
   if (!window.electronAPI) return
   trendLoading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     const res = await window.electronAPI.report.monthlyTrend({
@@ -392,11 +386,8 @@ async function loadTrend() {
       months: trendMonths.value
     })
     trend.value = res.trend || []
-  } catch (e: any) {
-    ElMessage.error(t('report.loadTrendFailed') + ': ' + e.message)
-  } finally {
-    trendLoading.value = false
-  }
+  })
+  trendLoading.value = false
 }
 
 // ==================== 目标进度 ====================
@@ -417,17 +408,14 @@ const goalsByStage = computed(() => {
 async function loadGoals() {
   if (!window.electronAPI) return
   goalsLoading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     const res = await window.electronAPI.report.goalProgress({ userId: user.id })
     goals.value = res.goals || []
     avgMonthlySavings.value = res.avgMonthlySavings || 0
-  } catch (e: any) {
-    ElMessage.error(t('report.loadGoalsFailed') + ': ' + e.message)
-  } finally {
-    goalsLoading.value = false
-  }
+  })
+  goalsLoading.value = false
 }
 
 // ==================== 工具函数 ====================

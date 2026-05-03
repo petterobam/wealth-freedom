@@ -279,6 +279,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import useI18n from "../i18n"
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import {
   Trophy,
   Guide,
@@ -300,6 +301,8 @@ import {
 } from '@element-plus/icons-vue'
 import { formatNumber } from '@/utils/format'
 import { useIncomeStore } from '@/stores/income'
+
+const { safeCall } = useErrorHandler()
 
 const incomeStore = useIncomeStore()
 const { t } = useI18n()

@@ -225,6 +225,9 @@ import { useIncomeStore } from '@/stores/income'
 import { formatCurrency, formatDate } from '@/utils/format'
 import type { IncomeGoal } from '@wealth-freedom/shared'
 import useI18n from "../i18n"
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const incomeStore = useIncomeStore()
 const { t } = useI18n()
@@ -467,12 +470,10 @@ const deleteGoal = (goal: IncomeGoal) => {
       type: 'warning'
     }
   ).then(async () => {
-    try {
+    await safeCall(async () => {
       await incomeStore.deleteGoal(goal.id)
       ElMessage.success(t('incomeGoals.deleteSuccess'))
-    } catch (error) {
-      ElMessage.error(t('incomeGoals.deleteFailed'))
-    }
+    })
   })
 }
 
@@ -484,7 +485,7 @@ const submitGoal = async () => {
     if (!valid) return
 
     submitting.value = true
-    try {
+    await safeCall(async () => {
       if (editingGoal.value) {
         // 更新目标
         await incomeStore.updateGoal(editingGoal.value.id, {
@@ -502,10 +503,8 @@ const submitGoal = async () => {
         ElMessage.success(t('incomeGoals.createSuccess'))
       }
       showCreateDialog.value = false
-    } catch (error) {
-      ElMessage.error(editingGoal.value ? t('incomeGoals.updateFailed') : t('incomeGoals.createFailed'))
-    } finally {
-      submitting.value = false
+    })
+    submitting.value = false
     }
   })
 }

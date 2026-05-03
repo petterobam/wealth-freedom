@@ -141,6 +141,9 @@ import { ref, onMounted } from 'vue'
 import { Loading } from '@element-plus/icons-vue'
 import FeatureGate from '@/components/FeatureGate.vue'
 import useI18n from '../i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
@@ -178,24 +181,24 @@ const phaseLabel = (phase: string) => {
 }
 
 const loadBenchmarks = async () => {
-  try {
+  await safeCall(async () => {
     const res = await window.electronAPI.insight.benchmarks()
     if (res.success) benchmarks.value = res.data
-  } catch {}
+  })
 }
 
 const loadAchievements = async () => {
-  try {
+  await safeCall(async () => {
     const res = await window.electronAPI.insight.achievements()
     if (res.success) achievementData.value = res.data
-  } catch {}
+  })
 }
 
 const loadSummary = async () => {
-  try {
+  await safeCall(async () => {
     const res = await window.electronAPI.insight.summary()
     if (res.success) summaryData.value = res.data
-  } catch {}
+  })
 }
 
 onMounted(async () => {

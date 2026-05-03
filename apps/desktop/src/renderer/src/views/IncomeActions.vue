@@ -294,6 +294,9 @@ import { List, Plus, Refresh, Clock, TrendCharts, Calendar, Check, Star, User, G
 import { useIncomeStore } from '@/stores/income'
 import { formatNumber, formatDate } from '@/utils/format'
 import useI18n from '../i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
@@ -551,15 +554,11 @@ async function applyStrategy() {
 // 初始化
 onMounted(async () => {
   loading.value = true
-  try {
+  await safeCall(async () => {
     await incomeStore.loadStrategies()
     await incomeStore.loadActions()
-  } catch (error) {
-    console.error(t('incomeActions.loadDataFailed'), error)
-    ElMessage.error(t('incomeActions.loadDataFailed'))
-  } finally {
-    loading.value = false
-  }
+  })
+  loading.value = false
 })
 </script>
 

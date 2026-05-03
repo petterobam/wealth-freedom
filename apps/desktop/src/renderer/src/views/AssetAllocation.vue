@@ -187,6 +187,9 @@ import type { EChartsOption } from 'echarts'
 import HelpTooltip from '@/components/HelpTooltip.vue'
 import { exportToPDF, exportChartToImage, exportMultipleChartsToImage } from '@/utils/export'
 import useI18n from '../i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
@@ -582,7 +585,7 @@ const applyRecommendedAllocation = () => {
 }
 
 const exportReport = async () => {
-  try {
+  await safeCall(async () => {
     ElMessage.info(t('assetAllocation.generatingReport'))
 
     // 确保所有图表都已完全渲染
@@ -645,10 +648,7 @@ const exportReport = async () => {
     await exportToPDF(`资产配置报告_${stageName}`)
 
     ElMessage.success(t('assetAllocation.exportSuccess'))
-  } catch (error) {
-    console.error('Export report failed:', error)
-    ElMessage.error(t('assetAllocation.exportFailed'))
-  }
+  })
 }
 
 const saveConfiguration = () => {

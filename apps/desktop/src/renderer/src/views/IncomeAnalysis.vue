@@ -242,9 +242,12 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import useI18n from "../i18n"
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { Refresh, Check, Close } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { useIncomeStore } from '@/stores/income'
+
+const { safeCall } = useErrorHandler()
 
 const incomeStore = useIncomeStore()
 const { t } = useI18n()
@@ -361,7 +364,7 @@ const dismissSuggestion = (suggestion: any) => {
 // 加载分析数据
 const loadAnalysisData = async () => {
   loading.value = true
-  try {
+  await safeCall(async () => {
     // 这里应该调用后端 API 获取分析数据
     // const response = await incomeStore.getAnalysis(timeRange.value)
     // analysis.value = response
@@ -421,12 +424,8 @@ const loadAnalysisData = async () => {
     // 等待 DOM 更新后渲染图表
     await nextTick()
     renderCharts()
-  } catch (error) {
-    console.error('加载分析数据失败:', error)
-    ElMessage.error(t('incomeAnalysis.loadDataFailed'))
-  } finally {
-    loading.value = false
-  }
+  })
+  loading.value = false
 }
 
 // 渲染图表

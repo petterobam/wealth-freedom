@@ -156,6 +156,9 @@
 import { ref, reactive, onMounted, nextTick } from 'vue'
 import { Setting } from '@element-plus/icons-vue'
 import useI18n from '../i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 

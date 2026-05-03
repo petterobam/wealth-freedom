@@ -193,6 +193,9 @@ import { useAccountStore } from '@/stores/accounts'
 import { useDebtStore } from '@/stores/debts'
 import { useGoalStore } from '@/stores/goals'
 import { useI18n } from '@/i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const emit = defineEmits(['complete'])
 
@@ -288,8 +291,7 @@ const nextStep = async () => {
 const handleComplete = async () => {
   if (loading.value) return
   loading.value = true
-
-  try {
+  await safeCall(async () => {
     const user = await userStore.createUser({
       name: form.value.name || t('welcome.defaultUser'),
       settings: JSON.stringify({
@@ -358,33 +360,25 @@ const handleComplete = async () => {
 
     ElMessage.success(t('welcome.initSuccess'))
     emit('complete')
-  } catch (error) {
-    console.error('初始化失败:', error)
-    ElMessage.error(t('welcome.initFailed'))
-  } finally {
-    loading.value = false
-  }
+  })
+  loading.value = false
 }
 
 const handleDemoMode = async () => {
   if (demoLoading.value) return
   demoLoading.value = true
-  try {
+  await safeCall(async () => {
     const result = await (window as any).electronAPI.demo.seed()
     if (result.success) {
       ElMessage.success(t('welcome.demoLoaded'))
       emit('complete')
     }
-  } catch (error) {
-    console.error('演示模式加载失败:', error)
-    ElMessage.error(t('welcome.demoFailed'))
-  } finally {
-    demoLoading.value = false
-  }
+  })
+  demoLoading.value = false
 }
 
 const handleSkip = async () => {
-  try {
+  await safeCall(async () => {
     await userStore.createUser({
       name: t('welcome.defaultUser'),
       currency: 'CNY',
@@ -392,10 +386,7 @@ const handleSkip = async () => {
     })
     ElMessage.success(t('welcome.skipped'))
     emit('complete')
-  } catch (error) {
-    console.error('跳过失败:', error)
-    ElMessage.error(t('welcome.skipFailed'))
-  }
+  })
 }
 </script>
 

@@ -112,6 +112,9 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Select, CloseBold, Key } from '@element-plus/icons-vue'
 import useI18n from '../i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+
+const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
@@ -209,7 +212,7 @@ async function refreshStatus() {
 
 async function handleOnlineCheck() {
   checkingOnline.value = true
-  try {
+  await safeCall(async () => {
     const result = await window.electronAPI.license.onlineCheck()
     if (result.revoked) {
       ElMessage.error(t('license.revokeMessage'))
@@ -217,11 +220,8 @@ async function handleOnlineCheck() {
       ElMessage.success(t('license.verifySuccess'))
     }
     await refreshStatus()
-  } catch (e: any) {
-    ElMessage.error(t('license.verifyFailed') + '：' + e.message)
-  } finally {
-    checkingOnline.value = false
-  }
+  })
+  checkingOnline.value = false
 }
 
 async function handleActivate() {
@@ -230,7 +230,7 @@ async function handleActivate() {
     return
   }
   activating.value = true
-  try {
+  await safeCall(async () => {
     // 优先在线激活（v1.8.0）
     let result
     try {
@@ -246,11 +246,8 @@ async function handleActivate() {
     } else {
       ElMessage.error(result.message)
     }
-  } catch (e: any) {
-    ElMessage.error(t('license.activateFailed') + '：' + e.message)
-  } finally {
-    activating.value = false
-  }
+  })
+  activating.value = false
 }
 
 async function handleDeactivate() {
@@ -272,7 +269,7 @@ async function handleDeactivate() {
 
 async function handleRenew() {
   renewing.value = true
-  try {
+  await safeCall(async () => {
     const result = await window.electronAPI.license.renew()
     if (result.success) {
       ElMessage.success(result.message)
@@ -280,11 +277,8 @@ async function handleRenew() {
     } else {
       ElMessage.error(result.message)
     }
-  } catch (e: any) {
-    ElMessage.error(t('license.renewFailed') + '：' + e.message)
-  } finally {
-    renewing.value = false
-  }
+  })
+  renewing.value = false
 }
 
 function handleUpgrade(tier: string) {
