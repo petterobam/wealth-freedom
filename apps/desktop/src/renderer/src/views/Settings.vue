@@ -662,26 +662,21 @@ const dreamCount = ref(0)
 const createdAt = ref('-')
 
 // 加载数据统计
-const loadStatistics = async () => {
-  try {
-    await accountStore.fetchAccounts()
-    await debtStore.fetchDebts()
-    await transactionStore.fetchTransactions()
-    await goalStore.fetchGoals()
+const loadStatistics = () => safeCall(async () => {
+  await accountStore.fetchAccounts()
+  await debtStore.fetchDebts()
+  await transactionStore.fetchTransactions()
+  await goalStore.fetchGoals()
 
-    accountCount.value = accountStore.accounts.length
-    debtCount.value = debtStore.debts.length
-    transactionCount.value = transactionStore.transactions.length
-    goalCount.value = goalStore.goals.length
+  accountCount.value = accountStore.accounts.length
+  debtCount.value = debtStore.debts.length
+  transactionCount.value = transactionStore.transactions.length
+  goalCount.value = goalStore.goals.length
 
-    // 获取创建时间（如果有数据）
-    if (userStore.user) {
-      createdAt.value = new Date().toLocaleDateString('zh-CN')
-    }
-  } catch (error) {
-    console.error('加载统计数据失败:', error)
+  if (userStore.user) {
+    createdAt.value = new Date().toLocaleDateString('zh-CN')
   }
-}
+})
 
 // 显示重置对话框
 const showResetDialog = () => {
@@ -699,22 +694,20 @@ const exportLoading = ref(false)
 const autoBackupStatus = ref<any>(null) // v0.10.0
 
 const loadBackupInfo = async () => {
-  try {
+  await safeCall(async () => {
     const res = await window.electronAPI.backupInfo()
     if (res.success) backupInfo.value = res.data
-  } catch { /* ignore */ }
-  try {
+  })
+  await safeCall(async () => {
     const res = await window.electronAPI.backupAutoStatus()
     if (res.success) autoBackupStatus.value = res.data
-  } catch { /* ignore */ }
+  })
 }
 
-const loadBackupList = async () => {
-  try {
-    const res = await window.electronAPI.backupList()
-    if (res.success) backupList.value = res.data
-  } catch { /* ignore */ }
-}
+const loadBackupList = () => safeCall(async () => {
+  const res = await window.electronAPI.backupList()
+  if (res.success) backupList.value = res.data
+})
 
 const handleBackup = async () => {
   backupLoading.value = true
@@ -913,7 +906,7 @@ const handleExportExcel = () => {
 
 const handleExportBackup = async () => {
   exporting.value = true
-  try {
+  await safeCall(async () => {
     const backup: FullBackupData = {
       version: '1.0',
       exportedAt: new Date().toISOString(),
@@ -925,29 +918,18 @@ const handleExportBackup = async () => {
       settings: userStore.user?.settings || undefined
     }
     exportFullBackup(backup)
-  } catch (error) {
-    console.error('导出失败:', error)
-    ElMessage.error('导出备份失败')
-  } finally {
-    exporting.value = false
-  }
+  }, { successMsg: '备份导出成功' })
+  exporting.value = false
 }
 
 // 导入数据（先预览）
-const handleImportBackup = async () => {
-  try {
-    const { content } = await pickFile()
-    const preview = previewImport(content)
-    importPreviewText.value = formatPreviewText(preview)
-    pendingImportData = content
-    importPreviewVisible.value = true
-  } catch (error: any) {
-    if (error.message !== '未选择文件') {
-      console.error('读取文件失败:', error)
-      ElMessage.error(`读取失败: ${error.message}`)
-    }
-  }
-}
+const handleImportBackup = () => safeCall(async () => {
+  const { content } = await pickFile()
+  const preview = previewImport(content)
+  importPreviewText.value = formatPreviewText(preview)
+  pendingImportData = content
+  importPreviewVisible.value = true
+})
 
 // 导入前自动备份当前数据
 const autoBackupBeforeImport = (): FullBackupData => {
@@ -1141,19 +1123,19 @@ const cacheStatus = ref<any>(null)
 const exchangeRates = ref<Array<{currency: string; rate: number}>>([])
 
 const loadCurrencySettings = async () => {
-  try {
+  await safeCall(async () => {
     const currencies = await window.electronAPI.currency.getSupported()
     supportedCurrencies.value = currencies || []
-  } catch { /* ignore */ }
-  try {
+  })
+  await safeCall(async () => {
     const userId = userStore.user?.id || 'default'
     const base = await window.electronAPI.currency.getBaseCurrency(userId)
     if (base && base.currency) baseCurrency.value = base.currency
-  } catch { /* ignore */ }
-  try {
+  })
+  await safeCall(async () => {
     const status = await window.electronAPI.currency.getCacheStatus()
     cacheStatus.value = status
-  } catch { /* ignore */ }
+  })
 }
 
 const onBaseCurrencyChange = () => {
@@ -1162,42 +1144,31 @@ const onBaseCurrencyChange = () => {
 
 const saveCurrencySettings = async () => {
   currencySaving.value = true
-  try {
+  await safeCall(async () => {
     const userId = userStore.user?.id || 'default'
     await window.electronAPI.currency.setBaseCurrency(userId, baseCurrency.value)
-    ElMessage.success('基准货币已更新为 ' + baseCurrency.value)
     await refreshRates()
-  } catch (e: any) {
-    ElMessage.error('保存失败: ' + (e.message || '未知错误'))
-  } finally {
-    currencySaving.value = false
-  }
+  }, { successMsg: '基准货币已更新为 ' + baseCurrency.value })
+  currencySaving.value = false
 }
 
 const refreshRates = async () => {
   ratesLoading.value = true
-  try {
+  await safeCall(async () => {
     const others = supportedCurrencies.value.filter(c => c.code !== baseCurrency.value).map(c => c.code)
     const rates = await window.electronAPI.currency.getRatesForBase(baseCurrency.value, others)
     exchangeRates.value = rates || []
     const status = await window.electronAPI.currency.getCacheStatus()
     cacheStatus.value = status
-    ElMessage.success(`已获取 ${exchangeRates.value.length} 条汇率`)
-  } catch (e: any) {
-    ElMessage.error('获取汇率失败: ' + (e.message || '网络错误'))
-  } finally {
-    ratesLoading.value = false
-  }
+  }, { successMsg: `已获取 ${exchangeRates.value.length} 条汇率` })
+  ratesLoading.value = false
 }
 
-const clearCurrencyCache = async () => {
-  try {
-    await window.electronAPI.currency.clearCache()
-    cacheStatus.value = null
-    exchangeRates.value = []
-    ElMessage.success('汇率缓存已清除')
-  } catch { /* ignore */ }
-}
+const clearCurrencyCache = () => safeCall(async () => {
+  await window.electronAPI.currency.clearCache()
+  cacheStatus.value = null
+  exchangeRates.value = []
+}, { successMsg: '汇率缓存已清除' })
 
 onMounted(async () => {
   await loadBasicData()

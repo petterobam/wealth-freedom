@@ -214,8 +214,10 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, MoreFilled } from '@element-plus/icons-vue'
 import FeatureGate from '@/components/FeatureGate.vue'
 import { useI18n } from '@/i18n'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 const { t } = useI18n()
+const { safeCall } = useErrorHandler()
 
 interface BudgetStatus {
   budget: any
@@ -265,7 +267,7 @@ function getPeriodDates() {
 async function loadBudgetStatus() {
   if (!window.electronAPI) return
   loading.value = true
-  try {
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
     const { start, end } = getPeriodDates()
@@ -274,11 +276,8 @@ async function loadBudgetStatus() {
       periodStart: start,
       periodEnd: end
     })
-  } catch (e: any) {
-    ElMessage.error('加载预算失败: ' + e.message)
-  } finally {
-    loading.value = false
-  }
+  })
+  loading.value = false
 }
 
 async function saveBudget() {
@@ -287,7 +286,8 @@ async function saveBudget() {
     return
   }
   saving.value = true
-  try {
+  const action = editingBudget.value ? '更新' : '创建'
+  await safeCall(async () => {
     const user = await window.electronAPI.getUser()
     if (!user) return
 
@@ -301,7 +301,6 @@ async function saveBudget() {
         icon: budgetForm.value.icon || undefined,
         rollover: budgetForm.value.rollover
       })
-      ElMessage.success('预算已更新')
     } else {
       const { start } = getPeriodDates()
       await window.electronAPI.createBudget({
@@ -314,15 +313,11 @@ async function saveBudget() {
         icon: budgetForm.value.icon || undefined,
         rollover: budgetForm.value.rollover
       })
-      ElMessage.success('预算已创建')
     }
     showCreateDialog.value = false
     await loadBudgetStatus()
-  } catch (e: any) {
-    ElMessage.error('保存失败: ' + e.message)
-  } finally {
-    saving.value = false
-  }
+  }, { successMsg: `预算已${action}` })
+  saving.value = false
 }
 
 function resetForm() {
@@ -343,12 +338,8 @@ async function handleAction(cmd: string, item: BudgetStatus) {
     }
     showCreateDialog.value = true
   } else if (cmd === 'history') {
-    try {
-      historyData.value = await window.electronAPI.getBudgetHistory({ budgetId: item.budget.id, limit: 12 })
-      showHistoryDialog.value = true
-    } catch (e: any) {
-      ElMessage.error('加载历史失败')
-    }
+    historyData.value = await safeCall(() => window.electronAPI.getBudgetHistory({ budgetId: item.budget.id, limit: 12 }))
+    if (historyData.value) showHistoryDialog.value = true
   } else if (cmd === 'delete') {
     await ElMessageBox.confirm(`确定删除预算「${item.budget.name}」？`, '确认删除', { type: 'warning' })
     await window.electronAPI.deleteBudget({ id: item.budget.id })
