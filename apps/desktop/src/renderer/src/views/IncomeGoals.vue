@@ -481,7 +481,8 @@ const deleteGoal = (goal: IncomeGoal) => {
 const submitGoal = async () => {
   if (!goalFormRef.value) return
 
-  await goalFormRef.value.validate(async (valid) => {
+  try {
+    const valid = await goalFormRef.value.validate()
     if (!valid) return
 
     submitting.value = true
@@ -505,8 +506,9 @@ const submitGoal = async () => {
       showCreateDialog.value = false
     })
     submitting.value = false
-    }
-  })
+  } catch {
+    // validation failed
+  }
 }
 
 // 应用策略
