@@ -3,9 +3,9 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": ".",
-    "module": "CommonJS",
+    "module": "ESNext",
     "target": "ES2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "declaration": true
   },
   "include": ["./**/*.ts"],
