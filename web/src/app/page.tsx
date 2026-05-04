@@ -6,7 +6,7 @@ export default function Home() {
       {/* Hero */}
       <section className="flex flex-col items-center justify-center px-6 pt-20 pb-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm mb-6">
-          🚀 v1.6.0 全新发布 · 桌面端 + 网页端
+          🚀 v2.0.0 商业版发布 · 全局错误处理 + 多语言 + 数据加密
         </div>
         <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-emerald-400 to-amber-400 bg-clip-text text-transparent">
           财富自由之路
@@ -98,7 +98,10 @@ export default function Home() {
             { title: "投资组合追踪", desc: "记录投资品种，追踪收益率，资产配置可视化", icon: "📈" },
             { title: "AI 财务助手", desc: "基于你的财务数据，AI 提供个性化理财建议", icon: "🤖" },
             { title: "财务健康评分", desc: "五维度评估：储蓄、投资、债务、保障、成长", icon: "💪" },
-            { title: "周期性交易", desc: "自动记录工资、房租等周期性收支，省心省力", icon: "🔄" },
+            { title: "数据可视化大屏", desc: "全屏看板，6 大卡片实时展示财务全貌", icon: "🖥️" },
+            { title: "多语言支持", desc: "中英文双语界面，全球用户无障碍使用", icon: "🌍" },
+            { title: "数据加密", desc: "AES-256-GCM 加密存储，财务数据绝对安全", icon: "🔐" },
+            { title: "多币种支持", desc: "管理多币种账户，自动汇率转换", icon: "💱" },
             { title: "数据导出报告", desc: "PDF 报告一键导出，随时掌握财务全貌", icon: "📄" },
           ].map((f) => (
             <div key={f.title} className="flex gap-4 bg-slate-800/30 rounded-xl p-6 border border-slate-700/50 hover:border-slate-600 transition">
@@ -112,11 +115,55 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 定价 */}
+      <section className="max-w-5xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-bold text-center mb-4">选择适合你的方案</h2>
+        <p className="text-center text-slate-400 mb-12">从免费开始，按需升级</p>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              name: "免费版", price: "¥0", period: "永久免费", highlight: false,
+              features: ["基础收支记录", "账户管理", "3 条预算规则", "数据导入导出", "PDF 报告"],
+            },
+            {
+              name: "Pro 月度", price: "¥19", period: "/月", highlight: true,
+              features: ["全部免费版功能", "AI 财务助手", "无限预算规则", "数据可视化大屏", "周期性交易", "多币种支持", "优先更新"],
+            },
+            {
+              name: "Pro 终身", price: "¥399", period: "一次性", highlight: false,
+              features: ["全部 Pro 功能", "终身免费升级", "数据加密", "离线许可证", "专属客服支持", "未来新功能"],
+            },
+          ].map((plan) => (
+            <div key={plan.name} className={`rounded-2xl p-8 border transition ${plan.highlight ? "bg-gradient-to-b from-blue-900/40 to-emerald-900/20 border-blue-500/50 scale-105" : "bg-slate-800/30 border-slate-700/50 hover:border-slate-600"}`}>
+              {plan.highlight && <div className="text-center text-xs text-blue-400 font-bold mb-3">⭐ 推荐</div>}
+              <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">{plan.price}</span>
+                <span className="text-slate-400 text-sm">{plan.period}</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
+                    <span className="text-emerald-400">✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/login"
+                className={`block text-center py-3 rounded-lg font-semibold transition ${plan.highlight ? "bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500" : "border border-slate-600 hover:border-slate-400"}`}
+              >
+                {plan.price === "¥0" ? "免费开始" : "立即订阅"}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* 技术栈 */}
       <section className="max-w-3xl mx-auto px-6 py-16 text-center">
         <h2 className="text-2xl font-bold mb-6">技术栈</h2>
         <div className="flex flex-wrap justify-center gap-3">
-          {["Electron", "Next.js 16", "React 19", "TypeScript", "Prisma", "SQLite", "Tailwind CSS 4", "Recharts"].map((t) => (
+          {["Electron", "Next.js", "React", "TypeScript", "Prisma", "SQLite", "Tailwind CSS", "ECharts", "Playwright"].map((t) => (
             <span key={t} className="px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-sm text-slate-300">
               {t}
             </span>
