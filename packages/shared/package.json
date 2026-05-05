@@ -8,19 +8,23 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     },
     "./types": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.js"
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js"
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.js"
     },
     "./calculators/freedom-timeline": {
       "types": "./dist/src/calculators/freedom-timeline.d.ts",
-      "import": "./dist/src/calculators/freedom-timeline.js"
+      "import": "./dist/src/calculators/freedom-timeline.js",
+      "require": "./dist/src/calculators/freedom-timeline.js"
     }
   },
   "scripts": {

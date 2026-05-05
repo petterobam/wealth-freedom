@@ -37,7 +37,13 @@
 
 ### 🎨 截图
 
-> 截图待添加 —— 欢迎下载体验！
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="45%" />
+  <img src="docs/screenshots/goals.png" alt="Goals" width="45%" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/bigscreen.png" alt="Big Screen" width="90%" />
+</p>
 
 ---
 
