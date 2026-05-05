@@ -54,6 +54,52 @@
       </div>
     </div>
 
+    <!-- 财务自由三阶段路径 -->
+    <div class="section-title">{{ t('dashboard.freedomPathTitle') }}</div>
+    <div class="freedom-path">
+      <div class="freedom-stage" :class="{ 'stage-achieved': freedomStages.security.achieved }">
+        <div class="stage-icon">🛡️</div>
+        <div class="stage-info">
+          <div class="stage-name">{{ t('dashboard.stageSecurity') }}</div>
+          <div class="stage-desc">{{ t('dashboard.stageSecurityDesc') }}</div>
+          <el-progress :percentage="freedomStages.security.progress" :stroke-width="8" :color="'#67c23a'" />
+          <div class="stage-detail">
+            <span>{{ t('dashboard.emergencyFund') }}: {{ formatCurrency(freedomStages.security.current) }} / {{ formatCurrency(freedomStages.security.target) }}</span>
+            <span v-if="!freedomStages.security.achieved" class="stage-eta">{{ t('dashboard.estimatedArrival') }}: {{ freedomStages.security.eta }}</span>
+            <span v-else class="stage-done">✅ {{ t('dashboard.achieved') }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-arrow">→</div>
+      <div class="freedom-stage" :class="{ 'stage-achieved': freedomStages.safety.achieved }">
+        <div class="stage-icon">🏠</div>
+        <div class="stage-info">
+          <div class="stage-name">{{ t('dashboard.stageSafety') }}</div>
+          <div class="stage-desc">{{ t('dashboard.stageSafetyDesc') }}</div>
+          <el-progress :percentage="freedomStages.safety.progress" :stroke-width="8" :color="'#409eff'" />
+          <div class="stage-detail">
+            <span>{{ t('dashboard.netWorth') }}: {{ formatCurrency(freedomStages.safety.current) }} / {{ formatCurrency(freedomStages.safety.target) }}</span>
+            <span v-if="!freedomStages.safety.achieved" class="stage-eta">{{ t('dashboard.estimatedArrival') }}: {{ freedomStages.safety.eta }}</span>
+            <span v-else class="stage-done">✅ {{ t('dashboard.achieved') }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-arrow">→</div>
+      <div class="freedom-stage" :class="{ 'stage-achieved': freedomStages.freedom.achieved }">
+        <div class="stage-icon">🏝️</div>
+        <div class="stage-info">
+          <div class="stage-name">{{ t('dashboard.stageFreedom') }}</div>
+          <div class="stage-desc">{{ t('dashboard.stageFreedomDesc') }}</div>
+          <el-progress :percentage="freedomStages.freedom.progress" :stroke-width="8" :color="'#e6a23c'" />
+          <div class="stage-detail">
+            <span>{{ t('dashboard.netWorth') }}: {{ formatCurrency(freedomStages.freedom.current) }} / {{ formatCurrency(freedomStages.freedom.target) }}</span>
+            <span v-if="!freedomStages.freedom.achieved" class="stage-eta">{{ t('dashboard.estimatedArrival') }}: {{ freedomStages.freedom.eta }}</span>
+            <span v-else class="stage-done">✅ {{ t('dashboard.achieved') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 财务比率 -->
     <div class="section-title">{{ t('dashboard.keyRatios') }}</div>
     <div class="ratio-cards">
@@ -308,6 +354,63 @@ const metrics = computed(() => ({
   monthlyExpense: transactionStore.monthlyExpense,
   monthlyBalance: transactionStore.monthlyIncome - transactionStore.monthlyExpense
 }))
+
+// 财务自由三阶段计算
+const freedomStages = computed(() => {
+  const netWorth = metrics.value.netWorth
+  const monthlyExpense = transactionStore.monthlyExpense || 1
+  const monthlyBalance = metrics.value.monthlyBalance || 0
+  const annualReturnRate = 0.04 // 4% 年化收益率假设
+
+  // 阶段1: 财务保障 — 6个月储备金
+  const securityTarget = monthlyExpense * 6
+  const securityProgress = Math.min(100, Math.max(0, Math.round((netWorth / securityTarget) * 100)))
+  const securityMonthsRemaining = monthlyBalance > 0 ? Math.max(0, Math.ceil((securityTarget - netWorth) / monthlyBalance)) : -1
+
+  // 阶段2: 财务安全 — 被动收入覆盖日常支出 (年支出 / 年化收益率)
+  const safetyTarget = (monthlyExpense * 12) / annualReturnRate
+  const safetyProgress = Math.min(100, Math.max(0, Math.round((netWorth / safetyTarget) * 100)))
+  const safetyMonthsRemaining = monthlyBalance > 0 ? Math.max(0, Math.ceil((safetyTarget - netWorth) / monthlyBalance)) : -1
+
+  // 阶段3: 财务自由 — 被动收入覆盖梦想生活 (假设梦想支出 = 日常支出 × 2.5)
+  const freedomTarget = (monthlyExpense * 12 * 2.5) / annualReturnRate
+  const freedomProgress = Math.min(100, Math.max(0, Math.round((netWorth / freedomTarget) * 100)))
+  const freedomMonthsRemaining = monthlyBalance > 0 ? Math.max(0, Math.ceil((freedomTarget - netWorth) / monthlyBalance)) : -1
+
+  const formatETA = (months: number) => {
+    if (months < 0) return t('dashboard.needPositiveBalance')
+    if (months === 0) return t('dashboard.imminent')
+    if (months < 12) return t('dashboard.monthsLater', { n: months })
+    const years = Math.floor(months / 12)
+    const rem = months % 12
+    const yearStr = t('dashboard.yearsLater', { n: years })
+    return rem > 0 ? yearStr + ' ' + t('dashboard.monthsLater', { n: rem }) : yearStr
+  }
+
+  return {
+    security: {
+      achieved: securityProgress >= 100,
+      progress: securityProgress,
+      current: Math.max(0, netWorth),
+      target: Math.round(securityTarget),
+      eta: formatETA(securityMonthsRemaining)
+    },
+    safety: {
+      achieved: safetyProgress >= 100,
+      progress: safetyProgress,
+      current: Math.max(0, netWorth),
+      target: Math.round(safetyTarget),
+      eta: formatETA(safetyMonthsRemaining)
+    },
+    freedom: {
+      achieved: freedomProgress >= 100,
+      progress: freedomProgress,
+      current: Math.max(0, netWorth),
+      target: Math.round(freedomTarget),
+      eta: formatETA(freedomMonthsRemaining)
+    }
+  }
+})
 
 const ratios = computed(() => {
   const income = transactionStore.monthlyIncome || 1
@@ -633,6 +736,83 @@ onBeforeUnmount(() => {
   .quick-actions {
     display: flex;
     gap: 12px;
+  }
+
+  .freedom-path {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .freedom-stage {
+    flex: 1;
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    gap: 14px;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    &.stage-achieved {
+      border-color: #67c23a;
+      background: linear-gradient(135deg, rgba(103, 194, 58, 0.05), rgba(103, 194, 58, 0.02));
+    }
+  }
+
+  .stage-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .stage-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stage-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .stage-desc {
+    font-size: 12px;
+    color: #909399;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .stage-detail {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #606266;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stage-eta {
+    color: #409eff;
+    font-weight: 500;
+  }
+
+  .stage-done {
+    color: #67c23a;
+    font-weight: 500;
+  }
+
+  .stage-arrow {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    color: #c0c4cc;
+    font-weight: 300;
   }
 
   .daily-insight {
