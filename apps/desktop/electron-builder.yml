@@ -19,6 +19,9 @@ mac:
         - arm64
   icon: build/icon.icns
 
+# 统一产物文件名（避免中文 productName 导致文件名异常）
+artifactName: wealth-freedom-${version}-${arch}.${ext}
+
 win:
   target:
     - target: nsis
