@@ -4,6 +4,8 @@
 >
 > 三阶段理财哲学：**保障** → **安全** → **自由**
 
+[![Banner](docs/banner.png)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
+
 [![Version](https://img.shields.io/badge/v2.0.0-blue?style=flat-square&label=Release)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/macOS-arm64%20%7C%20x64-blue?style=flat-square&logo=apple)](https://github.com/petterobam/wealth-freedom/releases)
