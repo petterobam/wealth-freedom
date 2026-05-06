@@ -28,6 +28,6 @@ jobs:
         run: pnpm -F @wealth-freedom/shared build
 
       - name: Build desktop (type-check via electron-vite)
-        run: pnpm -F @wealth-freedom/desktop build
+        run: pnpm -F @wealth-freedom/desktop build:vite
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
