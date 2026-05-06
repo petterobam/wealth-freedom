@@ -8,8 +8,10 @@ import type { SourceDetection, ImportPreview, ImportedTransaction, RawRecord, Im
 import { alipayImporter } from './alipay';
 import { wechatImporter } from './wechat';
 import { genericImporter } from './csv-generic';
+import { cmbImporter } from './cmb';
+import { icbcImporter } from './icbc';
 
-const IMPORTERS: Importer[] = [alipayImporter, wechatImporter, genericImporter];
+const IMPORTERS: Importer[] = [alipayImporter, wechatImporter, cmbImporter, icbcImporter, genericImporter];
 
 /**
  * 读取 CSV 文件（自动处理编码和头部）
@@ -66,7 +68,7 @@ export function detectSource(filePath: string, headers: string[]): SourceDetecti
     const confidence = importer.detect(headers, []);
     if (confidence > bestSource.confidence) {
       bestSource = {
-        source: importer === alipayImporter ? 'alipay' : importer === wechatImporter ? 'wechat' : 'generic',
+        source: importer === alipayImporter ? 'alipay' : importer === wechatImporter ? 'wechat' : importer === cmbImporter ? 'cmb' : importer === icbcImporter ? 'icbc' : 'generic',
         confidence,
         encoding: 'utf-8',
         name: importer.name,

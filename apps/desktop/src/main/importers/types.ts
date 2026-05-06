@@ -20,7 +20,7 @@ export interface ImportedTransaction {
 
 /** 来源检测结果 */
 export interface SourceDetection {
-  source: 'alipay' | 'wechat' | 'cmb' | 'generic';
+  source: 'alipay' | 'wechat' | 'cmb' | 'icbc' | 'generic';
   confidence: number;  // 0-1
   encoding: string;    // utf-8, gbk
   name: string;        // 显示名
