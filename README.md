@@ -6,8 +6,10 @@
 
 [![Banner](docs/banner.png)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
 
-[![Version](https://img.shields.io/badge/v2.0.0-blue?style=flat-square&label=Release)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
+[![CI](https://img.shields.io/github/actions/workflow/status/petterobam/wealth-freedom/ci.yml?style=flat-square&label=CI)](https://github.com/petterobam/wealth-freedom/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/petterobam/wealth-freedom?style=flat-square&label=Release)](https://github.com/petterobam/wealth-freedom/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Downloads](https://img.shields.io/github/downloads/petterobam/wealth-freedom/total?style=flat-square&label=Downloads)](https://github.com/petterobam/wealth-freedom/releases)
 
 **[English](./README.en.md)**
 [![Platform](https://img.shields.io/badge/macOS-arm64%20%7C%20x64-blue?style=flat-square&logo=apple)](https://github.com/petterobam/wealth-freedom/releases)
