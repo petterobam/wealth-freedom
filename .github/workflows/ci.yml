@@ -24,13 +24,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Type check
-        run: npx tsc --noEmit
-
       - name: Build shared
         run: pnpm -F @wealth-freedom/shared build
 
-      - name: Build desktop
+      - name: Build desktop (type-check via electron-vite)
         run: pnpm -F @wealth-freedom/desktop build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
