@@ -138,7 +138,7 @@ wealth-freedom/
 - [x] v1.7~1.8 — 数据大屏、变现基础设施、E2E测试
 - [x] v1.9 — i18n、数据加密、多币种
 - [x] v2.0 — 全局错误处理、GitHub Release 🎉
-- [ ] v2.1+ — Windows 支持、移动端、云端同步
+- [ ] v2.1+ — [Windows/Linux 支持](https://github.com/petterobam/wealth-freedom/issues/1) · [云端同步](https://github.com/petterobam/wealth-freedom/issues/2) · [移动端](https://github.com/petterobam/wealth-freedom/issues/3) · [AI 深度集成](https://github.com/petterobam/wealth-freedom/issues/4)
 
 ---
 
