@@ -192,3 +192,5 @@ MIT License — 自由使用、修改和分发。
 **觉得有用？给个 ⭐️ Star 吧！**
 
 📧 [GitHub](https://github.com/petterobam) · [知乎](https://zhihu.com/people/oy6666) · [LinkedIn](https://linkedin.com/in/petterobam)
+
+<!-- SEO: personal finance app, 记账软件, 理财工具, 预算管理, 投资追踪, 财务自由, 个人财务管理, 开源记账, money management, budget tracker, expense tracker, wealth tracker, net worth tracker, financial independence, FIRE, YNAB alternative, Mint alternative, 随手记替代, 挖财替代 -->
