@@ -4,7 +4,7 @@
 >
 > 三阶段理财哲学：**保障** → **安全** → **自由**
 
-[![Banner](docs/banner.png)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
+[![Banner](docs/banner.png)](https://github.com/petterobam/wealth-freedom/releases/latest)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/petterobam/wealth-freedom/ci.yml?style=flat-square&label=CI)](https://github.com/petterobam/wealth-freedom/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/petterobam/wealth-freedom?style=flat-square&label=Release)](https://github.com/petterobam/wealth-freedom/releases/latest)
@@ -65,9 +65,9 @@
 
 **[⬇️ 前往 GitHub Releases 下载最新版本](https://github.com/petterobam/wealth-freedom/releases/latest)**
 
-- **macOS (Apple Silicon)**: `Wealth-Freedom-2.0.0-arm64.dmg` (111MB)
-- **macOS (Intel)**: 即将发布
-- **Windows**: 即将发布
+- **macOS (Apple Silicon)**: DMG (111MB)
+- **Linux**: deb (76MB) / AppImage (121MB)
+- **Windows**: portable exe (72MB)
 
 ### 从源码运行
 
@@ -150,7 +150,8 @@ wealth-freedom/
 - [x] v1.7~1.8 — 数据大屏、变现基础设施、E2E测试
 - [x] v1.9 — i18n、数据加密、多币种
 - [x] v2.0 — 全局错误处理、GitHub Release 🎉
-- [ ] v2.1+ — [Windows/Linux 支持](https://github.com/petterobam/wealth-freedom/issues/1) · [云端同步](https://github.com/petterobam/wealth-freedom/issues/2) · [移动端](https://github.com/petterobam/wealth-freedom/issues/3) · [AI 深度集成](https://github.com/petterobam/wealth-freedom/issues/4)
+- [x] v2.1 — 全平台构建（Mac + Linux + Windows）、自然语言查询、Demo数据增强
+- [ ] v2.2+ — [云端同步](https://github.com/petterobam/wealth-freedom/issues/2) · [移动端](https://github.com/petterobam/wealth-freedom/issues/3) · [AI 深度集成](https://github.com/petterobam/wealth-freedom/issues/4)
 
 ---
 
@@ -168,7 +169,7 @@ MIT License — 自由使用、修改和分发。
 
 ## 🌟 加入我们
 
-> 🚀 **刚刚发布 v2.0.0！** 成为第一批 ⭐️ Star 用户，和我们一起走向财务自由
+> 🚀 **全平台发布 v2.1.8！** Mac + Linux + Windows 全部就绪，成为第一批 ⭐️ Star 用户，和我们一起走向财务自由
 >
 > 你的 Star 是对开源独立开发者最大的鼓励！
 
