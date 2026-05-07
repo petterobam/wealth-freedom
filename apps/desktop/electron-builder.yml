@@ -41,3 +41,6 @@ nsis:
   oneClick: false
   perMachine: true
   allowToChangeInstallationDirectory: true
+
+# CI 中由 publish job 统一上传，electron-builder 只负责构建
+publish: none
