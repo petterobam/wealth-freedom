@@ -49,6 +49,14 @@
   <img src="docs/screenshots/bigscreen.png" alt="Big Screen" width="90%" />
 </p>
 
+### 💡 为什么选择 Wealth Freedom？
+
+- 🎯 **三阶段理财哲学** — 不是简单的记账工具，而是一套从「财务保障」到「财务自由」的完整方法论
+- 🔒 **数据完全本地** — SQLite 本地存储，你的财务数据永远不会上传到云端
+- 🆓 **开源免费** — MIT 协议，核心功能永久免费，Pro 版仅 ¥19/月
+- 🌍 **中文优先** — 原生中文支持，贴合国内理财场景（支付宝/微信导入）
+- ⚡ **轻量快速** — Electron + Vue 3，流畅体验，安装包仅 111MB
+
 ---
 
 ## 🚀 快速开始
@@ -158,9 +166,25 @@ MIT License — 自由使用、修改和分发。
 
 1. Fork → 2. Feature Branch → 3. Commit → 4. Push → 5. PR
 
-## 🌟 Star History
+## 🌟 加入我们
 
-[![Star History Chart](https://api.star-history.com/svg?repos=petterobam/wealth-freedom&type=Date)](https://star-history.com/#petterobam/wealth-freedom&Date)
+> 🚀 **刚刚发布 v2.0.0！** 成为第一批 ⭐️ Star 用户，和我们一起走向财务自由
+>
+> 你的 Star 是对开源独立开发者最大的鼓励！
+
+<p align="center">
+  <a href="https://github.com/petterobam/wealth-freedom/stargazers">
+    <img src="https://img.shields.io/github/stars/petterobam/wealth-freedom?style=social" alt="Stars" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/petterobam/wealth-freedom/fork">
+    <img src="https://img.shields.io/github/forks/petterobam/wealth-freedom?style=social" alt="Forks" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/petterobam/wealth-freedom/watchers">
+    <img src="https://img.shields.io/github/watchers/petterobam/wealth-freedom?style=social" alt="Watchers" />
+  </a>
+</p>
 
 ---
 
