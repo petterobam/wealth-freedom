@@ -42,5 +42,5 @@ nsis:
   perMachine: true
   allowToChangeInstallationDirectory: true
 
-# CI 中由 publish job 统一上传，electron-builder 只负责构建
-publish: none
+# CI 中由 publish job 统一上传
+# --publish never 在 CI 命令中指定
