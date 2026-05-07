@@ -25,10 +25,10 @@ artifactName: wealth-freedom-${version}-${arch}.${ext}
 win:
   executableName: wealth-freedom
   target:
-    - target: nsis
+    - target: portable
       arch:
         - x64
-    - target: portable
+    - target: zip
       arch:
         - x64
   icon: build/icon.ico
@@ -39,11 +39,6 @@ linux:
     - deb
   category: Office
   icon: build/icon.png
-
-nsis:
-  oneClick: false
-  perMachine: true
-  allowToChangeInstallationDirectory: true
 
 # CI 中由 publish job 统一上传
 # --publish never 在 CI 命令中指定
