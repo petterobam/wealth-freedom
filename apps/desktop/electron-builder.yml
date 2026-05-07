@@ -41,7 +41,6 @@ nsis:
   oneClick: false
   perMachine: true
   allowToChangeInstallationDirectory: true
-  installerName: wealth-freedom-setup.exe
 
 # CI 中由 publish job 统一上传
 # --publish never 在 CI 命令中指定
