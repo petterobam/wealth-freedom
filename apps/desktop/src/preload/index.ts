@@ -211,4 +211,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
     clearCache: () => ipcRenderer.invoke('currency:clearCache'),
     formatAmount: (amount: number, currency: string) => ipcRenderer.invoke('currency:formatAmount', { amount, currency }),
   },
+
+  // AI 财务助手 (v1.3.0+)
+  ai: {
+    getConfig: () => ipcRenderer.invoke('ai:getConfig'),
+    updateConfig: (config: any) => ipcRenderer.invoke('ai:updateConfig', config),
+    quickTips: (ctx: any) => ipcRenderer.invoke('ai:quickTips', ctx),
+    analyzeSpending: (ctx: any) => ipcRenderer.invoke('ai:analyzeSpending', ctx),
+    savingsPlan: (ctx: any, targetAmount: number, targetDate?: string) => ipcRenderer.invoke('ai:savingsPlan', ctx, targetAmount, targetDate),
+    investmentAdvice: (ctx: any, holdings: any[], riskLevel: string) => ipcRenderer.invoke('ai:investmentAdvice', ctx, holdings, riskLevel),
+    chat: (ctx: any, question: string, history: any[]) => ipcRenderer.invoke('ai:chat', ctx, question, history),
+    usage: () => ipcRenderer.invoke('ai:usage'),
+    clearCache: () => ipcRenderer.invoke('ai:clearCache'),
+    // 自然语言查询 (v2.1.0)
+    naturalQuery: (query: string) => ipcRenderer.invoke('ai:naturalQuery', query),
+    quickQueries: () => ipcRenderer.invoke('ai:quickQueries'),
+  },
 })

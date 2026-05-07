@@ -96,6 +96,45 @@
         </div>
       </el-tab-pane>
 
+      <!-- 自然语言查询 -->
+      <el-tab-pane :label="t('aiAdvice.tabNLQuery')" name="nlquery">
+        <div class="tab-content">
+          <p class="tab-desc">直接用中文提问，即时获得答案（无需 API Key）</p>
+          <div class="quick-queries">
+            <el-button
+              v-for="(q, i) in quickQueryList"
+              :key="i"
+              size="small"
+              @click="executeNLQuery(q.query)"
+              :loading="loading.nlquery && nlQuery === q.query"
+            >
+              {{ q.icon }} {{ q.label }}
+            </el-button>
+          </div>
+          <div class="nl-input">
+            <el-input
+              v-model="nlQuery"
+              placeholder="试试：上个月吃饭花了多少？"
+              @keyup.enter="executeNLQuery(nlQuery)"
+              :disabled="loading.nlquery"
+            />
+            <el-button
+              type="primary"
+              :loading="loading.nlquery"
+              @click="executeNLQuery(nlQuery)"
+              :disabled="!nlQuery.trim()"
+            >
+              {{ t('aiAdvice.send') }}
+            </el-button>
+          </div>
+          <div v-if="nlResult" class="ai-result">
+            <div class="nl-confidence" v-if="nlResult.confidence < 0.5">
+              <el-tag type="warning" size="small">置信度 {{ (nlResult.confidence * 100).toFixed(0) }}%</el-tag>
+            </div>
+            <div v-html="renderMarkdown(nlResult.answer)"></div>
+          </div>
+        </div>
+      </el-tab-pane>
       <!-- 自由问答 -->
       <el-tab-pane :label="t('aiAdvice.tabChat')" name="chat">
         <div class="tab-content">
@@ -162,7 +201,7 @@ const { safeCall } = useErrorHandler()
 
 const { t } = useI18n()
 
-const api = (window as any).api
+const api = (window as any).electronAPI || (window as any).api
 
 // ====== 状态 ======
 const activeTab = ref('spending')
@@ -176,6 +215,7 @@ const loading = reactive({
   savings: false,
   investment: false,
   chat: false,
+  nlquery: false,
 })
 
 const results = reactive({
@@ -189,6 +229,11 @@ const savingsTarget = ref(100000)
 
 // 投资建议
 const riskLevel = ref('moderate')
+
+// 自然语言查询
+const nlQuery = ref('')
+const nlResult = ref<any>(null)
+const quickQueryList = ref<Array<{ label: string; query: string; icon: string }>>([])
 
 // 聊天
 const chatInput = ref('')
@@ -390,10 +435,33 @@ async function loadTips() {
   tips.value = await api.ai.quickTips(ctx)
 }
 
+async function executeNLQuery(query: string) {
+  if (!query.trim()) return
+  nlQuery.value = query
+  loading.nlquery = true
+  nlResult.value = null
+  try {
+    nlResult.value = await api.ai.naturalQuery(query)
+  } catch (e: any) {
+    nlResult.value = { answer: `❌ 查询失败：${e.message}`, confidence: 0, type: 'unknown' }
+  } finally {
+    loading.nlquery = false
+  }
+}
+
+async function loadQuickQueries() {
+  try {
+    quickQueryList.value = await api.ai.quickQueries()
+  } catch {
+    quickQueryList.value = []
+  }
+}
+
 onMounted(async () => {
   await loadConfig()
   await loadUsage()
   await loadTips()
+  await loadQuickQueries()
 })
 </script>
 
@@ -584,4 +652,26 @@ onMounted(async () => {
 :root.dark .tip-warning { background: #3a2e1a; }
 :root.dark .tip-success { background: #1a2e1a; }
 :root.dark .tip-info { background: #1a2535; }
+
+/* 自然语言查询 */
+.quick-queries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.nl-input {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.nl-input .el-input {
+  flex: 1;
+}
+
+.nl-confidence {
+  margin-bottom: 8px;
+}
 </style>

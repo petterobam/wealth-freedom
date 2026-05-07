@@ -205,6 +205,22 @@ interface ElectronAPI {
     formatAmount: (amount: number, currency: string) => Promise<any>
   }
 
+  // AI 财务助手 (v1.3.0+)
+  ai: {
+    getConfig: () => Promise<any>
+    updateConfig: (config: any) => Promise<{ success: boolean }>
+    quickTips: (ctx: any) => Promise<any[]>
+    analyzeSpending: (ctx: any) => Promise<any>
+    savingsPlan: (ctx: any, targetAmount: number, targetDate?: string) => Promise<any>
+    investmentAdvice: (ctx: any, holdings: any[], riskLevel: string) => Promise<any>
+    chat: (ctx: any, question: string, history: any[]) => Promise<any>
+    usage: () => Promise<{ count: number; tokens: number }>
+    clearCache: () => Promise<{ success: boolean }>
+    // 自然语言查询 (v2.1.0)
+    naturalQuery: (query: string) => Promise<any>
+    quickQueries: () => Promise<Array<{ label: string; query: string; icon: string }>>
+  }
+
   // 数据库管理
   resetDatabase: () => Promise<{ success: boolean; error?: string }>
 }

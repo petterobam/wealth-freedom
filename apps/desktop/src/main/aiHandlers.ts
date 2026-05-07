@@ -15,6 +15,7 @@ import {
   generateQuickTips,
   type FinancialContext,
 } from './aiPromptTemplates';
+import { naturalLanguageQuery, getQuickQueries, type NLQueryDataContext } from './nlQueryEngine';
 import { checkLimit } from './license';
 
 /**
@@ -95,6 +96,33 @@ export function initAIHandlers(db: any): void {
 
   ipcMain.handle('ai:usage', () => {
     return aiService.getTodayUsage();
+  });
+
+  // ====== 自然语言查询（本地规则引擎，无需 API Key） ======
+
+  ipcMain.handle('ai:naturalQuery', async (_event, query: string) => {
+    // 收集财务数据上下文
+    const [accounts, debts, transactions, goals, investments] = await Promise.all([
+      db.prepare('SELECT * FROM accounts').all().catch(() => []),
+      db.prepare('SELECT * FROM debts').all().catch(() => []),
+      db.prepare('SELECT * FROM transactions').all().catch(() => []),
+      db.prepare('SELECT * FROM goals').all().catch(() => []),
+      db.prepare('SELECT * FROM investments').all().catch(() => []),
+    ]);
+
+    const ctx: NLQueryDataContext = {
+      transactions: transactions || [],
+      accounts: accounts || [],
+      debts: debts || [],
+      goals: goals || [],
+      investments: investments || [],
+    };
+
+    return naturalLanguageQuery(query, ctx);
+  });
+
+  ipcMain.handle('ai:quickQueries', () => {
+    return getQuickQueries();
   });
 
   // ====== 缓存管理 ======

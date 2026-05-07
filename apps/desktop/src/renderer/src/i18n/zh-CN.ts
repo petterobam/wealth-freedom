@@ -827,6 +827,7 @@ export default {
     tabSavings: '🎯 储蓄规划',
     tabInvestment: '📈 投资建议',
     tabChat: '💬 自由问答',
+    tabNLQuery: '💬 智能查询',
     spendingDesc: '基于您的收支数据，AI 将分析支出结构并给出优化建议。',
     savingsDesc: '输入目标金额，AI 将制定储蓄计划并计算达成时间。',
     investmentDesc: '基于您的投资持仓和风险偏好，AI 将提供组合优化建议。',

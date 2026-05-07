@@ -820,6 +820,7 @@ export default {
     tabSavings: '🎯 Savings Plan',
     tabInvestment: '📈 Investment Advice',
     tabChat: '💬 Free Chat',
+    tabNLQuery: '💬 Smart Query',
     spendingDesc: 'Based on your income and expense data, AI will analyze your spending patterns and provide optimization suggestions.',
     savingsDesc: 'Enter your target amount, and AI will create a savings plan and calculate the timeline.',
     investmentDesc: 'Based on your investment holdings and risk preference, AI will provide portfolio optimization advice.',
