@@ -1,0 +1,164 @@
+name: Auto Promote on Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Custom promotional message'
+        required: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare release info
+        id: release
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          # Extract version without v prefix
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate tweet
+        id: tweet
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -n "${{ github.event.inputs.message }}" ]; then
+            TWEET="${{ github.event.inputs.message }}"
+          else
+            TWEET="🚀 Wealth Freedom v${TAG#v} is out! Free open-source personal finance app — track your path to financial freedom in 3 stages. Local-first, privacy-respecting. Mac/Windows/Linux. 
+
+          ⭐ https://github.com/${REPO}
+
+          #OpenSource #PersonalFinance #Electron #FIRE"
+          fi
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$TWEET" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post to Twitter/X
+        if: env.TWITTER_API_KEY != ''
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+        run: |
+          # Use Twitter API v2 to post tweet
+          # Requires secrets: TWITTER_API_KEY, TWITTER_API_SECRET, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_SECRET
+          BEARER=$(curl -s -X POST "https://api.twitter.com/oauth2/token" \
+            -u "$TWITTER_API_KEY:$TWITTER_API_SECRET" \
+            -d "grant_type=client_credentials" | jq -r '.access_token')
+          
+          # Post using OAuth 1.0a via simple approach
+          npm install -g oauth-1.0a crypto
+          node -e "
+          const https = require('https');
+          const crypto = require('crypto');
+          
+          const consumerKey = process.env.TWITTER_API_KEY;
+          const consumerSecret = process.env.TWITTER_API_SECRET;
+          const token = process.env.TWITTER_ACCESS_TOKEN;
+          const tokenSecret = process.env.TWITTER_ACCESS_SECRET;
+          
+          const tweet = process.env.TWEET_CONTENT;
+          
+          const oauth = {
+            consumer_key: consumerKey,
+            consumer_secret: consumerSecret,
+            token: token,
+            token_secret: tokenSecret,
+            timestamp: Math.floor(Date.now()/1000).toString(),
+            nonce: crypto.randomBytes(16).toString('hex'),
+            version: '1.0',
+            signature_method: 'HMAC-SHA1'
+          };
+          
+          // Simple OAuth 1.0a signing for Twitter API v2
+          const baseString = 'POST&' + encodeURIComponent('https://api.twitter.com/2/tweets') + '&' + encodeURIComponent(Object.entries({...oauth}).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&'));
+          const signingKey = encodeURIComponent(consumerSecret) + '&' + encodeURIComponent(tokenSecret);
+          const signature = crypto.createHmac('sha1', signingKey).update(baseString).digest('base64');
+          
+          const header = 'OAuth ' + Object.entries({...oauth, signature}).map(([k,v])=>k+'=\"'+encodeURIComponent(v)+'\"').join(', ');
+          
+          const data = JSON.stringify({text: tweet});
+          const req = https.request('https://api.twitter.com/2/tweets', {
+            method: 'POST',
+            headers: {'Authorization': header, 'Content-Type': 'application/json'}
+          }, (res) => {
+            let body = '';
+            res.on('data', d => body += d);
+            res.on('end', () => console.log(res.statusCode, body));
+          });
+          req.write(data);
+          req.end();
+          " || echo "Twitter post failed, continuing..."
+        continue-on-error: true
+
+      - name: Post to Dev.to
+        if: env.DEV_TO_API_KEY != ''
+        env:
+          DEV_TO_API_KEY: ${{ secrets.DEV_TO_API_KEY }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          # Auto-publish release announcement to Dev.to
+          ARTICLE=$(cat <<'ARTICLE_EOF'
+          ---
+          title: "Wealth Freedom ${{ steps.release.outputs.tag }} Released — What's New"
+          published: true
+          description: "Release announcement for Wealth Freedom, a free open-source personal finance app"
+          tags: electron, vue, opensource, finance
+          series: building-wealth-freedom
+          ---
+          
+          ## What's New in ${{ steps.release.outputs.tag }}
+          
+          We're excited to announce the latest release of **Wealth Freedom** — a free, open-source personal finance app that helps you track your path to financial freedom.
+          
+          ### Download
+          
+          - [Mac (DMG)](https://github.com/${{ github.repository }}/releases/latest)
+          - [Windows (Portable)](https://github.com/${{ github.repository }}/releases/latest)
+          - [Linux (AppImage/deb)](https://github.com/${{ github.repository }}/releases/latest)
+          
+          ### Features
+          
+          - 🏦 Full financial tracking (income, expenses, assets, liabilities)
+          - 📊 Interactive dashboards with ECharts
+          - 🎯 3-stage financial freedom roadmap
+          - 🤖 AI financial advisor
+          - 🌍 Multi-currency support
+          - 📱 29 views with comprehensive features
+          - 🔒 100% local, privacy-first
+          
+          ### Get Started
+          
+          ⭐ Star us on GitHub: https://github.com/${{ github.repository }}
+          
+          It's free, open-source, and your data never leaves your machine.
+          ARTICLE_EOF
+          
+          curl -X POST "https://dev.to/api/articles" \
+            -H "api-key: $DEV_TO_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"article\":{\"title\":\"Wealth Freedom $TAG Released\",\"body_markdown\":$(echo "$ARTICLE" | jq -Rs .),\"tags\":[\"electron\",\"vue\",\"opensource\",\"finance\"],\"published\":true}}" || echo "Dev.to post failed, continuing..."
+        continue-on-error: true
+
+      - name: Create promotion summary
+        run: |
+          echo "## 📢 Promotion Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Release**: ${{ steps.release.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tweet**: ${{ steps.tweet.outputs.content }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Setup Required" >> $GITHUB_STEP_SUMMARY
+          echo "Add these secrets to your repository:" >> $GITHUB_STEP_SUMMARY
+          echo "1. \`DEV_TO_API_KEY\` — Get from https://dev.to/settings/extensions" >> $GITHUB_STEP_SUMMARY
+          echo "2. \`TWITTER_API_KEY\`, \`TWITTER_API_SECRET\`, \`TWITTER_ACCESS_TOKEN\`, \`TWITTER_ACCESS_SECRET\` — Get from https://developer.twitter.com/" >> $GITHUB_STEP_SUMMARY
