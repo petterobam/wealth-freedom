@@ -6,7 +6,7 @@ export default function Home() {
       {/* Hero */}
       <section className="flex flex-col items-center justify-center px-6 pt-20 pb-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm mb-6">
-          🚀 v2.0.0 商业版发布 · 全局错误处理 + 多语言 + 数据加密
+          🚀 v2.1.8 全平台发布 · Mac + Windows + Linux · AI 助手 + 数据加密
         </div>
         <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-emerald-400 to-amber-400 bg-clip-text text-transparent">
           财富自由之路
@@ -17,20 +17,31 @@ export default function Home() {
         <p className="text-sm text-slate-400 max-w-lg mb-8">
           开源免费 · 数据本地存储 · AI 驱动的智能理财建议 · 跨平台支持
         </p>
-        <div className="flex gap-4">
-          <Link
-            href="/login"
-            className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 font-semibold transition shadow-lg shadow-blue-500/20"
-          >
-            免费开始
-          </Link>
-          <a
-            href="https://github.com/petterobam/wealth-freedom"
-            target="_blank"
-            className="px-8 py-3 rounded-lg border border-slate-600 hover:border-slate-400 font-semibold transition"
-          >
-            ⭐ GitHub
-          </a>
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex gap-4">
+            <Link
+              href="/login"
+              className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 font-semibold transition shadow-lg shadow-blue-500/20"
+            >
+              在线体验
+            </Link>
+            <a
+              href="https://github.com/petterobam/wealth-freedom/releases/latest"
+              target="_blank"
+              className="px-8 py-3 rounded-lg bg-white/10 hover:bg-white/20 font-semibold transition border border-white/20"
+            >
+              💻 免费下载桌面版
+            </a>
+          </div>
+          <div className="flex gap-3 text-xs text-slate-400">
+            <a href="https://github.com/petterobam/wealth-freedom/releases/latest" target="_blank" className="hover:text-slate-200 transition">📱 Mac</a>
+            <span>·</span>
+            <a href="https://github.com/petterobam/wealth-freedom/releases/latest" target="_blank" className="hover:text-slate-200 transition">🪟 Windows</a>
+            <span>·</span>
+            <a href="https://github.com/petterobam/wealth-freedom/releases/latest" target="_blank" className="hover:text-slate-200 transition">🐧 Linux</a>
+            <span>·</span>
+            <a href="https://github.com/petterobam/wealth-freedom" target="_blank" className="hover:text-slate-200 transition">⭐ GitHub</a>
+          </div>
         </div>
       </section>
 
@@ -177,11 +188,11 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-4">开始你的财富自由之旅</h2>
           <p className="text-slate-300 mb-6">免费使用，数据安全，开源透明</p>
           <div className="flex justify-center gap-4">
-            <Link href="/login" className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 font-semibold transition shadow-lg shadow-blue-500/20">
-              立即开始
-            </Link>
+            <a href="https://github.com/petterobam/wealth-freedom/releases/latest" target="_blank" className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 font-semibold transition shadow-lg shadow-blue-500/20">
+              💻 免费下载
+            </a>
             <a href="https://github.com/petterobam/wealth-freedom" target="_blank" className="px-8 py-3 rounded-lg border border-slate-600 hover:border-slate-400 font-semibold transition">
-              查看源码
+              ⭐ Star on GitHub
             </a>
           </div>
         </div>
