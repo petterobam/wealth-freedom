@@ -1,11 +1,12 @@
 import { reactive, computed, inject, type InjectionKey } from 'vue'
 import zhCN from './zh-CN'
 import en from './en'
+import jaJP from './ja-JP'
 
-export type Locale = 'zh-CN' | 'en'
+export type Locale = 'zh-CN' | 'en' | 'ja-JP'
 export type Messages = typeof zhCN
 
-const messages: Record<Locale, Messages> = { 'zh-CN': zhCN, en }
+const messages: Record<Locale, Messages> = { 'zh-CN': zhCN, en, 'ja-JP': jaJP }
 
 interface I18nState {
   locale: Locale

@@ -18,6 +18,9 @@
           class="app-menu"
           :collapse="!sidebarVisible"
           :unique-opened="true"
+          background-color="transparent"
+          text-color="rgba(255, 255, 255, 0.75)"
+          active-text-color="#ffffff"
         >
           <!-- 财务管理分组 -->
           <el-sub-menu index="finance">
@@ -157,9 +160,9 @@
         <!-- 主题切换 + 更新提示 -->
         <div class="sidebar-bottom">
           <!-- 语言切换 -->
-          <div class="lang-toggle" @click="setLocale(locale === 'zh-CN' ? 'en' : 'zh-CN')">
+          <div class="lang-toggle" @click="cycleLocale">
             <span class="lang-icon">🌐</span>
-            <span class="lang-label" v-show="sidebarVisible">{{ locale === 'zh-CN' ? 'English' : '中文' }}</span>
+            <span class="lang-label" v-show="sidebarVisible">{{ localeLabel }}</span>
           </div>
           <div v-if="hasUpdate" class="update-badge" @click="openUpdateDownload">
             <span class="update-icon">🔴</span>
@@ -213,7 +216,7 @@ import { useUserStore } from '@/stores/user'
 import { useTheme } from '@/composables/useTheme'
 import { useUpdate } from '@/composables/useUpdate'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useI18n } from '@/i18n'
+import { useI18n, type Locale } from '@/i18n'
 import {
   getCurrentBreakpoint,
   getSidebarWidth,
@@ -227,6 +230,15 @@ const { isDark, toggleTheme } = useTheme()
 const { updateInfo, checkUpdate, openDownload } = useUpdate()
 const { setupGlobalHandlers } = useErrorHandler()
 const { t, locale, setLocale } = useI18n()
+
+// 语言切换 - 三语言循环：中文 → English → 日本語 → 中文
+const locales: Locale[] = ['zh-CN', 'en', 'ja-JP']
+const localeLabels: Record<Locale, string> = { 'zh-CN': 'English', 'en': '日本語', 'ja-JP': '中文' }
+const localeLabel = computed(() => localeLabels[locale.value as Locale] || 'English')
+const cycleLocale = () => {
+  const idx = locales.indexOf(locale.value as Locale)
+  setLocale(locales[(idx + 1) % locales.length])
+}
 const hasUpdate = computed(() => updateInfo.value?.hasUpdate ?? false)
 const openUpdateDownload = () => {
   if (updateInfo.value?.downloadUrl) openDownload(updateInfo.value.downloadUrl)
@@ -317,6 +329,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .app-container {
   height: 100vh;
+  overflow: hidden;
   background: var(--bg-body);
 }
 
@@ -347,10 +360,20 @@ onMounted(() => {
   }
 }
 
+// el-container override: prevent flex overflow
+:deep(.el-container) {
+  height: 100vh;
+  overflow: hidden;
+}
+
 .app-aside {
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
   transition: width 0.3s ease;
 
   // 侧边栏折叠时的样式
@@ -371,6 +394,7 @@ onMounted(() => {
 
 .logo {
   height: 60px;
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -391,9 +415,11 @@ onMounted(() => {
 .app-menu {
   border-right: none;
   background: transparent;
+  flex: 1;
+  overflow-y: auto;
 
   :deep(.el-menu-item) {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--sidebar-text, rgba(255, 255, 255, 0.7));
 
     &:hover {
       background: rgba(255, 255, 255, 0.1);
@@ -408,7 +434,7 @@ onMounted(() => {
 
   // 子菜单标题样式
   :deep(.el-sub-menu__title) {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--sidebar-text, rgba(255, 255, 255, 0.85));
     font-weight: 500;
 
     &:hover {
@@ -457,6 +483,7 @@ onMounted(() => {
   padding: 20px;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   transition: padding-left 0.3s ease;
   background: var(--bg-body);
 
@@ -474,6 +501,7 @@ onMounted(() => {
 .sidebar-bottom {
   margin-top: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 // 更新提示徽章
