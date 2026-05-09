@@ -295,8 +295,21 @@ onMounted(() => {
   checkInit()
   updateResponsiveLayout()
 
+  // 键盘快捷键：Cmd/Ctrl+Shift+D 切换暗色/亮色主题
+  const handleKeyboard = (e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'D') {
+      e.preventDefault()
+      toggleTheme()
+    }
+  }
+  window.addEventListener('keydown', handleKeyboard)
+
   // 监听窗口大小变化
-  const cleanup = onWindowResize(updateResponsiveLayout)
+  const cleanupResize = onWindowResize(updateResponsiveLayout)
+  const cleanup = () => {
+    cleanupResize()
+    window.removeEventListener('keydown', handleKeyboard)
+  }
   onUnmounted(cleanup)
 })
 </script>
