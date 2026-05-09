@@ -332,7 +332,7 @@ onMounted(loadAll)
 <style lang="scss" scoped>
 .pdf-report {
   padding: 16px;
-  background: #f5f7fa;
+  background: var(--bg-body, #f5f7fa);
   min-height: 100vh;
 }
 
@@ -345,14 +345,14 @@ onMounted(loadAll)
   justify-content: flex-end;
   gap: 12px;
   padding: 12px 0;
-  background: #f5f7fa;
+  background: var(--bg-body, #f5f7fa);
 }
 
 // 报告内容
 .report-content {
   max-width: 900px;
   margin: 0 auto;
-  background: #fff;
+  background: var(--bg-card, #fff);
   border-radius: 12px;
   padding: 40px 48px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);

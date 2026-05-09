@@ -147,8 +147,59 @@ const api = {
   resetDatabase: () => ipcRenderer.invoke('database:reset'),
 };
 
-// 暴露 API 到渲染进程
+// 暴露 API 到渲染进程 — 保留 window.api（兼容旧代码）+ window.electronAPI（视图层使用）
 contextBridge.exposeInMainWorld('api', api);
+
+// 扁平化 API，匹配 browser-mock.ts 的 electronAPI 结构
+const electronAPI = {
+  ...api,
+
+  // 扁平化的用户方法
+  getUser: api.user.get,
+  createUser: api.user.create,
+  updateUser: api.user.update,
+
+  // 扁平化的账户方法
+  getAccounts: api.account.getAll,
+  createAccount: api.account.create,
+  updateAccount: (data: any) => api.account.update(data.id, data),
+  deleteAccount: api.account.delete,
+
+  // 扁平化的负债方法
+  getDebts: api.debt.getAll,
+  createDebt: api.debt.create,
+  updateDebt: (data: any) => api.debt.update(data.id, data),
+  deleteDebt: api.debt.delete,
+
+  // 扁平化的交易方法
+  getTransactions: api.transaction.getAll,
+  createTransaction: api.transaction.create,
+  updateTransaction: (data: any) => api.transaction.update(data.id, data),
+  deleteTransaction: api.transaction.delete,
+
+  // 扁平化的目标方法
+  getGoals: api.goal.getAll,
+  createGoal: api.goal.create,
+  updateGoal: (data: any) => api.goal.update(data.id, data),
+  deleteGoal: api.goal.delete,
+
+  // 扁平化的梦想方法
+  getDreams: api.dream.getAll,
+  createDream: api.dream.create,
+  updateDream: (data: any) => api.dream.update(data.id, data),
+  deleteDream: api.dream.delete,
+
+  // 扁平化的计算方法
+  getNetWorth: api.calculation.getNetWorth,
+  getCashFlow: api.calculation.getCashFlow,
+  getGoalsProgress: api.calculation.getGoalProgress,
+  getRatios: api.calculation.getRatios,
+
+  // 仪表盘数据（PdfReport 等使用）
+  getDashboardData: () => ipcRenderer.invoke('dashboard:getData'),
+};
+
+contextBridge.exposeInMainWorld('electronAPI', electronAPI);
 
 // TypeScript 类型定义（供渲染进程使用）
 export type API = typeof api;

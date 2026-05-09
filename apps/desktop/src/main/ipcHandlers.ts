@@ -109,6 +109,9 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 
   // ==================== 数据库管理 ====================
   ipcMain.handle('database:reset', handleDatabaseReset);
+
+  // ==================== 仪表盘数据 ====================
+  ipcMain.handle('dashboard:getData', handleDashboardGetData);
 }
 
 // ==================== 用户处理函数 ====================
@@ -476,6 +479,72 @@ async function handleDatabaseReset() {
   } catch (error) {
     console.error('重置数据库失败:', error);
     return { success: false, error: String(error) };
+  }
+}
+
+// ==================== 仪表盘数据处理函数 ====================
+async function handleDashboardGetData() {
+  try {
+    const accounts = await handleAccountGetAll() as any[];
+    const debts = await handleDebtGetAll() as any[];
+    const allGoals = await handleGoalGetAll() as any[];
+
+    const totalAssets = accounts.reduce((s: number, a: any) => s + (a.balance || 0), 0);
+    const totalDebts = debts.reduce((s: number, d: any) => s + (d.remaining_amount || d.remainingAmount || 0), 0);
+    const netWorth = totalAssets - totalDebts;
+
+    // 本月收支
+    const now = new Date();
+    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const monthTxns = await handleTransactionGetAll(null, { month }) as any[];
+    const monthlyIncome = monthTxns.filter((t: any) => t.type === 'income').reduce((s: number, t: any) => s + (t.amount || 0), 0);
+    const monthlyExpense = monthTxns.filter((t: any) => t.type === 'expense').reduce((s: number, t: any) => s + (t.amount || 0), 0);
+
+    // 投资数据
+    const investAccounts = accounts.filter((a: any) => a.type === 'investment');
+    const investTotal = investAccounts.reduce((s: number, a: any) => s + (a.balance || 0), 0);
+    const investCost = investAccounts.reduce((s: number, a: any) => s + ((a as any).cost_basis || (a as any).initial_balance || (a.balance || 0)), 0);
+    const investProfit = investTotal - investCost;
+    const investReturnRate = investCost > 0 ? (investProfit / investCost) * 100 : 0;
+
+    // 用户保障月数
+    const user = await handleUserGet() as any;
+    const guaranteeMonths = user?.guarantee_months || user?.settings?.guaranteeMonths || 6;
+    const monthlyExpenseSafe = monthlyExpense || 1;
+
+    return {
+      user,
+      netWorth,
+      monthlyIncome,
+      monthlyExpense,
+      monthlyBalance: monthlyIncome - monthlyExpense,
+      totalAssets,
+      totalDebts,
+      investTotal,
+      investProfit,
+      investReturnRate,
+      guaranteeProgress: {
+        current: Math.max(0, netWorth),
+        target: monthlyExpenseSafe * guaranteeMonths,
+        percentage: Math.min(100, Math.round(netWorth / (monthlyExpenseSafe * guaranteeMonths) * 100)),
+      },
+      securityProgress: {
+        current: Math.max(0, netWorth),
+        target: monthlyExpenseSafe * 150,
+        percentage: Math.min(100, Math.round(netWorth / (monthlyExpenseSafe * 150) * 100)),
+      },
+      freedomProgress: {
+        current: Math.max(0, netWorth),
+        target: monthlyExpenseSafe * 2.5 * 150,
+        percentage: Math.min(100, Math.round(netWorth / (monthlyExpenseSafe * 2.5 * 150) * 100)),
+      },
+      goals: allGoals,
+      recentTransactions: monthTxns.slice(-5),
+      accounts,
+    };
+  } catch (error) {
+    console.error('获取仪表盘数据失败:', error);
+    return {};
   }
 }
 
