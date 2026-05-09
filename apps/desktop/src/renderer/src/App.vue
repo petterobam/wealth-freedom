@@ -147,10 +147,6 @@
             <el-icon><Key /></el-icon>
             <template #title>{{ t('sidebar.license') }}</template>
           </el-menu-item>
-          <el-menu-item index="/bigscreen">
-            <el-icon><Monitor /></el-icon>
-            <template #title>{{ t('sidebar.bigscreen') }}</template>
-          </el-menu-item>
           <el-menu-item index="/settings">
             <el-icon><Setting /></el-icon>
             <template #title>{{ t('sidebar.settings') }}</template>
@@ -340,7 +336,8 @@ onMounted(() => {
   top: 16px;
   left: 16px;
   z-index: 1000;
-  background: #fff;
+  background: var(--bg-card);
+  color: var(--text-primary);
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -367,14 +364,14 @@ onMounted(() => {
 }
 
 .app-aside {
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
   flex-shrink: 0;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, background 0.3s ease;
 
   // 侧边栏折叠时的样式
   &.sidebar-collapsed {
@@ -399,8 +396,8 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #fff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--sidebar-active-text);
+  border-bottom: 1px solid var(--sidebar-border);
 
   .logo-icon {
     font-size: 24px;
@@ -419,37 +416,37 @@ onMounted(() => {
   overflow-y: auto;
 
   :deep(.el-menu-item) {
-    color: var(--sidebar-text, rgba(255, 255, 255, 0.7));
+    color: var(--sidebar-text);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      background: var(--sidebar-hover-bg);
+      color: var(--sidebar-text-hover);
     }
 
     &.is-active {
-      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-      color: #fff;
+      background: var(--sidebar-active-bg);
+      color: var(--sidebar-active-text);
     }
   }
 
   // 子菜单标题样式
   :deep(.el-sub-menu__title) {
-    color: var(--sidebar-text, rgba(255, 255, 255, 0.85));
+    color: var(--sidebar-text);
     font-weight: 500;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      background: var(--sidebar-hover-bg);
+      color: var(--sidebar-text-hover);
     }
 
     .el-sub-menu__icon-arrow {
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--sidebar-icon);
     }
   }
 
   // 子菜单展开时的背景
   :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
-    color: #fff;
+    color: var(--sidebar-text-hover);
   }
 
   // 子菜单内的菜单项
@@ -460,20 +457,20 @@ onMounted(() => {
 
   // 折叠状态下子菜单的弹出菜单样式
   :deep(.el-menu--vertical .el-menu--popup) {
-    background: #1a1a2e;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-card);
+    border: 1px solid var(--sidebar-border);
 
     .el-menu-item {
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--sidebar-text);
 
       &:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
+        background: var(--sidebar-hover-bg);
+        color: var(--sidebar-text-hover);
       }
 
       &.is-active {
-        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-        color: #fff;
+        background: var(--sidebar-active-bg);
+        color: var(--sidebar-active-text);
       }
     }
   }
@@ -500,7 +497,7 @@ onMounted(() => {
 
 .sidebar-bottom {
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--sidebar-border);
   flex-shrink: 0;
 }
 
@@ -537,13 +534,40 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--sidebar-text);
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-hover);
+  }
+
+  .update-icon {
+    font-size: 10px;
+    width: 24px;
+    text-align: center;
+  }
+
+  .update-text {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+// 语言切换按钮（第二个定义覆盖上面的重复）
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  color: var(--sidebar-text);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-hover);
   }
 
   .lang-icon {
@@ -563,13 +587,13 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--sidebar-text);
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--sidebar-hover-bg);
+    color: var(--sidebar-text-hover);
   }
 
   .theme-icon {

@@ -588,24 +588,41 @@ const saveBasicData = async () => {
   saving.value = true
 
   await safeCall(async () => {
-    // 1. 更新用户设置
+    // 1. 更新用户设置（包含收支数据）
     if (userStore.user) {
+      const currentSettings = typeof userStore.user.settings === 'string'
+        ? JSON.parse(userStore.user.settings)
+        : (userStore.user.settings || {})
       await userStore.updateUser(userStore.user.id, {
         settings: {
-          language: userStore.user.settings?.language || 'zh',
-          theme: userStore.user.settings?.theme || 'light',
-          startDayOfMonth: userStore.user.settings?.startDayOfMonth || 1,
+          language: currentSettings.language || 'zh',
+          theme: currentSettings.theme || 'light',
+          startDayOfMonth: currentSettings.startDayOfMonth || 1,
           guaranteeMonths: basicForm.value.guaranteeMonths,
-          expectedReturnRate: basicForm.value.expectedReturnRate
+          expectedReturnRate: basicForm.value.expectedReturnRate,
+          monthlyIncome: basicForm.value.monthlyIncome,
+          monthlyExpense: basicForm.value.monthlyExpense
         }
       })
     }
 
-    // 2. 更新账户
+    // 2. 更新/创建现金账户
     const cashAccount = accountStore.accounts.find(a => a.type === 'cash')
     if (cashAccount) {
       await accountStore.updateAccount(cashAccount.id, {
         balance: basicForm.value.cashAssets
+      })
+    } else if (basicForm.value.cashAssets > 0) {
+      await accountStore.createAccount({
+        userId: userStore.user?.id || 'user-1',
+        name: '现金及存款',
+        type: 'cash',
+        icon: '💵',
+        color: '#67c23a',
+        balance: basicForm.value.cashAssets,
+        currency: 'CNY',
+        isReserved: false,
+        includeInNetWorth: true
       })
     }
 
@@ -614,13 +631,37 @@ const saveBasicData = async () => {
       await accountStore.updateAccount(investmentAccount.id, {
         balance: basicForm.value.investmentAssets
       })
+    } else if (basicForm.value.investmentAssets > 0) {
+      await accountStore.createAccount({
+        userId: userStore.user?.id || 'user-1',
+        name: '投资账户',
+        type: 'investment',
+        icon: '📈',
+        color: '#4facfe',
+        balance: basicForm.value.investmentAssets,
+        currency: 'CNY',
+        isReserved: false,
+        includeInNetWorth: true
+      })
     }
 
-    // 3. 更新负债
+    // 3. 更新/创建负债
     if (debtStore.debts.length > 0) {
       await debtStore.updateDebt(debtStore.debts[0].id, {
         totalAmount: basicForm.value.totalDebt,
         remainingAmount: basicForm.value.totalDebt
+      })
+    } else if (basicForm.value.totalDebt > 0) {
+      await debtStore.createDebt({
+        userId: userStore.user?.id || 'user-1',
+        name: '总负债',
+        type: 'other',
+        totalAmount: basicForm.value.totalDebt,
+        paidAmount: 0,
+        remainingAmount: basicForm.value.totalDebt,
+        monthlyPayment: 0,
+        interestRate: 0,
+        priority: 3
       })
     }
 

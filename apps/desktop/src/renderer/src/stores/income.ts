@@ -218,7 +218,11 @@ export const useIncomeStore = defineStore('income', {
         currentRatio,
         progress
       }
-    }
+    },
+
+    // Alias getters for views
+    strategies: (state) => state.incomeStrategies,
+    actions: (state) => state.incomeActions,
   },
 
   actions: {
@@ -551,6 +555,71 @@ export const useIncomeStore = defineStore('income', {
     // 获取近6个月收入趋势
     getLast6MonthsIncomeTrend() {
       return this.last6MonthsIncomeTrend
+    },
+
+    // ── Alias methods used by views ────────────────────────────
+
+    // loadIncomeData: loads all income data (sources + records)
+    async loadIncomeData() {
+      this.loading = true
+      try {
+        await Promise.all([
+          this.loadIncomeSources(),
+          this.loadIncomeRecords()
+        ])
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // loadGoals: alias for loadIncomeGoals
+    async loadGoals() {
+      return this.loadIncomeGoals()
+    },
+
+    // createGoal: alias for createIncomeGoal
+    async createGoal(data: any) {
+      return this.createIncomeGoal(data)
+    },
+
+    // updateGoal: alias for updateIncomeGoal
+    async updateGoal(id: string, data: any) {
+      return this.updateIncomeGoal(id, data)
+    },
+
+    // deleteGoal: alias for deleteIncomeGoal
+    async deleteGoal(id: string) {
+      return this.deleteIncomeGoal(id)
+    },
+
+    // loadStrategies: alias for loadIncomeStrategies
+    async loadStrategies() {
+      return this.loadIncomeStrategies()
+    },
+
+    // loadActions: alias for loadIncomeActions
+    async loadActions() {
+      return this.loadIncomeActions()
+    },
+
+    // addAction: alias for createIncomeAction
+    async addAction(data: any) {
+      return this.createIncomeAction(data)
+    },
+
+    // updateAction: alias for updateIncomeAction
+    async updateAction(id: string, data: any) {
+      return this.updateIncomeAction(id, data)
+    },
+
+    // deleteAction: alias for deleteIncomeAction
+    async deleteAction(id: string) {
+      return this.deleteIncomeAction(id)
+    },
+
+    // applyStrategy: alias for applyIncomeStrategy
+    async applyStrategy(id: string) {
+      return this.applyIncomeStrategy(id)
     }
   }
 })

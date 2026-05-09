@@ -5,65 +5,482 @@
 
 [data-theme="dark"] {
 
-  /* === 通用背景覆盖 === */
-  /* 白色背景 → 暗色卡片背景 */
+  /* ══════════════════════════════════════════
+     1. Element Plus 组件变量级覆盖
+     ══════════════════════════════════════════ */
+
+  /* ── 按钮 ── */
+  .el-button--default,
+  .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info):not(.is-text):not(.is-link) {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    color: #e5e5e5 !important;
+  }
+  .el-button--default:hover,
+  .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info):not(.is-text):not(.is-link):hover {
+    background: var(--bg-hover) !important;
+    border-color: var(--el-color-primary) !important;
+    color: var(--el-color-primary) !important;
+  }
+
+  /* 主色按钮 — 确保白色文字不被全局文字覆盖 */
+  .el-button--primary {
+    --el-button-bg-color: var(--el-color-primary);
+    --el-button-border-color: var(--el-color-primary);
+    color: #fff !important;
+  }
+  .el-button--primary:hover {
+    color: #fff !important;
+  }
+  .el-button--success {
+    --el-button-bg-color: var(--el-color-success);
+    --el-button-border-color: var(--el-color-success);
+    color: #fff !important;
+  }
+  .el-button--warning {
+    --el-button-bg-color: var(--el-color-warning);
+    --el-button-border-color: var(--el-color-warning);
+    color: #fff !important;
+  }
+  .el-button--danger {
+    --el-button-bg-color: var(--el-color-danger);
+    --el-button-border-color: var(--el-color-danger);
+    color: #fff !important;
+  }
+
+  /* 文字/链接按钮 */
+  .el-button.is-text,
+  .el-button.is-link {
+    color: #c8c8c8 !important;
+    background: transparent !important;
+  }
+  .el-button.is-text:hover,
+  .el-button.is-link:hover {
+    color: var(--el-color-primary) !important;
+  }
+
+  /* ── 表格 ── */
+  .el-table {
+    --el-table-bg-color: var(--bg-card);
+    --el-table-tr-bg-color: var(--bg-card);
+    --el-table-header-bg-color: var(--bg-hover);
+    --el-table-row-hover-bg-color: var(--bg-hover);
+    --el-table-border-color: var(--border-color);
+    --el-table-text-color: var(--text-primary);
+    --el-table-header-text-color: var(--text-regular);
+  }
+  .el-table th.el-table__cell {
+    background: var(--bg-hover) !important;
+    color: var(--text-regular) !important;
+  }
+  .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+    background: var(--bg-hover) !important;
+  }
+
+  /* ── 对话框 ── */
+  .el-dialog {
+    --el-dialog-bg-color: var(--bg-card);
+  }
+  .el-dialog__header {
+    color: var(--text-primary);
+  }
+  .el-dialog__body {
+    color: var(--text-regular);
+  }
+
+  /* ── 表单 ── */
+  .el-form-item__label {
+    color: var(--text-regular) !important;
+  }
+  .el-input__wrapper,
+  .el-textarea__inner,
+  .el-select__wrapper {
+    background-color: var(--bg-input) !important;
+    box-shadow: 0 0 0 1px var(--border-color) inset !important;
+  }
+  .el-input__inner {
+    color: var(--text-primary) !important;
+  }
+
+  /* 数字输入框增减按钮 */
+  .el-input-number__decrease,
+  .el-input-number__increase {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+  .el-input-number__decrease:hover,
+  .el-input-number__increase:hover {
+    color: var(--el-color-primary) !important;
+  }
+
+  /* ── 单选按钮组 ── */
+  .el-radio-button__inner {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-regular) !important;
+  }
+  .el-radio-button__original-radio:checked + .el-radio-button__inner {
+    background: var(--el-color-primary) !important;
+    border-color: var(--el-color-primary) !important;
+    color: #fff !important;
+  }
+  /* 选中态内部所有子元素强制白色文字 */
+  .el-radio-button.is-active .el-radio-button__inner,
+  .el-radio-button.is-active .el-radio-button__inner span,
+  .el-radio-button.is-active .el-radio-button__inner .stage-name,
+  .el-radio-button.is-active .el-radio-button__inner .stage-desc {
+    color: #fff !important;
+  }
+  .el-radio-button.is-active .el-radio-button__inner .stage-desc {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* ── 描述列表 ── */
+  .el-descriptions__body {
+    background: var(--bg-card) !important;
+    color: var(--text-regular) !important;
+  }
+  .el-descriptions__cell {
+    background: var(--bg-card) !important;
+  }
+  .el-descriptions__label {
+    color: var(--text-secondary) !important;
+  }
+  .el-descriptions__content {
+    color: var(--text-primary) !important;
+  }
+
+  /* ── 分割线 ── */
+  .el-divider {
+    border-color: var(--border-color) !important;
+  }
+  .el-divider__text {
+    background: var(--bg-body) !important;
+    color: var(--text-regular) !important;
+  }
+
+  /* ── 下拉菜单 ── */
+  .el-select-dropdown {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+  }
+  .el-select-dropdown__item {
+    color: var(--text-regular) !important;
+  }
+  .el-select-dropdown__item.hover,
+  .el-select-dropdown__item:hover {
+    background-color: var(--bg-hover) !important;
+  }
+
+  /* ── 弹出层 ── */
+  .el-popper.is-light {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+  }
+  .el-popper.is-light .el-popper__arrow::before {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* ── 标签 — 暗色模式用亮色背景+深色文字 ── */
+  .el-tag.el-tag--light {
+    color: var(--el-color-primary-dark-2) !important;
+  }
+  .el-tag.el-tag--success.el-tag--light {
+    background: rgba(103, 194, 58, 0.25) !important;
+    border-color: rgba(103, 194, 58, 0.4) !important;
+    color: #67c23a !important;
+  }
+  .el-tag.el-tag--warning.el-tag--light {
+    background: rgba(230, 162, 60, 0.25) !important;
+    border-color: rgba(230, 162, 60, 0.4) !important;
+    color: #e6a23c !important;
+  }
+  .el-tag.el-tag--danger.el-tag--light {
+    background: rgba(245, 108, 108, 0.25) !important;
+    border-color: rgba(245, 108, 108, 0.4) !important;
+    color: #f56c6c !important;
+  }
+  .el-tag.el-tag--info.el-tag--light {
+    background: rgba(144, 147, 153, 0.25) !important;
+    border-color: rgba(144, 147, 153, 0.4) !important;
+    color: #a0a3ad !important;
+  }
+  .el-tag.el-tag--primary.el-tag--light {
+    background: rgba(64, 158, 255, 0.25) !important;
+    border-color: rgba(64, 158, 255, 0.4) !important;
+    color: #409eff !important;
+  }
+  /* 非 light 变体的 tag 保持原色但确保文字可读 */
+  .el-tag:not(.el-tag--light) {
+    color: #fff !important;
+  }
+
+  /* ── 进度条 — 轨道暗色 ── */
+  .el-progress-bar__outer {
+    background: #3a3a3a !important;
+  }
+  .el-progress__text {
+    color: var(--text-primary) !important;
+  }
+
+  /* ── 统计 ── */
+  .el-statistic__head {
+    color: var(--text-regular) !important;
+  }
+  .el-statistic__content {
+    color: var(--text-primary) !important;
+  }
+
+  /* ── 描述列表 ── */
+  .el-descriptions__label {
+    color: var(--text-regular) !important;
+  }
+
+  /* ── 卡片 ── */
+  .el-card {
+    --el-card-bg-color: var(--bg-card);
+    --el-card-border-color: var(--border-color);
+  }
+
+  /* ── 单选 ── */
+  .el-radio__label {
+    color: var(--text-regular) !important;
+  }
+
+  /* ── 选项卡 ── */
+  .el-tabs__item {
+    color: var(--text-regular);
+  }
+  .el-tabs__item.is-active {
+    color: var(--primary-color);
+  }
+
+  /* ── 分页 ── */
+  .el-pagination {
+    --el-pagination-bg-color: var(--bg-card);
+    --el-pagination-text-color: var(--text-regular);
+    --el-pagination-button-bg-color: var(--bg-card);
+  }
+
+  /* ── 开关 ── */
+  .el-switch__label {
+    color: var(--text-regular) !important;
+  }
+
+  /* ── 日期选择器弹出层 ── */
+  .el-date-picker,
+  .el-picker-panel {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+  }
+  .el-date-table th {
+    color: var(--text-regular) !important;
+  }
+  .el-date-table td .el-date-table-cell__text {
+    color: var(--text-regular) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     2. 全局页面容器背景
+     ══════════════════════════════════════════ */
   .app-wrapper { background: var(--bg-card) !important; }
   .main-content { background: var(--bg-body) !important; }
 
-  /* === App.vue 侧边栏 === */
-  .sidebar {
-    background: var(--bg-sidebar) !important;
-  }
-  .sidebar .brand {
-    background: transparent !important;
-  }
-
-  /* === 通用页面容器背景 === */
   .page-container,
-  .dashboard-container,
-  .transactions-container,
-  .goals-container,
-  .budget-container,
-  .report-container,
-  .settings-container,
-  .accounts-container,
-  .debts-container,
-  .dreams-container,
-  .calculator-container,
-  .welcome-container {
+  .dashboard,
+  .dashboard-page,
+  .transactions-page,
+  .goals-page,
+  .budget-page,
+  .report-page,
+  .pdf-report,
+  .report-content,
+  .settings-page,
+  .accounts-page,
+  .debts-page,
+  .dreams-page,
+  .calculator-page,
+  .welcome-page,
+  .asset-page,
+  .health-page,
+  .investment-page,
+  .income-dashboard-page,
+  .income-goals-page,
+  .income-analysis-page,
+  .income-analysis,
+  .income-strategies-page,
+  .income-strategies,
+  .income-actions-page,
+  .income-actions,
+  .strategies-page,
+  .simulator-page,
+  .retirement-page,
+  .prepayment-page,
+  .expense-planner-page,
+  .toolbar-float {
     background: var(--bg-body) !important;
   }
 
-  /* === 卡片/面板背景 #fff → var(--bg-card) === */
-  .overview-card,
-  .account-section,
-  .allocation-card,
-  .stat-card,
+  /* ══════════════════════════════════════════
+     3. 所有白色 (#fff / white) 卡片/面板 → --bg-card
+     ══════════════════════════════════════════ */
+
+  /* ── Goals.vue ── */
+  .goal-section,
+  .goal-detail,
+  .goal-edit-form,
   .goal-card,
-  .budget-card,
-  .transaction-card,
-  .account-card,
-  .debt-card,
-  .dream-card,
-  .report-card,
-  .analysis-card,
-  .plan-card,
-  .summary-card,
-  .detail-card,
-  .health-card,
-  .income-card,
-  .strategy-card,
-  .scenario-card,
-  .expense-card,
-  .retirement-card,
-  .prepayment-card,
-  .action-card {
+  .milestone-card,
+  .timeline-card,
+  .key-metrics,
+  .params-adjust {
     background: var(--bg-card) !important;
     box-shadow: var(--shadow-sm) !important;
     border-color: var(--border-color) !important;
   }
 
-  /* === 次级背景 #f5f7fa / #fafafa → var(--bg-hover) === */
+  /* ── Dashboard.vue ── */
+  .chart-card,
+  .finance-card,
+  .metric-card,
+  .ratio-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Transactions.vue ── */
+  .stat-card,
+  .transaction-list,
+  .transaction-item {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Report.vue + PDF Report ── */
+  .overview-card,
+  .category-card,
+  .section-card,
+  .report-section,
+  .score-hero,
+  .dimension-card,
+  .advice-section {
+    background: var(--bg-card) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-color: var(--border-color) !important;
+  }
+  /* PDF 报告内的表格条纹行 */
+  .pdf-report table td,
+  .pdf-report table th,
+  .pdf-report .right {
+    background: transparent !important;
+    color: var(--text-regular) !important;
+  }
+
+  /* ── Budget.vue ── */
+  .budget-item,
+  .overview-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Settings.vue ── */
+  .settings-section,
+  .calculated-box,
+  .goal-preview-item,
+  .import-preview-text,
+  .rate-item {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Income Dashboard ── */
+  .metric-card,
+  .income-sources,
+  .freedom-progress {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Income Goals ── */
+  .summary-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Income Analysis ── */
+  .time-range-selector,
+  .income-structure,
+  .growth-item,
+  .growth-sources,
+  .source-card,
+  .trend-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Income Strategies ── */
+  .strategy-card,
+  .strategy-item {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Income Actions ── */
+  .action-item,
+  .action-detail,
+  .action-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Accounts / Debts / Dreams ── */
+  .account-card,
+  .account-list-item,
+  .debt-item,
+  .debt-card,
+  .dream-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Planning Tools ── */
+  .sim-card,
+  .retirement-card,
+  .prepayment-card,
+  .expense-card,
+  .calc-card,
+  .allocation-card,
+  .scenario-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ── Investment ── */
+  .trade-row:hover { background: var(--bg-hover) !important; }
+
+  /* ── Welcome ── */
+  .welcome-card { background: var(--bg-card) !important; }
+
+  /* ── Health Score ── */
+  .suggestion-card { background: var(--bg-card) !important; }
+
+  /* ── Generic catch-all for remaining white cards ── */
+  .analysis-card,
+  .plan-card,
+  .detail-card,
+  .health-card,
+  .income-card,
+  .income-overview-card,
+  .income-trend-card,
+  .report-card,
+  .benchmark-card,
+  .benchmark-item {
+    background: var(--bg-card) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* ── BigScreen.vue ── */
+  .bs-header,
+  .bs-stage-bar,
+  .bs-card {
+    background: var(--bg-card) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     4. 次级浅色背景 → --bg-hover
+     ══════════════════════════════════════════ */
   .sub-header,
   .section-header,
   .list-header,
@@ -71,161 +488,311 @@
   .category-row,
   .filter-bar,
   .toolbar,
-  .tab-panel {
+  .tab-panel,
+  .filters,
+  .goal-formula,
+  .goal-notes,
+  .strategy-category,
+  .timeline-section,
+  .milestone-hint,
+  .milestone-item,
+  .settings-item,
+  .feature-card,
+  .action-step,
+  .asset-row,
+  .progress-summary,
+  .strategy-icon,
+  .strategy-reason,
+  .case-item,
+  .goal-progress-bg {
     background: var(--bg-hover) !important;
   }
 
-  /* === App.vue 侧边栏暗色 === */
-  .sidebar .nav-item:hover,
-  .sidebar .nav-item.active {
-    background: var(--bg-hover) !important;
+  /* 激活/选中状态 — 半透明蓝色 */
+  .theory-tip {
+    background: rgba(79, 172, 254, 0.12) !important;
+    border-left-color: var(--el-color-primary) !important;
+  }
+  .strategy-select-card.is-selected,
+  .strategy-card.is-active {
+    background: rgba(64, 158, 255, 0.12) !important;
+  }
+  .goal-preview-item:hover {
+    background: rgba(64, 158, 255, 0.12) !important;
   }
 
-  /* === Goals.vue === */
-  .goals-page { background: var(--bg-body) !important; }
-  .goal-detail,
-  .goal-edit-form,
-  .milestone-card {
-    background: var(--bg-card) !important;
+  /* 提示类 — 半透明色块 */
+  .settings-hint,
+  .insight-tip,
+  .strategy-tip,
+  .action-note,
+  .risk-tip,
+  .growth-source-tip {
+    background: rgba(79, 172, 254, 0.15) !important;
   }
-  .goal-progress-bg { background: #f0f2f5; }
-  .milestone-hint { background: var(--bg-hover) !important; }
-
-  /* === AssetAllocation.vue === */
-  .asset-page { background: var(--bg-body) !important; }
-  .asset-row { background: var(--bg-hover) !important; }
-  .alloc-bar-bg { background: #3a3a3a !important; }
-  .risk-warning { background: rgba(245, 108, 108, 0.15) !important; }
-  .risk-tip { background: rgba(79, 172, 254, 0.15) !important; }
-
-  /* === Dreams.vue === */
-  .dreams-page { background: var(--bg-body) !important; }
-  .dream-card { background: var(--bg-card) !important; }
-
-  /* === Dashboard.vue === */
-  .dashboard-page { background: var(--bg-body) !important; }
-  .chart-card { background: var(--bg-card) !important; }
-
-  /* === Transactions.vue === */
-  .transactions-page { background: var(--bg-body) !important; }
-  .transaction-item { background: var(--bg-card) !important; }
-
-  /* === IncomeActions.vue === */
-  .income-actions-page { background: var(--bg-body) !important; }
-  .action-detail { background: var(--bg-card) !important; }
-  .action-step { background: var(--bg-hover) !important; }
-  .action-note { background: rgba(79, 172, 254, 0.15) !important; }
-
-  /* === HealthScore.vue === */
-  .health-page { background: var(--bg-body) !important; }
-  .score-ring-bg { background: #3a3a3a !important; }
-  .suggestion-card { background: var(--bg-card) !important; }
-
-  /* === Investment.vue === */
-  .investment-page { background: var(--bg-body) !important; }
-  .alloc-track { background: #3a3a3a !important; }
-  .trade-row:hover { background: var(--bg-hover) !important; }
-
-  /* === IncomeGoals.vue === */
-  .income-goals-page { background: var(--bg-body) !important; }
-  .milestone-item { background: var(--bg-hover) !important; }
-
-  /* === Debts.vue === */
-  .debts-page { background: var(--bg-body) !important; }
-  .debt-item { background: var(--bg-card) !important; }
-  .debt-warning { background: rgba(245, 108, 108, 0.15) !important; }
-  .debt-tag { background: rgba(244, 244, 245, 0.15) !important; }
-
-  /* === Budget.vue === */
-  .budget-page { background: var(--bg-body) !important; }
-  .budget-item { background: var(--bg-card) !important; }
-  .progress-track { background: #3a3a3a !important; }
-  .budget-summary-bar { background: #3a3a3a !important; }
-
-  /* === Report.vue === */
-  .report-page { background: var(--bg-body) !important; }
-  .report-section { background: var(--bg-card) !important; }
-  .chart-placeholder { background: var(--bg-hover) !important; }
-  .bar-track { background: #3a3a3a !important; }
-  .summary-bar { background: #3a3a3a !important; }
-
-  /* === Settings.vue === */
-  .settings-page { background: var(--bg-body) !important; }
-  .settings-section { background: var(--bg-card) !important; }
-  .settings-item { background: var(--bg-hover) !important; }
-  .settings-hint { background: rgba(79, 172, 254, 0.15) !important; }
-
-  /* === Welcome.vue === */
-  .welcome-page { background: var(--bg-body) !important; }
-  .welcome-card { background: var(--bg-card) !important; }
-  .feature-card { background: var(--bg-hover) !important; }
-
-  /* === Calculator.vue === */
-  .calculator-page { background: var(--bg-body) !important; }
-  .calc-card { background: var(--bg-card) !important; }
-
-  /* === IncomeAnalysis.vue === */
-  .income-analysis-page { background: var(--bg-body) !important; }
-  .source-card { background: var(--bg-card) !important; }
-  .trend-card { background: var(--bg-card) !important; }
-  .insight-tip { background: rgba(79, 172, 254, 0.15) !important; }
-
-  /* === IncomeDashboard.vue === */
-  .income-dashboard-page { background: var(--bg-body) !important; }
-  .income-overview-card { background: var(--bg-card) !important; }
-  .income-trend-card { background: var(--bg-card) !important; }
-
-  /* === Accounts.vue === */
-  .accounts-page { background: var(--bg-body) !important; }
-  .account-list-item { background: var(--bg-card) !important; }
-
-  /* === IncomeStrategies.vue === */
-  .strategies-page { background: var(--bg-body) !important; }
-  .strategy-item { background: var(--bg-card) !important; }
-  .strategy-tip { background: rgba(79, 172, 254, 0.15) !important; }
-  .strategy-tag { background: rgba(244, 244, 245, 0.15) !important; }
-
-  /* === ScenarioSimulator / RetirementPlanner / PrepaymentCalculator / LargeExpensePlanner === */
-  .simulator-page,
-  .retirement-page,
-  .prepayment-page,
-  .expense-planner-page {
-    background: var(--bg-body) !important;
+  .debt-warning,
+  .risk-warning {
+    background: rgba(245, 108, 108, 0.15) !important;
   }
-  .sim-card,
-  .retirement-card,
-  .prepayment-card,
-  .expense-card {
-    background: var(--bg-card) !important;
+  .achievement-tip {
+    background: rgba(230, 162, 60, 0.15) !important;
+  }
+  .debt-tag,
+  .strategy-tag {
+    background: rgba(244, 244, 245, 0.15) !important;
   }
 
-  /* === 通用文字颜色修正（暗色模式确保可读性） === */
+  /* ── 进度条轨道 ── */
+  .progress-track,
+  .progress-bar-track,
+  .budget-summary-bar,
+  .bar-track,
+  .summary-bar,
+  .alloc-track,
+  .alloc-bar-bg,
+  .trend-bar {
+    background: #3a3a3a !important;
+  }
+
+  /* ══════════════════════════════════════════
+     5. 文字颜色修正
+     ══════════════════════════════════════════ */
+
+  /* 标题文字 — 暗色背景用最亮文字 */
   .card-title,
   .section-title,
   .stat-label,
-  .item-label {
+  .item-label,
+  .page-title,
+  .page-desc,
+  .budget-name,
+  .stage-name,
+  .strategy-title,
+  .advice-text,
+  .advice-item,
+  h1, h2, h3, h4 {
     color: var(--text-primary) !important;
   }
 
+  /* 常规描述文字 */
+  .stage-desc,
+  .stage-detail,
+  .stage-eta,
+  .stage-done,
+  .ratio-tip,
+  .goal-progress,
+  .goal-formula,
+  .strategy-desc,
   .card-subtitle,
   .stat-value,
-  .item-desc {
+  .item-desc,
+  .card-label,
+  .card-value,
+  .budget-category,
+  .budget-footer,
+  .progress-label,
+  .calc-value,
+  .rate-currency,
+  .backup-list-title,
+  .history-period,
+  .history-nums,
+  .card-header,
+  .form-section,
+  .helper-text,
+  .tip-text,
+  .note-text,
+  .form-hint,
+  .empty-hint,
+  small,
+  .text-secondary {
     color: var(--text-regular) !important;
   }
 
-  .helper-text,
-  .tip-text,
-  .note-text {
-    color: var(--text-secondary) !important;
+  /* Element Plus 组件文字覆盖 */
+  .el-card__header,
+  .el-select__selected-item,
+  .el-select__placeholder {
+    color: var(--text-primary) !important;
   }
 
-  /* === 通用边框 === */
-  .divider,
-  .separator {
-    border-color: var(--border-light) !important;
+  /* 强覆盖：硬编码深色文字 → 浅色 */
+  [style*="color: #303133"],
+  [style*="color:#303133"],
+  [style*="color: #1a1a2e"],
+  [style*="color:#1a1a2e"],
+  [style*="color: #606266"],
+  [style*="color:#606266"],
+  [style*="color: #333"],
+  [style*="color:#333"],
+  [style*="color: #909399"],
+  [style*="color:#909399"] {
+    color: var(--text-primary) !important;
   }
 
-  /* === 输入框/表单暗色 === */
+  /* 亮色背景上的标签文字 — 用深色字 */
+  .el-tag--success.el-tag--light,
+  .el-tag--warning.el-tag--light,
+  .el-tag--danger.el-tag--light,
+  .el-tag--info.el-tag--light,
+  .el-tag--primary.el-tag--light {
+    font-weight: 600;
+  }
+
+  /* 硬编码白色背景 → 暗色 */
+  [style*="background: white"],
+  [style*="background: #fff"],
+  [style*="background: #ffffff"],
+  [style*="background-color: white"],
+  [style*="background-color: #fff"],
+  [style*="background-color: #ffffff"] {
+    background: var(--bg-card) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     6. 全局兜底 — main 内容区强制亮色文字（禁止灰色）
+     ══════════════════════════════════════════ */
+  main {
+    color: var(--text-primary);
+  }
+  main div,
+  main p,
+  main span:not(.el-radio__inner):not(.el-switch__core span),
+  main label:not(.el-radio__label):not(.el-checkbox__label),
+  main strong,
+  main td,
+  main th,
+  main li,
+  main ul,
+  main ol {
+    color: var(--text-primary) !important;
+  }
+  /* ── Insights: level-badge 等级标签（警告/注意/良好） ── */
+  .level-badge.excellent {
+    background: rgba(103, 194, 58, 0.25) !important;
+    color: #67c23a !important;
+  }
+  .level-badge.good {
+    background: rgba(64, 158, 255, 0.25) !important;
+    color: #409eff !important;
+  }
+  .level-badge.warning {
+    background: rgba(230, 162, 60, 0.25) !important;
+    color: #e6a23c !important;
+  }
+  .level-badge.danger {
+    background: rgba(245, 108, 108, 0.25) !important;
+    color: #f56c6c !important;
+  }
+
+  /* ── Insights: tier-badge 段位标签（铜/银/金/钻石） ── */
+  .tier-badge.bronze {
+    background: rgba(184, 115, 51, 0.25) !important;
+    color: #d4915c !important;
+  }
+  .tier-badge.silver {
+    background: rgba(160, 160, 160, 0.25) !important;
+    color: #c0c0c0 !important;
+  }
+  .tier-badge.gold {
+    background: rgba(184, 134, 11, 0.25) !important;
+    color: #ffd700 !important;
+  }
+  .tier-badge.diamond {
+    background: rgba(92, 107, 192, 0.25) !important;
+    color: #7986cb !important;
+  }
+
+  /* ── Insights: summary-card 渐变背景 ── */
+  .summary-card.total {
+    background: rgba(254, 249, 231, 0.08) !important;
+  }
+  .summary-card.unlocked {
+    background: rgba(103, 194, 58, 0.08) !important;
+  }
+  .summary-card.progress {
+    background: rgba(64, 158, 255, 0.08) !important;
+  }
+
+  /* ── Insights: achievement-card unlocked 渐变 ── */
+  .achievement-card.unlocked {
+    background: rgba(103, 194, 58, 0.1) !important;
+    border-color: rgba(103, 194, 58, 0.3) !important;
+  }
+
+  /* ── Insights: phase-card 渐变背景 ── */
+  .phase-card.accumulation {
+    background: rgba(255, 183, 77, 0.12) !important;
+  }
+  .phase-card.growth {
+    background: rgba(103, 194, 58, 0.12) !important;
+  }
+  .phase-card.freedom {
+    background: rgba(64, 158, 255, 0.12) !important;
+  }
+
+  /* ── Insights: compare-bar 用户值文字 ── */
+  .compare-user .value {
+    color: #fff !important;
+  }
+
+  /* ── AssetAllocation: 滑块区域悬停 + 总比例提示 ── */
+  .slider-item:hover {
+    background: var(--bg-hover) !important;
+  }
+  .total-allocation {
+    background: rgba(245, 108, 108, 0.2) !important;
+    color: #f56c6c !important;
+  }
+  .total-allocation.valid {
+    background: rgba(103, 194, 58, 0.2) !important;
+    color: #67c23a !important;
+  }
+
+  /* 按钮内文字强制亮色 — 覆盖 catch-all 的灰色 */
+  .el-button,
+  .el-button span,
+  .el-button__text {
+    color: #e5e5e5 !important;
+  }
+  .el-button--primary,
+  .el-button--primary span,
+  .el-button--primary .el-button__text {
+    color: #fff !important;
+  }
+  .el-button--success,
+  .el-button--success span {
+    color: #fff !important;
+  }
+  .el-button--warning,
+  .el-button--warning span {
+    color: #fff !important;
+  }
+  .el-button--danger,
+  .el-button--danger span {
+    color: #fff !important;
+  }
+  .el-button--info,
+  .el-button--info span {
+    color: #fff !important;
+  }
+  .el-button.is-text,
+  .el-button.is-text span,
+  .el-button.is-link,
+  .el-button.is-link span {
+    color: #c8c8c8 !important;
+  }
+  .el-button.is-text:hover,
+  .el-button.is-link:hover {
+    color: var(--el-color-primary) !important;
+  }
+  .el-button.is-text:hover span,
+  .el-button.is-link:hover span {
+    color: var(--el-color-primary) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     7. 输入框 / 表单
+     ══════════════════════════════════════════ */
   input,
   textarea,
   select {
@@ -233,14 +800,149 @@
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
   }
-
   input::placeholder,
   textarea::placeholder {
     color: var(--text-placeholder) !important;
   }
 
-  /* === 空状态 === */
+  /* ══════════════════════════════════════════
+     7. 边框
+     ══════════════════════════════════════════ */
+  .divider,
+  .separator {
+    border-color: var(--border-light) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     8. 空状态
+     ══════════════════════════════════════════ */
   .empty-state {
     color: var(--text-secondary) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     9. 侧边栏
+     ══════════════════════════════════════════ */
+  .sidebar {
+    background: var(--bg-sidebar) !important;
+  }
+  .sidebar .brand {
+    background: transparent !important;
+  }
+  .sidebar .nav-item:hover,
+  .sidebar .nav-item.active {
+    background: var(--bg-hover) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     10. Settings 数据管理 — 彩色元素暗色适配
+     ══════════════════════════════════════════ */
+
+  /* ── 计算结果卡片 ── */
+  .calculated-box {
+    background: var(--bg-hover) !important;
+  }
+  .calc-value {
+    color: var(--text-primary) !important;
+  }
+  .calc-value.highlight {
+    color: #409eff !important;
+  }
+  .calc-value.positive {
+    color: #67c23a !important;
+  }
+  .calc-value.negative {
+    color: #f56c6c !important;
+  }
+  .calc-value.warning {
+    color: #e6a23c !important;
+  }
+
+  /* ── 理论提示条 ── */
+  .theory-tip {
+    background: rgba(64, 158, 255, 0.12) !important;
+    border-left-color: #409eff !important;
+    color: var(--text-regular) !important;
+  }
+  .theory-tip .el-icon {
+    color: #409eff !important;
+  }
+
+  /* ── 目标预览卡片 ── */
+  .goal-preview-item {
+    background: var(--bg-hover) !important;
+  }
+  .goal-preview-item:hover {
+    background: rgba(64, 158, 255, 0.12) !important;
+  }
+  .goal-name {
+    color: var(--text-primary) !important;
+  }
+  .goal-formula {
+    color: var(--text-secondary) !important;
+  }
+  .goal-progress {
+    color: var(--text-regular) !important;
+  }
+  .goal-progress.achieved {
+    color: #67c23a !important;
+  }
+
+  /* ── 表单分隔线 ── */
+  .form-section {
+    border-bottom-color: var(--border-color) !important;
+  }
+
+  /* ── 导入预览文本 ── */
+  .import-preview-text {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* ── 汇率项 ── */
+  .rate-item {
+    background: var(--bg-hover) !important;
+  }
+  .rate-currency {
+    color: var(--text-primary) !important;
+  }
+  .rate-value {
+    color: #67c23a !important;
+  }
+
+  /* ── 操作提示文字 ── */
+  .action-hint {
+    color: var(--text-secondary) !important;
+  }
+
+  /* ══════════════════════════════════════════
+     11. Dashboard 每日财富洞察 — 恢复渐变背景上的白色文字
+     ══════════════════════════════════════════ */
+  .daily-insight {
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2) !important;
+  }
+  .daily-insight,
+  .daily-insight span,
+  .daily-insight p,
+  .daily-insight .insight-title,
+  .daily-insight .insight-text,
+  .daily-insight .insight-source {
+    color: #fff !important;
+  }
+  .daily-insight .insight-source {
+    opacity: 0.8 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* ── Dashboard: 阶段达成态边框 ── */
+  .stage-achieved {
+    border-color: #67c23a !important;
+    background: rgba(103, 194, 58, 0.08) !important;
+  }
+  .stage-done {
+    color: #67c23a !important;
+  }
+  .stage-eta {
+    color: #409eff !important;
   }
 }

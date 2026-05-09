@@ -803,6 +803,14 @@ onUnmounted(() => {
         &.is-active {
           .el-radio-button__inner {
             animation: pulse 0.3s ease-in-out;
+
+            .stage-name {
+              color: #fff;
+            }
+
+            .stage-desc {
+              color: rgba(255, 255, 255, 0.85);
+            }
           }
         }
       }

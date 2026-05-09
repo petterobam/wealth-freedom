@@ -323,13 +323,19 @@ onUnmounted(() => {
 
 <style scoped>
 .bigscreen-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
   width: 100vw;
   height: 100vh;
   background: linear-gradient(135deg, #0a0e27 0%, #1a1e3a 50%, #0d1130 100%);
   color: #e0e0e0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -384,10 +390,11 @@ onUnmounted(() => {
 .bs-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(320px, 1fr));
   grid-template-rows: repeat(2, 1fr);
   gap: 16px;
   padding: 16px 24px 20px;
+  min-width: 1020px;
 }
 
 /* Card base */

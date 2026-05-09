@@ -40,8 +40,8 @@
     <!-- 梦想与财务自由的联系 -->
     <div class="dream-freedom-link">
       <h3>{{ t('dreams.dreamFreedom') }}</h3>
-      <p>{{ t('dreams.monthlyCost', { amount: formatCurrency(totalDreamCost) }) }}</p>
-      <p>{{ t('dreams.requiredPrincipal', { amount: formatCurrency(totalDreamCost * 150) }) }}</p>
+      <p v-html="t('dreams.monthlyCost', { amount: formatCurrency(totalDreamCost) })"></p>
+      <p v-html="t('dreams.requiredPrincipal', { amount: formatCurrency(totalDreamCost * 150) })"></p>
       <el-progress
         :percentage="freedomProgress"
         :stroke-width="16"

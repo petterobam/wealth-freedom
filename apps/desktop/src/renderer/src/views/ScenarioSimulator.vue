@@ -904,7 +904,7 @@ watch([currentScenario, newScenario], () => {
 </script>
 
 <style scoped>
-  .calculator {
+  .scenario-simulator {
     .page-title {
       font-size: 24px;
       font-weight: 600;
@@ -923,7 +923,7 @@ watch([currentScenario, newScenario], () => {
         margin-bottom: 16px;
       }
 
-      .calculator-form {
+      .scenario-simulator-form {
         margin-top: 20px;
 
         @media (max-width: 575px) {

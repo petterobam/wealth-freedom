@@ -730,7 +730,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-  .calculator {
+  .large-expense-planner {
     .page-title {
       font-size: 24px;
       font-weight: 600;
@@ -749,7 +749,7 @@ onUnmounted(() => {
         margin-bottom: 16px;
       }
 
-      .calculator-form {
+      .large-expense-planner-form {
         margin-top: 20px;
 
         @media (max-width: 575px) {

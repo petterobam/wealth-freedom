@@ -2,9 +2,15 @@
   <div class="dashboard">
     <div class="page-header">
       <h1 class="page-title">{{ t('dashboard.title') }} <span v-if="currency.loaded.value" class="base-currency-badge">{{ currency.baseCurrency.value }}</span></h1>
-      <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
-        {{ t('dashboard.exportPDF') }}
-      </el-button>
+      <div class="header-actions">
+        <el-button @click="$router.push('/bigscreen')">
+          <el-icon><Monitor /></el-icon>
+          {{ t('dashboard.bigScreen') }}
+        </el-button>
+        <el-button type="primary" :icon="Download" @click="handleExportPDF" :loading="pdfLoading">
+          {{ t('dashboard.exportPDF') }}
+        </el-button>
+      </div>
     </div>
 
     <!-- 核心指标卡片 -->
@@ -263,12 +269,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
-import { Plus, Flag, PictureFilled, Sunny, Download } from '@element-plus/icons-vue'
+import { Plus, Flag, PictureFilled, Sunny, Download, Monitor } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { useAccountStore } from '@/stores/accounts'
 import { useDebtStore } from '@/stores/debts'
 import { useTransactionStore } from '@/stores/transactions'
 import { useGoalStore } from '@/stores/goals'
+import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import { exportToPDF } from '../utils/export'
@@ -294,6 +301,7 @@ const accountStore = useAccountStore()
 const debtStore = useDebtStore()
 const transactionStore = useTransactionStore()
 const goalStore = useGoalStore()
+const userStore = useUserStore()
 const currency = useCurrency()
 
 const showAddTransaction = ref(false)
@@ -348,17 +356,27 @@ const dailyInsight = computed(() => {
   return insights[index]
 })
 
-const metrics = computed(() => ({
-  netWorth: accountStore.totalAssets - debtStore.totalDebt,
-  monthlyIncome: transactionStore.monthlyIncome,
-  monthlyExpense: transactionStore.monthlyExpense,
-  monthlyBalance: transactionStore.monthlyIncome - transactionStore.monthlyExpense
-}))
+const metrics = computed(() => {
+  // 从用户设置中读取收支数据作为回退
+  const userSettings = userStore.user?.settings
+    ? (typeof userStore.user.settings === 'string' ? JSON.parse(userStore.user.settings) : userStore.user.settings)
+    : {}
+  const txIncome = transactionStore.monthlyIncome
+  const txExpense = transactionStore.monthlyExpense
+  const monthlyIncome = txIncome || userSettings.monthlyIncome || 0
+  const monthlyExpense = txExpense || userSettings.monthlyExpense || 0
+  return {
+    netWorth: accountStore.totalAssets - debtStore.totalDebt,
+    monthlyIncome,
+    monthlyExpense,
+    monthlyBalance: monthlyIncome - monthlyExpense
+  }
+})
 
 // 财务自由三阶段计算
 const freedomStages = computed(() => {
   const netWorth = metrics.value.netWorth
-  const monthlyExpense = transactionStore.monthlyExpense || 1
+  const monthlyExpense = metrics.value.monthlyExpense || 1
   const monthlyBalance = metrics.value.monthlyBalance || 0
   const annualReturnRate = 0.04 // 4% 年化收益率假设
 
@@ -572,8 +590,7 @@ const initCharts = () => {
 }
 
 const handleAddTransaction = async () => {
-  const userStore = await import('@/stores/user').then(m => m.useUserStore())
-  const user = userStore().user
+  const user = userStore.user
 
   if (user) {
     await transactionStore.createTransaction({
@@ -593,6 +610,7 @@ const handleAddTransaction = async () => {
 onMounted(async () => {
   await safeCall(() =>
     Promise.all([
+      userStore.fetchUser(),
       accountStore.fetchAccounts(),
       debtStore.fetchDebts(),
       transactionStore.fetchTransactions(),
@@ -601,8 +619,7 @@ onMounted(async () => {
   )
   // v1.9.0 多币种初始化
   try {
-    const userStore = await import('@/stores/user').then(m => m.useUserStore())
-    const user = userStore().user
+    const user = userStore.user
     if (user) await currency.init(user.id)
   } catch { /* 单币种回退 */ }
   initCharts()
@@ -625,6 +642,11 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
   }
 
   .page-title {

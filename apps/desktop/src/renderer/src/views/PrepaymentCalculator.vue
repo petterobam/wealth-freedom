@@ -799,7 +799,7 @@ function formatCurrency(value: number): string {
 </script>
 
 <style scoped lang="scss">
-  .calculator {
+  .prepayment-calculator {
     .page-title {
       font-size: 24px;
       font-weight: 600;
@@ -818,7 +818,7 @@ function formatCurrency(value: number): string {
         margin-bottom: 16px;
       }
 
-      .calculator-form {
+      .prepayment-calculator-form {
         margin-top: 20px;
 
         @media (max-width: 575px) {

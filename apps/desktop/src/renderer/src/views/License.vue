@@ -18,7 +18,7 @@
           {{ t('license.deactivate') }}
         </el-button>
       </div>
-      <p class="status-message">{{ licenseStatus.message }}</p>
+      <p v-if="licenseStatus.message && licenseStatus.message !== statusLabel" class="status-message">{{ licenseStatus.message }}</p>
     </el-card>
 
     <!-- 在线验证状态 -->

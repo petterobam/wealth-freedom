@@ -10,7 +10,7 @@ const supportedCurrencies = ref<Array<{ code: string; name: string; symbol: stri
 const loaded = ref(false)
 
 export function useCurrency() {
-  const api = (window as any).api
+  const api = (window as any).electronAPI || (window as any).api
 
   async function init(userId?: string) {
     if (!api?.currency) return
@@ -45,7 +45,11 @@ export function useCurrency() {
   function formatMoney(amount: number, currency?: string): string {
     const cur = currency ?? baseCurrency.value
     const info = supportedCurrencies.value.find(c => c.code === cur)
-    const symbol = info?.symbol ?? cur
+    const symbols: Record<string, string> = {
+      CNY: '¥', USD: '$', EUR: '€', GBP: '£', JPY: '¥', KRW: '₩',
+      HKD: 'HK$', TWD: 'NT$', SGD: 'S$', AUD: 'A$', CAD: 'C$', CHF: 'CHF'
+    }
+    const symbol = info?.symbol ?? symbols[cur] ?? cur
     const dec = (cur === 'JPY' || cur === 'KRW') ? 0 : 0 // Dashboard 默认整数
     return `${symbol}${amount.toLocaleString('zh-CN', { maximumFractionDigits: dec })}`
   }
