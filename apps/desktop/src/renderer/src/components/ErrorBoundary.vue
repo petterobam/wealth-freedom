@@ -42,6 +42,7 @@ const detail = ref('')
 onErrorCaptured((err: Error) => {
   error.value = err
   detail.value = err.message || '未知错误'
+  console.error('[ErrorBoundary]', err.stack || err)
 
   const lower = err.message?.toLowerCase() || ''
   if (lower.includes('network') || lower.includes('fetch')) {

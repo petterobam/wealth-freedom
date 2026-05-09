@@ -4,7 +4,12 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin({ exclude: ['@wealth-freedom/shared', 'uuid'] })]
+    plugins: [externalizeDepsPlugin({ exclude: ['@wealth-freedom/shared', 'uuid'] })],
+    build: {
+      rollupOptions: {
+        external: ['better-sqlite3']
+      }
+    }
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
