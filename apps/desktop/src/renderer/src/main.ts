@@ -4,6 +4,12 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
+// Browser mock: provide electronAPI when not running inside Electron
+import { electronAPI } from './browser-mock'
+if (!window.electronAPI) {
+  (window as any).electronAPI = electronAPI
+}
+
 import App from './App.vue'
 import router from './router'
 import './styles/theme.css'
