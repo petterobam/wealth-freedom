@@ -14,6 +14,27 @@
 [![Downloads](https://img.shields.io/github/downloads/petterobam/wealth-freedom/total?style=flat-square&label=Downloads)](https://github.com/petterobam/wealth-freedom/releases)
 [![Stars](https://img.shields.io/github/stars/petterobam/wealth-freedom?style=flat-square&label=Stars)](https://github.com/petterobam/wealth-freedom/stargazers)
 
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td><img src="docs/screenshots/dashboard.png" alt="Dashboard" width="400"/></td>
+    <td><img src="docs/screenshots/goals.png" alt="Goals" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">📊 Dashboard</td>
+    <td align="center">🎯 Goal Tracking</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/screenshots/bigscreen.png" alt="Big Screen" width="600"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">🖥️ Data Visualization Big Screen</td>
+  </tr>
+</table>
+
+---
+
 [![Star History Chart](https://api.star-history.com/svg?repos=petterobam/wealth-freedom&type=Date)](https://star-history.com/#petterobam/wealth-freedom&Date)
 
 ---
