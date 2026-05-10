@@ -685,7 +685,7 @@ const resetForm = () => {
 .remaining-value {
   font-size: 16px;
   font-weight: 600;
-  color: #67c23a;
+  color: var(--el-color-success);
 }
 
 .remaining-diff {
@@ -693,11 +693,11 @@ const resetForm = () => {
 }
 
 .text-danger {
-  color: #f56c6c;
+  color: var(--el-color-danger);
 }
 
 .text-warning {
-  color: #e6a23c;
+  color: var(--el-color-warning);
 }
 
 .goal-deadline {
@@ -705,7 +705,7 @@ const resetForm = () => {
   align-items: center;
   gap: 8px;
   padding-top: 12px;
-  border-top: 1px solid #ebeef5;
+  border-top: 1px solid var(--border-color);
 }
 
 .deadline-label {
@@ -720,13 +720,13 @@ const resetForm = () => {
 
 .deadline-days {
   font-size: 14px;
-  color: #e6a23c;
+  color: var(--el-color-warning);
   font-weight: 500;
 }
 
 .goal-notes {
   padding: 12px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   border-radius: 8px;
 }
 
@@ -756,7 +756,7 @@ const resetForm = () => {
 
 .strategy-category {
   padding: 20px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   border-radius: 12px;
 }
 

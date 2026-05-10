@@ -266,7 +266,7 @@ onMounted(loadScore)
 }
 
 .dimension-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -275,10 +275,10 @@ onMounted(loadScore)
 
   &:hover { transform: translateY(-2px); }
 
-  &.level-good { border-top-color: #67c23a; }
-  &.level-ok { border-top-color: #e6a23c; }
+  &.level-good { border-top-color: var(--el-color-success); }
+  &.level-ok { border-top-color: var(--el-color-warning); }
   &.level-warn { border-top-color: #f89c30; }
-  &.level-bad { border-top-color: #f56c6c; }
+  &.level-bad { border-top-color: var(--el-color-danger); }
 }
 
 .dim-header {
@@ -287,7 +287,7 @@ onMounted(loadScore)
   align-items: center;
   margin-bottom: 8px;
 
-  .dim-label { font-size: 13px; color: #666; }
+  .dim-label { font-size: 13px; color: var(--text-regular); }
   .dim-score { font-size: 18px; font-weight: 700; color: #1a1a2e; }
 }
 
@@ -308,12 +308,12 @@ onMounted(loadScore)
 
 .dim-value {
   font-size: 11px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 // 建议
 .advice-section {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 18px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -337,7 +337,7 @@ onMounted(loadScore)
   align-items: flex-start;
   gap: 10px;
   font-size: 14px;
-  color: #444;
+  color: var(--text-regular);
   line-height: 1.5;
 
   .advice-icon { font-size: 18px; flex-shrink: 0; }

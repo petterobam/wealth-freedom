@@ -332,7 +332,7 @@ onMounted(loadAll)
 <style lang="scss" scoped>
 .pdf-report {
   padding: 16px;
-  background: var(--bg-body, #f5f7fa);
+  background: var(--bg-body);
   min-height: 100vh;
 }
 
@@ -345,14 +345,14 @@ onMounted(loadAll)
   justify-content: flex-end;
   gap: 12px;
   padding: 12px 0;
-  background: var(--bg-body, #f5f7fa);
+  background: var(--bg-body);
 }
 
 // 报告内容
 .report-content {
   max-width: 900px;
   margin: 0 auto;
-  background: var(--bg-card, #fff);
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 40px 48px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -375,7 +375,7 @@ onMounted(loadAll)
   }
 
   .report-date {
-    color: #999;
+    color: var(--text-secondary);
     font-size: 14px;
   }
 }
@@ -394,7 +394,7 @@ onMounted(loadAll)
 
   .badge-label {
     font-size: 12px;
-    color: #999;
+    color: var(--text-secondary);
     margin-top: 4px;
   }
 }
@@ -427,13 +427,13 @@ onMounted(loadAll)
 
 .metric-card {
   padding: 12px;
-  background: #fafafa;
+  background: var(--bg-body);
   border-radius: 8px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-color);
 
   .metric-label {
     font-size: 11px;
-    color: #999;
+    color: var(--text-secondary);
     margin-bottom: 4px;
   }
 
@@ -443,8 +443,8 @@ onMounted(loadAll)
     color: #1a1a2e;
   }
 
-  .metric-value.income { color: #67c23a; }
-  .metric-value.expense { color: #f56c6c; }
+  .metric-value.income { color: var(--el-color-success); }
+  .metric-value.expense { color: var(--el-color-danger); }
 }
 
 // 健康维度

@@ -915,21 +915,21 @@ onUnmounted(() => {
 .growth-source-rate {
   font-size: 24px;
   font-weight: 600;
-  color: #67C23A;
+  color: var(--el-color-success);
   margin-bottom: 5px;
 }
 
 .growth-source-amount {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .growth-source-tip {
   font-size: 14px;
-  color: #67C23A;
-  background: #f0f9ff;
+  color: var(--el-color-success);
+  background: var(--el-color-primary-light-9);
   padding: 10px;
   border-radius: 6px;
-  border-left: 4px solid #67C23A;
+  border-left: 4px solid var(--el-color-success);
 }
 </style>

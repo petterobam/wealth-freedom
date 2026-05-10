@@ -590,8 +590,8 @@ onMounted(() => {
   text-align: center;
   .yoy-label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
   .yoy-value { font-size: 20px; font-weight: 700; }
-  .yoy-value.income { color: #67c23a; }
-  .yoy-value.expense { color: #f56c6c; }
+  .yoy-value.income { color: var(--el-color-success); }
+  .yoy-value.expense { color: var(--el-color-danger); }
 }
 
 // 月度明细（年度）
@@ -609,7 +609,7 @@ onMounted(() => {
 
   .month-label {
     width: 40px;
-    color: #666;
+    color: var(--text-regular);
     flex-shrink: 0;
   }
 
@@ -624,8 +624,8 @@ onMounted(() => {
       border-radius: 2px;
       transition: width 0.4s ease;
     }
-    .bar-income { background: #67c23a; }
-    .bar-expense { background: #f56c6c; }
+    .bar-income { background: var(--el-color-success); }
+    .bar-expense { background: var(--el-color-danger); }
   }
 
   .breakdown-income, .breakdown-expense {
@@ -633,8 +633,8 @@ onMounted(() => {
     text-align: right;
     flex-shrink: 0;
   }
-  .breakdown-income.income { color: #67c23a; }
-  .breakdown-expense.expense { color: #f56c6c; }
+  .breakdown-income.income { color: var(--el-color-success); }
+  .breakdown-expense.expense { color: var(--el-color-danger); }
 }
 
 // 趋势列表
@@ -652,7 +652,7 @@ onMounted(() => {
 
   .trend-month {
     width: 70px;
-    color: #666;
+    color: var(--text-regular);
     flex-shrink: 0;
   }
 
@@ -665,7 +665,7 @@ onMounted(() => {
 
   .trend-bar {
     height: 6px;
-    background: #f0f0f0;
+    background: var(--border-color);
     border-radius: 3px;
     overflow: hidden;
 
@@ -674,8 +674,8 @@ onMounted(() => {
       border-radius: 3px;
       transition: width 0.4s ease;
     }
-    .income-fill { background: linear-gradient(90deg, #67c23a, #85ce61); }
-    .expense-fill { background: linear-gradient(90deg, #f56c6c, #f89898); }
+    .income-fill { background: linear-gradient(90deg, var(--el-color-success), #85ce61); }
+    .expense-fill { background: linear-gradient(90deg, var(--el-color-danger), #f89898); }
   }
 
   .trend-values {

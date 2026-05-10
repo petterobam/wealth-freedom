@@ -478,9 +478,9 @@ onMounted(loadBudgetStatus)
   border-radius: 4px;
   transition: width 0.4s ease;
 
-  &.fill-green { background: linear-gradient(90deg, #67c23a, #85ce61); }
-  &.fill-yellow { background: linear-gradient(90deg, #e6a23c, #f0c060); }
-  &.fill-red { background: linear-gradient(90deg, #f56c6c, #f89898); }
+  &.fill-green { background: linear-gradient(90deg, var(--el-color-success), #85ce61); }
+  &.fill-yellow { background: linear-gradient(90deg, var(--el-color-warning), #f0c060); }
+  &.fill-red { background: linear-gradient(90deg, var(--el-color-danger), #f89898); }
 }
 
 .progress-label {
@@ -541,7 +541,7 @@ onMounted(loadBudgetStatus)
 }
 
 .history-nums {
-  color: #666;
+  color: var(--text-regular);
   white-space: nowrap;
 }
 </style>

@@ -493,22 +493,22 @@ const handleSkip = async () => {
 .summary-box {
   text-align: center;
   padding: 20px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   border-radius: 10px;
   margin-top: 20px;
   transition: background 0.3s ease;
 
   .is-dark & {
-    background: #2a2a3e;
+    background: var(--bg-body);
   }
 
   .highlight {
     font-size: 24px;
     font-weight: 700;
-    color: #67c23a;
+    color: var(--el-color-success);
 
     &.negative {
-      color: #f56c6c;
+      color: var(--el-color-danger);
     }
   }
 }
@@ -516,13 +516,13 @@ const handleSkip = async () => {
 .summary-note {
   margin-top: 4px;
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
-.rate-excellent { color: #67c23a; font-weight: 600; }
-.rate-good { color: #409eff; font-weight: 600; }
-.rate-normal { color: #e6a23c; }
-.rate-danger { color: #f56c6c; font-weight: 600; }
+.rate-excellent { color: var(--el-color-success); font-weight: 600; }
+.rate-good { color: var(--el-color-primary); font-weight: 600; }
+.rate-normal { color: var(--el-color-warning); }
+.rate-danger { color: var(--el-color-danger); font-weight: 600; }
 
 .goal-intro {
   text-align: center;
@@ -534,7 +534,7 @@ const handleSkip = async () => {
   }
 
   p {
-    color: #909399;
+    color: var(--text-secondary);
     font-size: 14px;
   }
 }
@@ -548,13 +548,13 @@ const handleSkip = async () => {
   flex: 1;
   text-align: center;
   padding: 20px 16px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   border-radius: 12px;
   transition: all 0.3s ease;
   border: 2px solid transparent;
 
   .is-dark & {
-    background: #2a2a3e;
+    background: var(--bg-body);
   }
 
   &:hover {
