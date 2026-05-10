@@ -365,7 +365,7 @@ onMounted(loadBudgetStatus)
 }
 
 .page-desc {
-  color: #666;
+  color: var(--text-regular);
   margin-bottom: 20px;
 }
 
@@ -388,7 +388,7 @@ onMounted(loadBudgetStatus)
 }
 
 .overview-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -398,10 +398,10 @@ onMounted(loadBudgetStatus)
   transition: transform 0.2s;
 
   &:hover { transform: translateY(-2px); }
-  &.warning { border-left: 3px solid #e6a23c; }
+  &.warning { border-left: 3px solid var(--el-color-warning); }
 
   .card-icon { font-size: 28px; }
-  .card-label { font-size: 12px; color: #999; }
+  .card-label { font-size: 12px; color: var(--text-secondary); }
   .card-value { font-size: 18px; font-weight: 700; color: #1a1a2e; }
 }
 
@@ -414,23 +414,23 @@ onMounted(loadBudgetStatus)
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #999;
+  color: var(--text-secondary);
 
   .empty-icon { font-size: 48px; margin-bottom: 12px; }
   .empty-hint { font-size: 13px; margin-bottom: 16px; }
 }
 
 .budget-item {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-left: 4px solid #67c23a;
+  border-left: 4px solid var(--el-color-success);
   transition: transform 0.2s;
 
   &:hover { transform: translateY(-1px); }
-  &.status-yellow { border-left-color: #e6a23c; }
-  &.status-red { border-left-color: #f56c6c; }
+  &.status-yellow { border-left-color: var(--el-color-warning); }
+  &.status-red { border-left-color: var(--el-color-danger); }
 }
 
 .budget-header {
@@ -454,7 +454,7 @@ onMounted(loadBudgetStatus)
 }
 
 .budget-name { font-weight: 600; color: #1a1a2e; }
-.budget-category { font-size: 12px; color: #999; }
+.budget-category { font-size: 12px; color: var(--text-secondary); }
 
 .budget-actions {
   display: flex;
@@ -487,7 +487,7 @@ onMounted(loadBudgetStatus)
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #666;
+  color: var(--text-regular);
   margin-top: 4px;
 }
 
@@ -495,15 +495,15 @@ onMounted(loadBudgetStatus)
   display: flex;
   gap: 20px;
   font-size: 13px;
-  color: #666;
+  color: var(--text-regular);
 
-  strong { color: #1a1a2e; }
+  strong { color: var(--text-primary); }
 }
 
 .form-hint {
   margin-left: 8px;
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .history-list {
@@ -521,7 +521,7 @@ onMounted(loadBudgetStatus)
 
 .history-period {
   width: 80px;
-  color: #666;
+  color: var(--text-regular);
   flex-shrink: 0;
 }
 
@@ -537,7 +537,7 @@ onMounted(loadBudgetStatus)
   height: 100%;
   background: #4facfe;
   border-radius: 3px;
-  &.over { background: #f56c6c; }
+  &.over { background: var(--el-color-danger); }
 }
 
 .history-nums {

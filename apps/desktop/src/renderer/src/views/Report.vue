@@ -458,12 +458,12 @@ onMounted(() => {
 .page-title {
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .page-desc {
-  color: #666;
+  color: var(--text-regular);
   margin-bottom: 20px;
 }
 
@@ -493,7 +493,7 @@ onMounted(() => {
 }
 
 .overview-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -504,10 +504,10 @@ onMounted(() => {
 
   &:hover { transform: translateY(-2px); }
   .card-icon { font-size: 28px; }
-  .card-label { font-size: 12px; color: #999; }
-  .card-value { font-size: 18px; font-weight: 700; color: #1a1a2e; }
-  .card-value.income { color: #67c23a; }
-  .card-value.expense { color: #f56c6c; }
+  .card-label { font-size: 12px; color: var(--text-secondary); }
+  .card-value { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+  .card-value.income { color: var(--el-color-success); }
+  .card-value.expense { color: var(--el-color-danger); }
 }
 
 // 分类明细
@@ -516,7 +516,7 @@ onMounted(() => {
 }
 
 .category-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -524,7 +524,7 @@ onMounted(() => {
 
   h3 {
     font-size: 14px;
-    color: #666;
+    color: var(--text-regular);
     margin-bottom: 12px;
     font-weight: 600;
   }
@@ -541,13 +541,13 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 6px 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--border-color);
 
   &:last-child { border-bottom: none; }
-  .cat-name { color: #333; font-size: 13px; }
+  .cat-name { color: var(--text-primary); font-size: 13px; }
   .cat-amount { font-weight: 600; font-size: 14px; }
-  .cat-amount.income { color: #67c23a; }
-  .cat-amount.expense { color: #f56c6c; }
+  .cat-amount.income { color: var(--el-color-success); }
+  .cat-amount.expense { color: var(--el-color-danger); }
 }
 
 .empty-hint {
@@ -563,14 +563,14 @@ onMounted(() => {
 }
 
 .section-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   h3 {
     font-size: 15px;
-    color: #1a1a2e;
+    color: var(--text-primary);
     margin-bottom: 16px;
     font-weight: 600;
   }
@@ -588,7 +588,7 @@ onMounted(() => {
 
 .yoy-item {
   text-align: center;
-  .yoy-label { display: block; font-size: 12px; color: #999; margin-bottom: 4px; }
+  .yoy-label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
   .yoy-value { font-size: 20px; font-weight: 700; }
   .yoy-value.income { color: #67c23a; }
   .yoy-value.expense { color: #f56c6c; }
@@ -693,7 +693,7 @@ onMounted(() => {
 }
 
 .stat-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px;
   text-align: center;
@@ -725,7 +725,7 @@ onMounted(() => {
 }
 
 .goal-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 10px;
   padding: 14px 18px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);

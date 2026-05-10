@@ -728,7 +728,7 @@ onMounted(() => {
 
       .unit {
         margin-left: 8px;
-        color: #909399;
+        color: var(--text-secondary);
         font-size: 14px;
 
         @media (max-width: 575px) {
@@ -795,7 +795,7 @@ onMounted(() => {
       gap: 16px;
       padding: 20px;
       border-radius: 12px;
-      color: #fff;
+      color: var(--bg-card);
 
       @media (max-width: 575px) {
         padding: 16px;
@@ -902,11 +902,11 @@ onMounted(() => {
     }
 
     .goal-item {
-      background: linear-gradient(135deg, #f5f7fa 0%, #fff 100%);
+      background: linear-gradient(135deg, var(--bg-body) 0%, var(--bg-card) 100%);
       border-radius: 12px;
       padding: 20px;
       text-align: center;
-      border: 1px solid #e4e7ed;
+      border: 1px solid var(--border-color);
 
       @media (max-width: 575px) {
         padding: 16px;
@@ -925,7 +925,7 @@ onMounted(() => {
       .goal-title {
         font-size: 16px;
         font-weight: 600;
-        color: #303133;
+        color: var(--text-primary);
         margin-bottom: 8px;
 
         @media (max-width: 575px) {
@@ -937,7 +937,7 @@ onMounted(() => {
       .goal-amount {
         font-size: 24px;
         font-weight: 700;
-        color: #409eff;
+        color: var(--el-color-primary);
         margin-bottom: 12px;
 
         @media (max-width: 575px) {
@@ -956,7 +956,7 @@ onMounted(() => {
         justify-content: center;
         gap: 8px;
         font-size: 16px;
-        color: #67c23a;
+        color: var(--el-color-success);
         font-weight: 600;
         margin-bottom: 12px;
 
@@ -984,7 +984,7 @@ onMounted(() => {
 }
 
 .gradient-success {
-  background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+  background: linear-gradient(135deg, var(--el-color-success) 0%, #85ce61 100%);
 }
 
 .gradient-info {
@@ -992,7 +992,7 @@ onMounted(() => {
 }
 
 .gradient-warning {
-  background: linear-gradient(135deg, #e6a23c 0%, #f5a623 100%);
+  background: linear-gradient(135deg, var(--el-color-warning) 0%, #f5a623 100%);
 }
 
 // 场景管理样式
@@ -1021,7 +1021,7 @@ onMounted(() => {
   gap: 8px;
   flex-wrap: wrap;
   font-size: 12px;
-  color: #606266;
+  color: var(--text-regular);
 
   @media (max-width: 575px) {
     font-size: 11px;

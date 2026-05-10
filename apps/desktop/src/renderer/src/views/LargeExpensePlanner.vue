@@ -766,7 +766,7 @@ onUnmounted(() => {
 
         .unit {
           margin-left: 8px;
-          color: #909399;
+          color: var(--text-secondary);
           font-size: 14px;
 
           @media (max-width: 575px) {
@@ -832,7 +832,7 @@ onUnmounted(() => {
         gap: 16px;
         padding: 20px;
         border-radius: 12px;
-        color: #fff;
+        color: var(--bg-card);
 
         @media (max-width: 575px) {
           padding: 16px;
@@ -917,7 +917,7 @@ onUnmounted(() => {
   }
 
   .gradient-success {
-    background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+    background: linear-gradient(135deg, var(--el-color-success) 0%, #85ce61 100%);
   }
 
   .gradient-info {
@@ -925,7 +925,7 @@ onUnmounted(() => {
   }
 
   .gradient-warning {
-    background: linear-gradient(135deg, #e6a23c 0%, #f5a623 100%);
+    background: linear-gradient(135deg, var(--el-color-warning) 0%, #f5a623 100%);
   }
 
   .scenario-actions {
@@ -953,7 +953,7 @@ onUnmounted(() => {
     gap: 8px;
     flex-wrap: wrap;
     font-size: 12px;
-    color: #606266;
+    color: var(--text-regular);
 
     @media (max-width: 575px) {
       font-size: 11px;

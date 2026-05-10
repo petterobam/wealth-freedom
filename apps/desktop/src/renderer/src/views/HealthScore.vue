@@ -182,7 +182,7 @@ onMounted(loadScore)
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #999;
+  color: var(--text-secondary);
   .empty-icon { font-size: 48px; margin-bottom: 12px; }
 }
 
@@ -192,7 +192,7 @@ onMounted(loadScore)
   align-items: center;
   gap: 32px;
   padding: 24px;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   margin-bottom: 24px;
@@ -230,7 +230,7 @@ onMounted(loadScore)
 
     .score-label {
       font-size: 11px;
-      color: #999;
+      color: var(--text-secondary);
       margin-top: 2px;
     }
   }
@@ -245,7 +245,7 @@ onMounted(loadScore)
 
   .score-tip {
     font-size: 14px;
-    color: #666;
+    color: var(--text-regular);
     line-height: 1.5;
   }
 }

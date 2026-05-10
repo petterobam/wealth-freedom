@@ -490,7 +490,7 @@ onMounted(loadRules)
 }
 
 .page-desc {
-  color: #666;
+  color: var(--text-regular);
   margin-bottom: 20px;
 }
 
@@ -513,7 +513,7 @@ onMounted(loadRules)
 }
 
 .overview-card {
-  background: var(--bg-card, #fff);
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -525,7 +525,7 @@ onMounted(loadRules)
   &:hover { transform: translateY(-2px); }
 
   .card-icon { font-size: 28px; }
-  .card-label { font-size: 12px; color: #999; }
+  .card-label { font-size: 12px; color: var(--text-secondary); }
   .card-value { font-size: 16px; font-weight: 700; color: var(--text-primary, #1a1a2e); }
 }
 
@@ -538,14 +538,14 @@ onMounted(loadRules)
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #999;
+  color: var(--text-secondary);
 
   .empty-icon { font-size: 48px; margin-bottom: 12px; }
   .empty-hint { font-size: 13px; margin-bottom: 16px; }
 }
 
 .rule-item {
-  background: var(--bg-card, #fff);
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 16px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -555,7 +555,7 @@ onMounted(loadRules)
   &:hover { transform: translateY(-1px); }
 
   &.paused {
-    border-left-color: #c0c4cc;
+    border-left-color: var(--text-placeholder);
     opacity: 0.7;
   }
 }
@@ -581,11 +581,11 @@ onMounted(loadRules)
 
   &.income {
     background: rgba(103, 194, 58, 0.1);
-    color: #67c23a;
+    color: var(--el-color-success);
   }
   &.expense {
     background: rgba(245, 108, 108, 0.1);
-    color: #f56c6c;
+    color: var(--el-color-danger);
   }
 }
 
@@ -601,7 +601,7 @@ onMounted(loadRules)
 
 .rule-freq {
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .rule-actions {
@@ -624,20 +624,20 @@ onMounted(loadRules)
 
 .detail-label {
   font-size: 11px;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .detail-value {
   font-size: 13px;
   color: var(--text-primary, #1a1a2e);
 
-  &.amount.income { color: #67c23a; }
-  &.amount.expense { color: #f56c6c; }
+  &.amount.income { color: var(--el-color-success); }
+  &.amount.expense { color: var(--el-color-danger); }
 }
 
 .form-hint {
   margin-left: 8px;
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 }
 </style>

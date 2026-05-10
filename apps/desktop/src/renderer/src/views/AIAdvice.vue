@@ -521,17 +521,17 @@ onMounted(async () => {
 
 .tip-warning {
   background: #fdf6ec;
-  border-left: 3px solid #e6a23c;
+  border-left: 3px solid var(--el-color-warning);
 }
 
 .tip-success {
   background: #f0f9eb;
-  border-left: 3px solid #67c23a;
+  border-left: 3px solid var(--el-color-success);
 }
 
 .tip-info {
-  background: #ecf5ff;
-  border-left: 3px solid #409eff;
+  background: var(--el-color-primary-light-9);
+  border-left: 3px solid var(--el-color-primary);
 }
 
 .tip-icon {
@@ -546,7 +546,7 @@ onMounted(async () => {
 
 .tip-desc {
   font-size: 13px;
-  color: #666;
+  color: var(--text-regular);
   line-height: 1.5;
 }
 
@@ -560,7 +560,7 @@ onMounted(async () => {
 }
 
 .tab-desc {
-  color: #666;
+  color: var(--text-regular);
   margin-bottom: 16px;
 }
 
@@ -573,14 +573,14 @@ onMounted(async () => {
 }
 
 .form-label {
-  color: #666;
+  color: var(--text-regular);
 }
 
 /* AI 结果 */
 .ai-result {
   margin-top: 20px;
   padding: 20px;
-  background: var(--el-bg-color-page, #f5f7fa);
+  background: var(--el-bg-color-page, var(--bg-body));
   border-radius: 8px;
   line-height: 1.8;
   font-size: 14px;
@@ -602,7 +602,7 @@ onMounted(async () => {
   overflow-y: auto;
   margin-bottom: 16px;
   padding: 12px;
-  background: var(--el-bg-color-page, #f5f7fa);
+  background: var(--el-bg-color-page, var(--bg-body));
   border-radius: 8px;
 }
 
@@ -631,11 +631,11 @@ onMounted(async () => {
 
 .chat-msg.user .msg-content {
   background: var(--el-color-primary);
-  color: #fff;
+  color: var(--bg-card);
 }
 
 .chat-msg.assistant .msg-content {
-  background: var(--el-bg-color, #fff);
+  background: var(--el-bg-color, var(--bg-card));
   border: 1px solid var(--el-border-color-lighter);
 }
 

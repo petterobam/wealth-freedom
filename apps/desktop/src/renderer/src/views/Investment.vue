@@ -584,50 +584,50 @@ onMounted(loadAll)
 <style scoped>
 .investment-page { padding: 24px; max-width: 1400px; margin: 0 auto; }
 .page-title { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-.page-desc { color: #909399; margin-bottom: 20px; }
+.page-desc { color: var(--text-secondary); margin-bottom: 20px; }
 
 .overview-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.overview-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 16px; transition: transform 0.2s; }
+.overview-card { background: var(--bg-card); border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 16px; transition: transform 0.2s; }
 .overview-card:hover { transform: translateY(-2px); }
 .card-icon { font-size: 32px; }
-.card-label { font-size: 13px; color: #909399; }
+.card-label { font-size: 13px; color: var(--text-secondary); }
 .card-value { font-size: 22px; font-weight: 700; }
 .card-sub { font-size: 13px; font-weight: 600; }
-.positive { border-left: 3px solid #67c23a; }
-.negative { border-left: 3px solid #f56c6c; }
-.text-green { color: #67c23a; }
-.text-red { color: #f56c6c; }
+.positive { border-left: 3px solid var(--el-color-success); }
+.negative { border-left: 3px solid var(--el-color-danger); }
+.text-green { color: var(--el-color-success); }
+.text-red { color: var(--el-color-danger); }
 
 .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
 .toolbar-actions { display: flex; gap: 8px; }
 
-.account-section { background: #fff; border-radius: 12px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-.account-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; cursor: pointer; background: #fafafa; border-bottom: 1px solid #ebeef5; }
-.account-header:hover { background: #f5f7fa; }
+.account-section { background: var(--bg-card); border-radius: 12px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.account-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; cursor: pointer; background: var(--bg-body); border-bottom: 1px solid #ebeef5; }
+.account-header:hover { background: var(--bg-body); }
 .account-name { font-weight: 600; font-size: 15px; margin-right: 10px; }
 .account-info { display: flex; align-items: center; gap: 8px; }
 .account-body { padding: 16px 20px; }
 
 .portfolio-block { margin-bottom: 16px; }
 .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.portfolio-name { font-weight: 600; font-size: 14px; color: #606266; }
+.portfolio-name { font-weight: 600; font-size: 14px; color: var(--text-regular); }
 .portfolio-actions { display: flex; gap: 4px; }
-.empty-portfolio { text-align: center; color: #c0c4cc; padding: 20px 0; }
+.empty-portfolio { text-align: center; color: var(--text-placeholder); padding: 20px 0; }
 
-.editable-price { cursor: pointer; border-bottom: 1px dashed #409eff; }
-.editable-price:hover { color: #409eff; }
+.editable-price { cursor: pointer; border-bottom: 1px dashed var(--el-color-primary); }
+.editable-price:hover { color: var(--el-color-primary); }
 
-.empty-state { text-align: center; padding: 60px 0; color: #c0c4cc; }
+.empty-state { text-align: center; padding: 60px 0; color: var(--text-placeholder); }
 .empty-icon { font-size: 48px; margin-bottom: 12px; }
 
 .allocation-section { margin-top: 8px; }
-.allocation-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px; }
-.allocation-card h3 { font-size: 16px; margin-bottom: 16px; color: #303133; }
+.allocation-card { background: var(--bg-card); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px; }
+.allocation-card h3 { font-size: 16px; margin-bottom: 16px; color: var(--text-primary); }
 .alloc-bar { margin-bottom: 12px; }
-.alloc-label { display: flex; justify-content: space-between; font-size: 13px; color: #606266; margin-bottom: 4px; }
+.alloc-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-regular); margin-bottom: 4px; }
 .alloc-track { height: 8px; background: #f0f2f5; border-radius: 4px; overflow: hidden; }
-.alloc-fill { height: 100%; background: linear-gradient(90deg, #409eff, #67c23a); border-radius: 4px; transition: width 0.3s; }
-.alloc-fill.blue { background: linear-gradient(90deg, #409eff, #36d399); }
+.alloc-fill { height: 100%; background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-success)); border-radius: 4px; transition: width 0.3s; }
+.alloc-fill.blue { background: linear-gradient(90deg, var(--el-color-primary), #36d399); }
 .top-holdings { margin-top: 16px; }
 
 :deep(.el-table) { font-size: 13px; }

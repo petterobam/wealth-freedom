@@ -404,7 +404,7 @@ onMounted(async () => {
   }
 
   .page-desc {
-    color: #909399;
+    color: var(--text-secondary);
     margin-bottom: 24px;
   }
 
@@ -415,7 +415,7 @@ onMounted(async () => {
   }
 
   .goal-section {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 24px;
 
@@ -460,7 +460,7 @@ onMounted(async () => {
       }
 
       p {
-        color: #909399;
+        color: var(--text-secondary);
         font-size: 14px;
       }
     }
@@ -481,7 +481,7 @@ onMounted(async () => {
         .label {
           display: block;
           font-size: 12px;
-          color: #909399;
+          color: var(--text-secondary);
           margin-bottom: 4px;
         }
 
@@ -501,10 +501,10 @@ onMounted(async () => {
       align-items: center;
       gap: 8px;
       padding: 12px;
-      background: #f5f7fa;
+      background: var(--bg-body);
       border-radius: 8px;
       font-size: 13px;
-      color: #606266;
+      color: var(--text-regular);
     }
 
     .goal-actions {
@@ -520,7 +520,7 @@ onMounted(async () => {
   .timeline-section {
     margin-top: 32px;
     padding: 24px;
-    background: #f8f9fb;
+    background: var(--bg-body);
     border-radius: 16px;
 
     .section-title {
@@ -533,7 +533,7 @@ onMounted(async () => {
     }
 
     .section-desc {
-      color: #909399;
+      color: var(--text-secondary);
       font-size: 14px;
       margin-bottom: 20px;
     }
@@ -547,7 +547,7 @@ onMounted(async () => {
   }
 
   .timeline-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
@@ -582,7 +582,7 @@ onMounted(async () => {
 
     .timeline-amount {
       font-size: 13px;
-      color: #909399;
+      color: var(--text-secondary);
       margin-bottom: 12px;
     }
   }
@@ -591,7 +591,7 @@ onMounted(async () => {
     display: flex;
     gap: 24px;
     padding: 16px;
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     margin-bottom: 20px;
 
@@ -602,14 +602,14 @@ onMounted(async () => {
       .metric-label {
         display: block;
         font-size: 12px;
-        color: #909399;
+        color: var(--text-secondary);
         margin-bottom: 4px;
       }
 
       .metric-value {
         font-size: 16px;
         font-weight: 600;
-        color: #303133;
+        color: var(--text-primary);
       }
     }
   }
@@ -619,7 +619,7 @@ onMounted(async () => {
     align-items: center;
     gap: 24px;
     padding: 16px;
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
 
     .param-item {
@@ -630,7 +630,7 @@ onMounted(async () => {
 
       .param-label {
         font-size: 14px;
-        color: #606266;
+        color: var(--text-regular);
         white-space: nowrap;
       }
 
@@ -664,13 +664,13 @@ onMounted(async () => {
         display: block;
         font-size: 14px;
         font-weight: 600;
-        color: #303133;
+        color: var(--text-primary);
         margin-bottom: 6px;
       }
 
       p {
         font-size: 13px;
-        color: #606266;
+        color: var(--text-regular);
         line-height: 1.6;
         margin: 0;
       }
@@ -682,15 +682,15 @@ onMounted(async () => {
     align-items: center;
     gap: 8px;
     padding: 16px;
-    background: #f0f9ff;
-    border-left: 4px solid #67c23a;
+    background: var(--el-color-primary-light-9);
+    border-left: 4px solid var(--el-color-success);
     border-radius: 8px;
     margin-top: 16px;
     font-size: 14px;
-    color: #606266;
+    color: var(--text-regular);
 
     .el-icon {
-      color: #67c23a;
+      color: var(--el-color-success);
       font-size: 20px;
     }
   }

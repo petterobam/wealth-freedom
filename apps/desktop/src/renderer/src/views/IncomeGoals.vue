@@ -543,7 +543,7 @@ const resetForm = () => {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .quick-actions {
@@ -564,7 +564,7 @@ const resetForm = () => {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
@@ -579,14 +579,14 @@ const resetForm = () => {
 
 .summary-label {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .summary-value {
   font-size: 24px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .goal-list {
@@ -614,7 +614,7 @@ const resetForm = () => {
 .goal-title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .header-right {
@@ -636,18 +636,18 @@ const resetForm = () => {
 
 .metric-label {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .metric-value {
   font-size: 28px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .metric-period {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .goal-progress {
@@ -662,13 +662,13 @@ const resetForm = () => {
 
 .progress-label {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 .progress-value {
   font-size: 14px;
   font-weight: 600;
-  color: #409eff;
+  color: var(--el-color-primary);
 }
 
 .goal-remaining {
@@ -679,7 +679,7 @@ const resetForm = () => {
 
 .remaining-label {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .remaining-value {
@@ -710,12 +710,12 @@ const resetForm = () => {
 
 .deadline-label {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .deadline-value {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 .deadline-days {
@@ -732,19 +732,19 @@ const resetForm = () => {
 
 .notes-label {
   font-size: 12px;
-  color: #909399;
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .notes-text {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   line-height: 1.5;
 }
 
 .form-tip {
   font-size: 12px;
-  color: #909399;
+  color: var(--text-secondary);
   margin-top: 4px;
 }
 
@@ -767,7 +767,7 @@ const resetForm = () => {
 
 .strategy-category p {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   margin-bottom: 16px;
 }
 </style>

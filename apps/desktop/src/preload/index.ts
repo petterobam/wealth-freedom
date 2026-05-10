@@ -10,31 +10,31 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 账户相关
   getAccounts: () => ipcRenderer.invoke('account:getAll'),
   createAccount: (data: any) => ipcRenderer.invoke('account:create', data),
-  updateAccount: (data: any) => ipcRenderer.invoke('account:update', data),
+  updateAccount: (data: any) => ipcRenderer.invoke('account:update', data.id, data),
   deleteAccount: (id: number) => ipcRenderer.invoke('account:delete', id),
-  
+
   // 负债相关
   getDebts: () => ipcRenderer.invoke('debt:getAll'),
   createDebt: (data: any) => ipcRenderer.invoke('debt:create', data),
-  updateDebt: (data: any) => ipcRenderer.invoke('debt:update', data),
+  updateDebt: (data: any) => ipcRenderer.invoke('debt:update', data.id, data),
   deleteDebt: (id: number) => ipcRenderer.invoke('debt:delete', id),
-  
+
   // 交易相关
   getTransactions: (filters?: any) => ipcRenderer.invoke('transaction:getAll', filters),
   createTransaction: (data: any) => ipcRenderer.invoke('transaction:create', data),
-  updateTransaction: (data: any) => ipcRenderer.invoke('transaction:update', data),
+  updateTransaction: (data: any) => ipcRenderer.invoke('transaction:update', data.id, data),
   deleteTransaction: (id: number) => ipcRenderer.invoke('transaction:delete', id),
-  
+
   // 目标相关
   getGoals: () => ipcRenderer.invoke('goal:getAll'),
   createGoal: (data: any) => ipcRenderer.invoke('goal:create', data),
-  updateGoal: (data: any) => ipcRenderer.invoke('goal:update', data),
+  updateGoal: (data: any) => ipcRenderer.invoke('goal:update', data.id, data),
   deleteGoal: (id: number) => ipcRenderer.invoke('goal:delete', id),
-  
+
   // 梦想相关
   getDreams: () => ipcRenderer.invoke('dream:getAll'),
   createDream: (data: any) => ipcRenderer.invoke('dream:create', data),
-  updateDream: (data: any) => ipcRenderer.invoke('dream:update', data),
+  updateDream: (data: any) => ipcRenderer.invoke('dream:update', data.id, data),
   deleteDream: (id: number) => ipcRenderer.invoke('dream:delete', id),
   
   // 计算相关
@@ -42,6 +42,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getCashFlow: (month: string) => ipcRenderer.invoke('calculate:cashFlow', month),
   getGoalsProgress: () => ipcRenderer.invoke('calculate:goalsProgress'),
   getRatios: () => ipcRenderer.invoke('calculate:ratios'),
+
+  // 仪表盘数据
+  getDashboardData: () => ipcRenderer.invoke('dashboard:getData'),
 
   // 收入来源相关
   getIncomeSources: () => ipcRenderer.invoke('incomeSource:getAll'),

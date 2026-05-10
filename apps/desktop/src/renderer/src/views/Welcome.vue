@@ -411,7 +411,7 @@ const handleSkip = async () => {
   width: 640px;
   max-height: 90vh;
   overflow-y: auto;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 40px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
@@ -459,16 +459,16 @@ const handleSkip = async () => {
 
   h1 {
     font-size: 24px;
-    color: #303133;
+    color: var(--text-primary);
     margin-bottom: 8px;
 
     .is-dark & {
-      color: #e0e0e0;
+      color: var(--text-primary);
     }
   }
 
   p {
-    color: #909399;
+    color: var(--text-secondary);
   }
 }
 
@@ -486,7 +486,7 @@ const handleSkip = async () => {
 
   .unit {
     margin-left: 10px;
-    color: #909399;
+    color: var(--text-secondary);
   }
 }
 

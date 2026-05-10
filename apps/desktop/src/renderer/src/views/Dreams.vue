@@ -203,7 +203,7 @@ onMounted(() => {
   }
 
   .page-desc {
-    color: #909399;
+    color: var(--text-secondary);
   }
 
   .dreams-grid {
@@ -214,7 +214,7 @@ onMounted(() => {
   }
 
   .dream-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 16px;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -259,7 +259,7 @@ onMounted(() => {
 
     .dream-desc {
       font-size: 14px;
-      color: #909399;
+      color: var(--text-secondary);
       margin-bottom: 12px;
       line-height: 1.5;
     }
@@ -271,7 +271,7 @@ onMounted(() => {
       border-top: 1px solid #f0f0f0;
 
       .label {
-        color: #909399;
+        color: var(--text-secondary);
         font-size: 14px;
       }
 
@@ -286,7 +286,7 @@ onMounted(() => {
       align-items: center;
       justify-content: center;
       min-height: 280px;
-      border: 2px dashed #dcdfe6;
+      border: 2px dashed var(--border-color);
       background: transparent;
       cursor: pointer;
 
@@ -300,7 +300,7 @@ onMounted(() => {
         flex-direction: column;
         align-items: center;
         gap: 8px;
-        color: #909399;
+        color: var(--text-secondary);
 
         .el-icon {
           font-size: 32px;
@@ -313,7 +313,7 @@ onMounted(() => {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px;
     padding: 30px;
-    color: #fff;
+    color: var(--bg-card);
 
     h3 {
       font-size: 20px;

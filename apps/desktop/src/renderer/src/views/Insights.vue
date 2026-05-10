@@ -225,7 +225,7 @@ onMounted(async () => {
 }
 
 .subtitle {
-  color: #909399;
+  color: var(--text-secondary);
   font-size: 14px;
   margin: 0;
 }
@@ -236,7 +236,7 @@ onMounted(async () => {
   justify-content: center;
   gap: 8px;
   padding: 60px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 /* 基准对比 */
@@ -305,10 +305,10 @@ onMounted(async () => {
   font-weight: 500;
 }
 
-.level-badge.excellent { background: #f0f9eb; color: #67c23a; }
-.level-badge.good { background: #ecf5ff; color: #409eff; }
-.level-badge.warning { background: #fdf6ec; color: #e6a23c; }
-.level-badge.danger { background: #fef0f0; color: #f56c6c; }
+.level-badge.excellent { background: #f0f9eb; color: var(--el-color-success); }
+.level-badge.good { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
+.level-badge.warning { background: #fdf6ec; color: var(--el-color-warning); }
+.level-badge.danger { background: #fef0f0; color: var(--el-color-danger); }
 
 .compare-bar {
   height: 24px;
@@ -339,13 +339,13 @@ onMounted(async () => {
 
 .compare-benchmark {
   font-size: 12px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .item-desc {
   margin: 6px 0 0 0;
   font-size: 13px;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 /* 成就系统 */
@@ -363,13 +363,13 @@ onMounted(async () => {
   border: 1px solid var(--el-border-color-lighter);
 }
 
-.summary-card.total { background: linear-gradient(135deg, #fef9e7, #fff); }
-.summary-card.unlocked { background: linear-gradient(135deg, #e8f5e9, #fff); }
-.summary-card.progress { background: linear-gradient(135deg, #e3f2fd, #fff); }
+.summary-card.total { background: linear-gradient(135deg, #fef9e7, var(--bg-card)); }
+.summary-card.unlocked { background: linear-gradient(135deg, #e8f5e9, var(--bg-card)); }
+.summary-card.progress { background: linear-gradient(135deg, #e3f2fd, var(--bg-card)); }
 
 .summary-icon { font-size: 24px; margin-bottom: 4px; }
 .summary-value { font-size: 28px; font-weight: 700; color: var(--el-text-color-primary); }
-.summary-label { font-size: 13px; color: #909399; margin-top: 2px; }
+.summary-label { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
 
 .achievement-group {
   margin-bottom: 24px;
@@ -400,7 +400,7 @@ onMounted(async () => {
 }
 
 .achievement-card.unlocked {
-  background: linear-gradient(135deg, #f0f9eb, #fff);
+  background: linear-gradient(135deg, #f0f9eb, var(--bg-card));
   border-color: #b3e19d;
 }
 
@@ -427,13 +427,13 @@ onMounted(async () => {
 
 .achievement-desc {
   font-size: 12px;
-  color: #909399;
+  color: var(--text-secondary);
   margin: 2px 0 4px 0;
 }
 
 .unlocked-time {
   font-size: 11px;
-  color: #67c23a;
+  color: var(--el-color-success);
 }
 
 .tier-badge {
@@ -462,13 +462,13 @@ onMounted(async () => {
   margin-bottom: 20px;
 }
 
-.phase-card.accumulation { background: linear-gradient(135deg, #fff3e0, #fff); }
-.phase-card.growth { background: linear-gradient(135deg, #e8f5e9, #fff); }
-.phase-card.freedom { background: linear-gradient(135deg, #e3f2fd, #fff); }
+.phase-card.accumulation { background: linear-gradient(135deg, #fff3e0, var(--bg-card)); }
+.phase-card.growth { background: linear-gradient(135deg, #e8f5e9, var(--bg-card)); }
+.phase-card.freedom { background: linear-gradient(135deg, #e3f2fd, var(--bg-card)); }
 
 .phase-icon { font-size: 48px; margin-bottom: 8px; }
 .phase-label { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-.phase-networth { font-size: 16px; color: #606266; }
+.phase-networth { font-size: 16px; color: var(--text-regular); }
 
 .recommendation-card {
   padding: 20px;
@@ -483,7 +483,7 @@ onMounted(async () => {
 
 .recommendation-card p {
   margin: 0;
-  color: #606266;
+  color: var(--text-regular);
   line-height: 1.6;
 }
 

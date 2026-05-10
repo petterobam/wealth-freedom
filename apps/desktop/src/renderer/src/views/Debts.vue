@@ -241,12 +241,12 @@ onMounted(() => {
 
     &.total-debt {
       background: linear-gradient(135deg, #f56c6c 0%, #f89898 100%);
-      color: #fff;
+      color: var(--bg-card);
     }
 
     &.monthly-payment {
       background: linear-gradient(135deg, #e6a23c 0%, #f5d442 100%);
-      color: #fff;
+      color: var(--bg-card);
     }
 
     .summary-icon {
@@ -272,7 +272,7 @@ onMounted(() => {
     background: #fef0f0;
     border-radius: 12px;
     margin-bottom: 20px;
-    color: #f56c6c;
+    color: var(--el-color-danger);
 
     h4 {
       margin-bottom: 4px;
@@ -291,7 +291,7 @@ onMounted(() => {
   }
 
   .debt-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 20px;
 
@@ -309,12 +309,12 @@ onMounted(() => {
 
       &.consumer {
         background: #fef0f0;
-        color: #f56c6c;
+        color: var(--el-color-danger);
       }
 
       &.mortgage {
         background: #f4f4f5;
-        color: #909399;
+        color: var(--text-secondary);
       }
     }
 
@@ -336,7 +336,7 @@ onMounted(() => {
         .label {
           display: block;
           font-size: 12px;
-          color: #909399;
+          color: var(--text-secondary);
           margin-bottom: 4px;
         }
 
@@ -344,7 +344,7 @@ onMounted(() => {
           font-weight: 600;
 
           &.highlight {
-            color: #f56c6c;
+            color: var(--el-color-danger);
           }
         }
       }
@@ -354,7 +354,7 @@ onMounted(() => {
   .empty-state {
     text-align: center;
     padding: 60px;
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
 
     .empty-icon {
@@ -364,7 +364,7 @@ onMounted(() => {
     }
 
     .empty-tip {
-      color: #909399;
+      color: var(--text-secondary);
       font-size: 14px;
     }
   }

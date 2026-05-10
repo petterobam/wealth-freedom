@@ -537,7 +537,7 @@ onMounted(() => {
 <style scoped>
 .income-strategies {
   padding: 20px;
-  background-color: #f5f7fa;
+  background-color: var(--bg-body);
   min-height: 100vh;
 }
 
@@ -561,18 +561,18 @@ onMounted(() => {
   margin: 0 0 4px 0;
   font-size: 20px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .header-left p {
   margin: 0;
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .recommendation-card {
   margin-bottom: 20px;
-  border: 2px solid #67c23a;
+  border: 2px solid var(--el-color-success);
 }
 
 .card-header {
@@ -584,7 +584,7 @@ onMounted(() => {
 .card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -609,7 +609,7 @@ onMounted(() => {
 .strategy-card {
   cursor: pointer;
   transition: all 0.3s;
-  border: 1px solid #e4e7ed;
+  border: 1px solid var(--border-color);
 }
 
 .strategy-card:hover {
@@ -618,12 +618,12 @@ onMounted(() => {
 }
 
 .strategy-card.recommendation {
-  border: 2px solid #67c23a;
+  border: 2px solid var(--el-color-success);
 }
 
 .strategy-card.is-active {
-  border-color: #67c23a;
-  background-color: #f0f9ff;
+  border-color: var(--el-color-success);
+  background-color: var(--el-color-primary-light-9);
 }
 
 .strategy-header {
@@ -648,7 +648,7 @@ onMounted(() => {
 .strategy-title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   flex: 1;
 }
 
@@ -661,7 +661,7 @@ onMounted(() => {
 
 .strategy-desc {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   line-height: 1.6;
   margin-bottom: 12px;
 }
@@ -676,7 +676,7 @@ onMounted(() => {
   align-items: center;
   gap: 4px;
   font-size: 13px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .strategy-reason {
@@ -685,7 +685,7 @@ onMounted(() => {
   background-color: #f4f4f5;
   border-radius: 4px;
   font-size: 13px;
-  color: #606266;
+  color: var(--text-regular);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -705,13 +705,13 @@ onMounted(() => {
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   margin-bottom: 12px;
 }
 
 .detail-section p {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   line-height: 1.8;
   margin: 0;
 }
@@ -733,13 +733,13 @@ onMounted(() => {
 
 .case-name {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 .case-value {
   font-size: 14px;
   font-weight: 600;
-  color: #409EFF;
+  color: var(--el-color-primary);
 }
 
 .types-list {

@@ -87,7 +87,7 @@ const handleDismiss = () => {
 
     h3 {
       font-size: 16px;
-      color: #606266;
+      color: var(--text-regular);
       margin-bottom: 8px;
 
       .is-dark & {
@@ -97,7 +97,7 @@ const handleDismiss = () => {
 
     .error-detail {
       font-size: 13px;
-      color: #909399;
+      color: var(--text-secondary);
       margin-bottom: 20px;
       word-break: break-all;
     }

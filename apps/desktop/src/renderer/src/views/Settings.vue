@@ -1232,11 +1232,11 @@ onMounted(async () => {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .page-desc {
-  color: #909399;
+  color: var(--text-secondary);
   margin-bottom: 24px;
 }
 
@@ -1268,14 +1268,14 @@ onMounted(async () => {
     .section-title {
       font-size: 15px;
       font-weight: 600;
-      color: #606266;
+      color: var(--text-regular);
       margin-bottom: 16px;
     }
   }
 
   .unit {
     margin-left: 8px;
-    color: #909399;
+    color: var(--text-secondary);
   }
 }
 
@@ -1283,7 +1283,7 @@ onMounted(async () => {
   display: flex;
   gap: 24px;
   padding: 16px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   border-radius: 8px;
   margin-top: 16px;
 
@@ -1294,29 +1294,29 @@ onMounted(async () => {
     .calc-label {
       display: block;
       font-size: 12px;
-      color: #909399;
+      color: var(--text-secondary);
       margin-bottom: 6px;
     }
 
     .calc-value {
       font-size: 20px;
       font-weight: 700;
-      color: #303133;
+      color: var(--text-primary);
 
       &.highlight {
-        color: #409eff;
+        color: var(--el-color-primary);
       }
 
       &.positive {
-        color: #67c23a;
+        color: var(--el-color-success);
       }
 
       &.negative {
-        color: #f56c6c;
+        color: var(--el-color-danger);
       }
 
       &.warning {
-        color: #e6a23c;
+        color: var(--el-color-warning);
       }
     }
   }
@@ -1327,16 +1327,16 @@ onMounted(async () => {
   align-items: flex-start;
   gap: 8px;
   padding: 12px;
-  background: #ecf5ff;
-  border-left: 3px solid #409eff;
+  background: var(--el-color-primary-light-9);
+  border-left: 3px solid var(--el-color-primary);
   border-radius: 4px;
   margin-top: 12px;
   font-size: 13px;
-  color: #606266;
+  color: var(--text-regular);
   line-height: 1.6;
 
   .el-icon {
-    color: #409eff;
+    color: var(--el-color-primary);
     font-size: 16px;
     margin-top: 2px;
   }
@@ -1353,12 +1353,12 @@ onMounted(async () => {
   align-items: flex-start;
   gap: 16px;
   padding: 16px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   border-radius: 12px;
   transition: all 0.3s;
 
   &:hover {
-    background: #ecf5ff;
+    background: var(--el-color-primary-light-9);
   }
 
   .goal-icon {
@@ -1376,17 +1376,17 @@ onMounted(async () => {
 
     .goal-formula {
       font-size: 13px;
-      color: #909399;
+      color: var(--text-secondary);
       margin-bottom: 8px;
       font-family: 'Courier New', monospace;
     }
 
     .goal-progress {
       font-size: 14px;
-      color: #606266;
+      color: var(--text-regular);
 
       &.achieved {
-        color: #67c23a;
+        color: var(--el-color-success);
         font-weight: 600;
       }
     }
@@ -1395,11 +1395,11 @@ onMounted(async () => {
   .goal-theory {
     .el-icon {
       font-size: 20px;
-      color: #909399;
+      color: var(--text-secondary);
       cursor: help;
 
       &:hover {
-        color: #409eff;
+        color: var(--el-color-primary);
       }
     }
   }
@@ -1412,18 +1412,18 @@ onMounted(async () => {
 
   .action-hint {
     font-size: 13px;
-    color: #909399;
+    color: var(--text-secondary);
     margin: 0;
   }
 }
 
 .import-preview-text {
-  background: #f5f7fa;
+  background: var(--bg-body);
   padding: 16px;
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.8;
-  color: #303133;
+  color: var(--text-primary);
   white-space: pre-wrap;
   margin: 0;
 }
@@ -1452,7 +1452,7 @@ onMounted(async () => {
 
 .backup-list-title {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   margin-bottom: 8px;
 }
 
@@ -1460,17 +1460,17 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   padding: 6px 10px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   border-radius: 6px;
   margin-bottom: 6px;
   font-size: 13px;
 }
 .rate-currency {
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 .rate-value {
-  color: #67c23a;
+  color: var(--el-color-success);
   font-family: 'Monaco', monospace;
 }
 .currency-cache-info {

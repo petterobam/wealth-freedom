@@ -287,17 +287,17 @@ onMounted(() => {
   }
 
   .stat-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
 
     &.income {
-      border-left: 4px solid #67c23a;
+      border-left: 4px solid var(--el-color-success);
     }
 
     &.expense {
-      border-left: 4px solid #f56c6c;
+      border-left: 4px solid var(--el-color-danger);
     }
 
     &.balance {
@@ -306,7 +306,7 @@ onMounted(() => {
 
     .stat-label {
       font-size: 14px;
-      color: #909399;
+      color: var(--text-secondary);
       margin-bottom: 8px;
     }
 
@@ -315,27 +315,27 @@ onMounted(() => {
       font-weight: 700;
 
       &.positive {
-        color: #67c23a;
+        color: var(--el-color-success);
       }
 
       &.negative {
-        color: #f56c6c;
+        color: var(--el-color-danger);
       }
     }
   }
 
   .transaction-list {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 16px;
 
     .income-amount {
-      color: #67c23a;
+      color: var(--el-color-success);
       font-weight: 600;
     }
 
     .expense-amount {
-      color: #f56c6c;
+      color: var(--el-color-danger);
       font-weight: 600;
     }
   }

@@ -352,13 +352,13 @@ onUnmounted(() => {
 .bs-title-icon { font-size: 28px; }
 .bs-title h1 {
   font-size: 22px;
-  background: linear-gradient(90deg, #409EFF, #67C23A);
+  background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-success));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
 }
 .bs-header-right { display: flex; align-items: center; gap: 16px; }
-.bs-time { font-size: 14px; color: #999; font-variant-numeric: tabular-nums; }
+.bs-time { font-size: 14px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 
 /* Stage bar */
 .bs-stage-bar {
@@ -383,7 +383,7 @@ onUnmounted(() => {
   border: 1px solid rgba(64,158,255,0.3);
 }
 .stage-label { font-weight: 600; }
-.stage-value { font-size: 11px; color: #999; margin-left: 6px; }
+.stage-value { font-size: 11px; color: var(--text-secondary); margin-left: 6px; }
 .stage-divider { width: 40px; height: 1px; background: rgba(255,255,255,0.15); }
 
 /* Grid */
@@ -414,7 +414,7 @@ onUnmounted(() => {
 }
 .bs-card-title {
   font-size: 14px;
-  color: #999;
+  color: var(--text-secondary);
   margin-bottom: 12px;
   font-weight: 500;
 }
@@ -423,11 +423,11 @@ onUnmounted(() => {
 /* Net worth flip */
 .flip-numbers { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
 .flip-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
-.flip-label { color: #999; font-size: 14px; }
+.flip-label { color: var(--text-secondary); font-size: 14px; }
 .flip-value { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.flip-value.positive { color: #67C23A; }
-.flip-value.negative { color: #F56C6C; }
-.flip-value.grand { font-size: 32px; color: #409EFF; }
+.flip-value.positive { color: var(--el-color-success); }
+.flip-value.negative { color: var(--el-color-danger); }
+.flip-value.grand { font-size: 32px; color: var(--el-color-primary); }
 .flip-main { padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
 
 /* Savings progress */
@@ -435,7 +435,7 @@ onUnmounted(() => {
 .savings-item {}
 .savings-item-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
 .savings-name { font-size: 13px; color: #ccc; }
-.savings-pct { font-size: 13px; font-weight: 600; color: #409EFF; }
+.savings-pct { font-size: 13px; font-weight: 600; color: var(--el-color-primary); }
 .savings-bar-bg {
   height: 8px;
   background: rgba(255,255,255,0.08);
@@ -447,7 +447,7 @@ onUnmounted(() => {
   border-radius: 4px;
   transition: width 1s ease;
 }
-.savings-detail { font-size: 11px; color: #666; margin-top: 2px; }
+.savings-detail { font-size: 11px; color: var(--text-regular); margin-top: 2px; }
 
 /* Dark override for Element Plus */
 :deep(.el-button) {

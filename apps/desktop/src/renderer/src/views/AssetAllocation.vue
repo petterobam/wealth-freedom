@@ -713,12 +713,12 @@ onUnmounted(() => {
     margin: 0 0 20px 0;
     font-size: 28px;
     font-weight: 600;
-    color: #303133;
+    color: var(--text-primary);
     animation: slideDown 0.5s ease-out;
   }
 
   .finance-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 20px;
@@ -739,7 +739,7 @@ onUnmounted(() => {
       .card-title {
         font-size: 18px;
         font-weight: 600;
-        color: #303133;
+        color: var(--text-primary);
         position: relative;
 
         &::after {
@@ -749,7 +749,7 @@ onUnmounted(() => {
           left: 0;
           width: 40px;
           height: 3px;
-          background: linear-gradient(90deg, #409eff, #67c23a);
+          background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-success));
           border-radius: 2px;
         }
       }
@@ -790,12 +790,12 @@ onUnmounted(() => {
           .stage-name {
             font-size: 16px;
             font-weight: 600;
-            color: #303133;
+            color: var(--text-primary);
           }
 
           .stage-desc {
             font-size: 12px;
-            color: #909399;
+            color: var(--text-secondary);
             margin-top: 4px;
           }
         }
@@ -805,7 +805,7 @@ onUnmounted(() => {
             animation: pulse 0.3s ease-in-out;
 
             .stage-name {
-              color: #fff;
+              color: var(--bg-card);
             }
 
             .stage-desc {
@@ -835,7 +835,7 @@ onUnmounted(() => {
         transition: all 0.3s ease;
 
         &:hover {
-          background: #f5f7fa;
+          background: var(--bg-body);
         }
 
         .slider-header {
@@ -847,25 +847,25 @@ onUnmounted(() => {
           .label {
             font-size: 14px;
             font-weight: 500;
-            color: #303133;
+            color: var(--text-primary);
           }
 
           .percentage {
             font-size: 16px;
             font-weight: 600;
-            color: #409eff;
+            color: var(--el-color-primary);
             transition: color 0.3s ease;
           }
 
           .amount {
             font-size: 14px;
-            color: #909399;
+            color: var(--text-secondary);
           }
         }
 
         :deep(.el-slider) {
           .el-slider__runway {
-            background: #e4e7ed;
+            background: var(--border-color);
             transition: all 0.3s ease;
           }
 
@@ -887,15 +887,15 @@ onUnmounted(() => {
         text-align: center;
         font-size: 16px;
         font-weight: 600;
-        color: #f56c6c;
+        color: var(--el-color-danger);
         padding: 12px;
         background: #fef0f0;
         border-radius: 6px;
         transition: all 0.3s ease;
 
         &.valid {
-          color: #67c23a;
-          background: #f0f9ff;
+          color: var(--el-color-success);
+          background: var(--el-color-primary-light-9);
           animation: successPulse 0.5s ease-in-out;
         }
 
@@ -909,28 +909,28 @@ onUnmounted(() => {
 
   :deep(.el-table) {
     .diff {
-      color: #f56c6c;
+      color: var(--el-color-danger);
       font-weight: 600;
       animation: shake 0.5s ease-in-out;
     }
 
     .risk-low {
-      color: #67c23a;
+      color: var(--el-color-success);
     }
 
     .risk-medium {
-      color: #e6a23c;
+      color: var(--el-color-warning);
     }
 
     .risk-high {
-      color: #f56c6c;
+      color: var(--el-color-danger);
     }
 
     .el-table__row {
       transition: all 0.3s ease;
 
       &:hover {
-        background: #f5f7fa;
+        background: var(--bg-body);
       }
     }
   }

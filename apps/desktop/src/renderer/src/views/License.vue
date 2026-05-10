@@ -317,7 +317,7 @@ onMounted(() => {
 }
 
 .online-status-desc {
-  color: #666;
+  color: var(--text-regular);
   font-size: 13px;
   margin-bottom: 8px;
 }
@@ -458,6 +458,6 @@ onMounted(() => {
 /* 暗色模式适配 */
 :root.dark .plan-card.active {
   border-color: var(--el-color-primary);
-  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.3);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--el-color-primary) 30%, transparent);
 }
 </style>

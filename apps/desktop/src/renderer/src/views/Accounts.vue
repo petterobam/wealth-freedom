@@ -235,7 +235,7 @@ onMounted(() => {
   }
 
   .account-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 12px;
     padding: 16px;
     display: flex;

@@ -589,7 +589,7 @@ onUnmounted(() => {
 <style scoped>
 .income-analysis {
   padding: 20px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   min-height: 100vh;
 }
 
@@ -597,7 +597,7 @@ onUnmounted(() => {
   margin-bottom: 20px;
   font-size: 28px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .time-range-selector {
@@ -606,7 +606,7 @@ onUnmounted(() => {
   align-items: center;
   margin-bottom: 20px;
   padding: 15px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
@@ -654,11 +654,11 @@ onUnmounted(() => {
 }
 
 .metric-change.positive {
-  color: #67C23A;
+  color: var(--el-color-success);
 }
 
 .metric-change.negative {
-  color: #F56C6C;
+  color: var(--el-color-danger);
 }
 
 .gradient-primary {
@@ -685,7 +685,7 @@ onUnmounted(() => {
 }
 
 .finance-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -701,7 +701,7 @@ onUnmounted(() => {
 .card-title {
   font-size: 18px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .chart-card {
@@ -722,11 +722,11 @@ onUnmounted(() => {
   margin: 30px 0 20px 0;
   font-size: 20px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .income-structure {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -750,23 +750,23 @@ onUnmounted(() => {
 .structure-label {
   font-size: 16px;
   font-weight: 500;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 .structure-value {
   font-size: 18px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .structure-tip {
   margin-top: 10px;
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .structure-tip.warning {
-  color: #E6A23C;
+  color: var(--el-color-warning);
 }
 
 .growth-analysis {
@@ -777,7 +777,7 @@ onUnmounted(() => {
 }
 
 .growth-item {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -793,22 +793,22 @@ onUnmounted(() => {
 .growth-label {
   font-size: 16px;
   font-weight: 500;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 .growth-value {
   font-size: 20px;
   font-weight: 600;
-  color: #67C23A;
+  color: var(--el-color-success);
 }
 
 .growth-value.negative {
-  color: #F56C6C;
+  color: var(--el-color-danger);
 }
 
 .growth-detail {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .optimization-suggestions {
@@ -823,15 +823,15 @@ onUnmounted(() => {
 }
 
 .suggestion-card.priority-high {
-  border-left: 4px solid #F56C6C;
+  border-left: 4px solid var(--el-color-danger);
 }
 
 .suggestion-card.priority-medium {
-  border-left: 4px solid #E6A23C;
+  border-left: 4px solid var(--el-color-warning);
 }
 
 .suggestion-card.priority-low {
-  border-left: 4px solid #409EFF;
+  border-left: 4px solid var(--el-color-primary);
 }
 
 .suggestion-header {
@@ -849,7 +849,7 @@ onUnmounted(() => {
 .suggestion-title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .suggestion-content {
@@ -859,7 +859,7 @@ onUnmounted(() => {
 .suggestion-description {
   margin-bottom: 15px;
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   line-height: 1.6;
 }
 
@@ -867,14 +867,14 @@ onUnmounted(() => {
   margin-bottom: 10px;
   font-size: 14px;
   font-weight: 500;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .actions-list {
   margin: 0 0 15px 0;
   padding-left: 20px;
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   line-height: 1.8;
 }
 
@@ -884,7 +884,7 @@ onUnmounted(() => {
 }
 
 .growth-sources {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -908,7 +908,7 @@ onUnmounted(() => {
 .growth-source-name {
   font-size: 18px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   margin-bottom: 5px;
 }
 

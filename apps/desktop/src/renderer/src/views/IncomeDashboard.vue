@@ -343,7 +343,7 @@ onMounted(async () => {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .metric-cards {
@@ -356,7 +356,7 @@ onMounted(async () => {
 .metric-card {
   padding: 20px;
   border-radius: 12px;
-  background: white;
+  background: var(--bg-card);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
@@ -380,28 +380,28 @@ onMounted(async () => {
 
 .metric-label {
   font-size: 14px;
-  color: #909399;
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .metric-value {
   font-size: 24px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .metric-change {
   font-size: 12px;
-  color: #909399;
+  color: var(--text-secondary);
 }
 
 .metric-change.positive {
-  color: #67c23a;
+  color: var(--el-color-success);
 }
 
 .metric-change.negative {
-  color: #f56c6c;
+  color: var(--el-color-danger);
 }
 
 .gradient-primary {
@@ -431,11 +431,11 @@ onMounted(async () => {
   font-size: 18px;
   font-weight: 600;
   margin: 30px 0 20px 0;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .income-sources {
-  background: white;
+  background: var(--bg-card);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -458,13 +458,13 @@ onMounted(async () => {
 
 .source-name {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 .source-amount {
   font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .charts-row {
@@ -475,7 +475,7 @@ onMounted(async () => {
 }
 
 .finance-card {
-  background: white;
+  background: var(--bg-card);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -488,7 +488,7 @@ onMounted(async () => {
 .card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .chart-card {
@@ -501,7 +501,7 @@ onMounted(async () => {
 }
 
 .freedom-progress {
-  background: white;
+  background: var(--bg-card);
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -520,13 +520,13 @@ onMounted(async () => {
 
 .progress-label {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
 }
 
 .progress-value {
   font-size: 14px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
 }
 
 .progress-tip {

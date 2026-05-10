@@ -661,8 +661,8 @@ onBeforeUnmount(() => {
   .base-currency-badge {
     font-size: 12px;
     font-weight: 500;
-    background: var(--el-color-primary-light-9, #ecf5ff);
-    color: var(--el-color-primary, #409eff);
+    background: var(--el-color-primary-light-9);
+    color: var(--el-color-primary);
     padding: 2px 8px;
     border-radius: 10px;
   }
@@ -680,7 +680,7 @@ onBeforeUnmount(() => {
     gap: 16px;
     padding: 20px;
     border-radius: 12px;
-    color: #fff;
+    color: var(--bg-card);
 
     .metric-icon {
       font-size: 36px;
@@ -726,13 +726,13 @@ onBeforeUnmount(() => {
 
     .progress-label {
       font-size: 12px;
-      color: #909399;
+      color: var(--text-secondary);
     }
 
     .ratio-tip {
       margin-top: 8px;
       font-size: 12px;
-      color: #909399;
+      color: var(--text-secondary);
     }
   }
 
@@ -782,7 +782,7 @@ onBeforeUnmount(() => {
     }
 
     &.stage-achieved {
-      border-color: #67c23a;
+      border-color: var(--el-color-success);
       background: linear-gradient(135deg, rgba(103, 194, 58, 0.05), rgba(103, 194, 58, 0.02));
     }
   }
@@ -805,7 +805,7 @@ onBeforeUnmount(() => {
 
   .stage-desc {
     font-size: 12px;
-    color: #909399;
+    color: var(--text-secondary);
     margin-bottom: 10px;
     line-height: 1.4;
   }
@@ -813,19 +813,19 @@ onBeforeUnmount(() => {
   .stage-detail {
     margin-top: 8px;
     font-size: 12px;
-    color: #606266;
+    color: var(--text-regular);
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
 
   .stage-eta {
-    color: #409eff;
+    color: var(--el-color-primary);
     font-weight: 500;
   }
 
   .stage-done {
-    color: #67c23a;
+    color: var(--el-color-success);
     font-weight: 500;
   }
 
@@ -833,7 +833,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     font-size: 20px;
-    color: #c0c4cc;
+    color: var(--text-placeholder);
     font-weight: 300;
   }
 
@@ -842,7 +842,7 @@ onBeforeUnmount(() => {
     padding: 20px 24px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px;
-    color: #fff;
+    color: var(--bg-card);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 
     .insight-header {

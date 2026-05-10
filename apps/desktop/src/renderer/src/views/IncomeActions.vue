@@ -565,7 +565,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 .income-actions {
   padding: 20px;
-  background: #f5f7fa;
+  background: var(--bg-body);
   min-height: 100vh;
 }
 
@@ -585,13 +585,13 @@ onMounted(async () => {
       h2 {
         margin: 0;
         font-size: 20px;
-        color: #303133;
+        color: var(--text-primary);
       }
 
       p {
         margin: 4px 0 0 0;
         font-size: 14px;
-        color: #909399;
+        color: var(--text-secondary);
       }
     }
 
@@ -613,7 +613,7 @@ onMounted(async () => {
       margin-bottom: 12px;
       font-size: 18px;
       font-weight: 600;
-      color: #303133;
+      color: var(--text-primary);
     }
 
     .strategy-meta {
@@ -624,7 +624,7 @@ onMounted(async () => {
         display: flex;
         align-items: center;
         gap: 6px;
-        color: #606266;
+        color: var(--text-regular);
         font-size: 14px;
       }
     }
@@ -640,7 +640,7 @@ onMounted(async () => {
     .card-title {
       font-size: 16px;
       font-weight: 600;
-      color: #303133;
+      color: var(--text-primary);
     }
 
     .header-actions {
@@ -657,8 +657,8 @@ onMounted(async () => {
       align-items: flex-start;
       gap: 16px;
       padding: 20px;
-      background: #ffffff;
-      border: 1px solid #EBEEF5;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: 8px;
       margin-bottom: 12px;
       transition: all 0.3s;
@@ -668,17 +668,17 @@ onMounted(async () => {
       }
 
       &.is-completed {
-        background: #F5F7FA;
+        background: var(--bg-body);
         opacity: 0.7;
 
         .action-title {
           text-decoration: line-through;
-          color: #909399;
+          color: var(--text-secondary);
         }
       }
 
       &.is-in-progress {
-        border-left: 3px solid #409EFF;
+        border-left: 3px solid var(--el-color-primary);
       }
 
       .action-checkbox {
@@ -697,7 +697,7 @@ onMounted(async () => {
           .action-title {
             font-size: 16px;
             font-weight: 500;
-            color: #303133;
+            color: var(--text-primary);
           }
 
           .action-priority {
@@ -707,7 +707,7 @@ onMounted(async () => {
 
         .action-desc {
           font-size: 14px;
-          color: #606266;
+          color: var(--text-regular);
           margin-bottom: 12px;
           line-height: 1.6;
         }
@@ -722,7 +722,7 @@ onMounted(async () => {
             align-items: center;
             gap: 4px;
             font-size: 13px;
-            color: #909399;
+            color: var(--text-secondary);
 
             .el-icon {
               font-size: 14px;
@@ -736,7 +736,7 @@ onMounted(async () => {
         flex-direction: column;
         gap: 8px;
         padding-left: 12px;
-        border-left: 1px solid #EBEEF5;
+        border-left: 1px solid var(--border-color);
       }
     }
   }
@@ -744,7 +744,7 @@ onMounted(async () => {
   .progress-section {
     margin-top: 32px;
     padding-top: 24px;
-    border-top: 1px solid #EBEEF5;
+    border-top: 1px solid var(--border-color);
 
     .progress-header {
       display: flex;
@@ -754,12 +754,12 @@ onMounted(async () => {
 
       span {
         font-size: 14px;
-        color: #606266;
+        color: var(--text-regular);
       }
 
       .progress-text {
         font-weight: 600;
-        color: #409EFF;
+        color: var(--el-color-primary);
       }
     }
 
@@ -768,7 +768,7 @@ onMounted(async () => {
       justify-content: space-around;
       margin-top: 24px;
       padding: 16px;
-      background: #F5F7FA;
+      background: var(--bg-body);
       border-radius: 8px;
 
       .summary-item {
@@ -777,7 +777,7 @@ onMounted(async () => {
         .label {
           display: block;
           font-size: 13px;
-          color: #909399;
+          color: var(--text-secondary);
           margin-bottom: 8px;
         }
 
@@ -785,7 +785,7 @@ onMounted(async () => {
           display: block;
           font-size: 18px;
           font-weight: 600;
-          color: #409EFF;
+          color: var(--el-color-primary);
         }
       }
     }
@@ -797,7 +797,7 @@ onMounted(async () => {
   .strategy-select-tip {
     margin: 0 0 20px 0;
     font-size: 14px;
-    color: #606266;
+    color: var(--text-regular);
   }
 
   .strategy-grid {
@@ -816,8 +816,8 @@ onMounted(async () => {
       }
 
       &.is-selected {
-        border: 2px solid #409EFF;
-        background: #ECF5FF;
+        border: 2px solid var(--el-color-primary);
+        background: var(--el-color-primary-light-9);
       }
 
       .strategy-card-header {
@@ -831,9 +831,9 @@ onMounted(async () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #F5F7FA;
+          background: var(--bg-body);
           border-radius: 8px;
-          color: #409EFF;
+          color: var(--el-color-primary);
         }
 
         .strategy-info {
@@ -842,13 +842,13 @@ onMounted(async () => {
           .strategy-name {
             font-size: 16px;
             font-weight: 600;
-            color: #303133;
+            color: var(--text-primary);
             margin-bottom: 4px;
           }
 
           .strategy-desc {
             font-size: 13px;
-            color: #909399;
+            color: var(--text-secondary);
             line-height: 1.5;
           }
         }
@@ -863,7 +863,7 @@ onMounted(async () => {
           align-items: center;
           gap: 4px;
           font-size: 13px;
-          color: #606266;
+          color: var(--text-regular);
 
           .el-icon {
             font-size: 14px;
@@ -923,7 +923,7 @@ onMounted(async () => {
         justify-content: flex-end;
         padding-left: 0;
         border-left: none;
-        border-top: 1px solid #EBEEF5;
+        border-top: 1px solid var(--border-color);
         padding-top: 12px;
       }
     }
