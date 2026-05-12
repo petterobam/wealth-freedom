@@ -6,7 +6,7 @@
 >
 > [中文版 README](./README.cn.md) | [English](./README.en.md)
 
-[![Banner](docs/banner.png)](https://github.com/petterobam/wealth-freedom/releases/latest)
+[![Banner](docs/screenshots/bigscreen.png)](https://github.com/petterobam/wealth-freedom/releases/latest)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/petterobam/wealth-freedom/ci.yml?style=flat-square&label=CI)](https://github.com/petterobam/wealth-freedom/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/petterobam/wealth-freedom?style=flat-square&label=Release)](https://github.com/petterobam/wealth-freedom/releases/latest)
