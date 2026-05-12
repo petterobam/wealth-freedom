@@ -563,12 +563,12 @@ const handleSkip = async () => {
   }
 
   &.achieved {
-    border-color: #67c23a;
-    background: #f0f9eb;
+    border-color: var(--el-color-success);
+    background: var(--el-color-primary-light-9);
 
     .is-dark & {
-      background: #1a2e1a;
-      border-color: #67c23a;
+      background: var(--el-color-primary-light-9);
+      border-color: var(--el-color-success);
     }
   }
 
@@ -585,20 +585,20 @@ const handleSkip = async () => {
   .goal-amount {
     font-size: 15px;
     font-weight: 700;
-    color: #409eff;
+    color: var(--el-color-primary);
     margin-bottom: 6px;
   }
 
   .goal-note {
     font-size: 12px;
-    color: #909399;
+    color: var(--text-secondary);
   }
 
   .goal-check {
     margin-top: 6px;
     font-size: 13px;
     font-weight: 600;
-    color: #67c23a;
+    color: var(--el-color-success);
   }
 }
 
@@ -609,14 +609,14 @@ const handleSkip = async () => {
   gap: 6px;
   margin-top: 16px;
   padding: 10px;
-  background: #ecf5ff;
+  background: var(--el-color-primary-light-9);
   border-radius: 8px;
   font-size: 13px;
-  color: #606266;
+  color: var(--text-regular);
 
   .is-dark & {
-    background: #1a2a3e;
-    color: #b0b0b0;
+    background: var(--el-color-primary-light-9);
+    color: var(--text-regular);
   }
 }
 
@@ -632,7 +632,7 @@ const handleSkip = async () => {
   margin-top: 10px;
 
   .demo-hint {
-    color: #909399;
+    color: var(--text-secondary);
     font-size: 12px;
     margin-top: 8px;
   }

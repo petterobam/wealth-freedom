@@ -805,7 +805,7 @@ onUnmounted(() => {
             animation: pulse 0.3s ease-in-out;
 
             .stage-name {
-              color: var(--bg-card);
+              color: #fff;
             }
 
             .stage-desc {

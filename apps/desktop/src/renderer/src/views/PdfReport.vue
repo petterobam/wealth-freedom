@@ -1,5 +1,6 @@
 <template>
-  <div class="pdf-report" v-loading="loading" v-if="!isLocked">
+  <FeatureGate feature="hasPdfReport" :featureName="t('pdfReport.lockedTitle')" :description="t('pdfReport.lockedDesc')">
+  <div class="pdf-report" v-loading="loading">
     <!-- 浮动工具栏（打印时隐藏） -->
     <div class="toolbar-float">
       <el-button @click="$router.back()" :icon="ArrowLeft">{{ t('pdfReport.goBack') }}</el-button>
@@ -151,7 +152,7 @@
         <div class="goals-list">
           <div v-for="(items, stage) in goalsByStage" :key="stage" class="goal-stage">
             <h3 class="stage-label">
-              {{ stage === 'guarantee' ? t('pdfReport.stageGuarantee') : stage === 'security' ? t('pdfReport.stageSecurity') : t('pdfReport.stageFreedom') }}
+              {{ stage === 'security' ? t('pdfReport.stageGuarantee') : stage === 'safety' ? t('pdfReport.stageSecurity') : t('pdfReport.stageFreedom') }}
             </h3>
             <div v-for="g in items" :key="g.id" class="goal-row">
               <div class="goal-info">
@@ -196,19 +197,7 @@
       </footer>
     </div>
   </div>
-  <!-- 功能门控：免费版提示 -->
-  <div v-if="isLocked" class="feature-gate-overlay">
-    <div class="gate-card">
-      <div class="gate-icon">🔒</div>
-      <h3>{{ t('pdfReport.lockedTitle') }}</h3>
-      <p>{{ t('pdfReport.lockedDesc') }}</p>
-      <div class="gate-badges">
-        <span class="badge badge-pro">{{ t('pdfReport.proBadge') }}</span>
-        <span class="badge badge-trial">{{ t('pdfReport.trialBadge') }}</span>
-      </div>
-      <el-button type="primary" @click="$router.push('/license')">{{ t('pdfReport.upgradeNow') }}</el-button>
-    </div>
-  </div>
+  </FeatureGate>
 </template>
 
 <script setup lang="ts">
@@ -226,7 +215,7 @@ const { safeCall } = useErrorHandler()
 const { t } = useI18n()
 
 const { features, status: licenseStatus } = useLicense()
-const isLocked = computed(() => licenseStatus.value.tier !== 'trial' && !features.value.hasPdfReport)
+const isLocked = computed(() => false) // FeatureGate handles locking
 
 const loading = ref(false)
 const pdfLoading = ref(false)
@@ -277,9 +266,9 @@ const avgSavingsRate = computed(() => {
 })
 
 const goalsByStage = computed(() => {
-  const map: Record<string, any[]> = { guarantee: [], security: [], freedom: [] }
+  const map: Record<string, any[]> = { security: [], safety: [], freedom: [] }
   goals.value.forEach(g => {
-    const stage = g.stage || 'guarantee'
+    const stage = g.stage || 'security'
     if (!map[stage]) map[stage] = []
     map[stage].push(g)
   })
@@ -469,7 +458,7 @@ onMounted(loadAll)
 
   .dim-bar-track {
     height: 10px;
-    background: #f0f0f0;
+    background: var(--bg-body);
     border-radius: 5px;
     overflow: hidden;
   }
@@ -484,7 +473,7 @@ onMounted(loadAll)
     text-align: right;
     font-weight: 600;
     font-size: 13px;
-    color: #666;
+    color: var(--text-regular);
   }
 }
 
@@ -497,24 +486,24 @@ onMounted(loadAll)
 
   th, td {
     padding: 8px 10px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-color);
     text-align: left;
   }
 
   th {
-    background: #fafafa;
+    background: var(--bg-body);
     font-weight: 600;
-    color: #666;
+    color: var(--text-regular);
     font-size: 12px;
   }
 
   .right { text-align: right; }
-  .income-text { color: #67c23a; }
-  .expense-text { color: #f56c6c; }
+  .income-text { color: var(--el-color-success); }
+  .expense-text { color: var(--el-color-danger); }
 
   tfoot td {
-    border-top: 2px solid #ddd;
-    background: #fafafa;
+    border-top: 2px solid var(--border-color);
+    background: var(--bg-body);
   }
 }
 
@@ -528,7 +517,7 @@ onMounted(loadAll)
 .category-block {
   h3 {
     font-size: 13px;
-    color: #666;
+    color: var(--text-regular);
     margin-bottom: 8px;
     font-weight: 600;
   }
@@ -539,7 +528,7 @@ onMounted(loadAll)
   justify-content: space-between;
   padding: 4px 0;
   font-size: 13px;
-  border-bottom: 1px solid #f8f8f8;
+  border-bottom: 1px solid var(--border-color);
 }
 
 // 目标
@@ -557,7 +546,7 @@ onMounted(loadAll)
 
 .goal-row {
   padding: 8px 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--border-color);
 
   .goal-info {
     display: flex;
@@ -565,12 +554,12 @@ onMounted(loadAll)
     margin-bottom: 4px;
 
     .goal-name { font-weight: 600; font-size: 13px; }
-    .goal-pct { font-size: 13px; color: #409eff; font-weight: 600; }
+    .goal-pct { font-size: 13px; color: var(--el-color-primary); font-weight: 600; }
   }
 
   .goal-bar-track {
     height: 8px;
-    background: #f0f0f0;
+    background: var(--bg-body);
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 4px;
@@ -586,7 +575,7 @@ onMounted(loadAll)
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    color: #999;
+    color: var(--text-secondary);
   }
 }
 
@@ -594,15 +583,15 @@ onMounted(loadAll)
 .report-footer {
   margin-top: 32px;
   padding-top: 16px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
   text-align: center;
   font-size: 11px;
-  color: #bbb;
+  color: var(--text-placeholder);
   line-height: 1.8;
 }
 
 .empty-hint {
-  color: #ccc;
+  color: var(--text-placeholder);
   text-align: center;
   padding: 16px;
   font-size: 13px;
@@ -610,7 +599,7 @@ onMounted(loadAll)
 
 // 打印样式
 @media print {
-  .pdf-report { padding: 0; background: #fff; min-height: auto; }
+  .pdf-report { padding: 0; background: var(--bg-card); min-height: auto; }
   .toolbar-float { display: none !important; }
   .report-content {
     max-width: 100%;

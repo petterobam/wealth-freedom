@@ -13,17 +13,28 @@ import {
   type RecurringRule,
 } from './recurringService';
 
+function snakeToCamel(obj: any): any {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(snakeToCamel);
+  const result: any = {};
+  for (const key of Object.keys(obj)) {
+    const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    result[camelKey] = obj[key];
+  }
+  return result;
+}
+
 export function registerRecurringHandlers(db: Database.Database): void {
   // 获取所有规则
   ipcMain.handle('recurring:list', (_event, userId: string) => {
     const stmt = db.prepare('SELECT * FROM recurring_rules WHERE user_id = ? ORDER BY next_execution ASC');
-    return stmt.all(userId);
+    return snakeToCamel(stmt.all(userId));
   });
 
   // 获取单个规则
   ipcMain.handle('recurring:get', (_event, ruleId: string) => {
     const stmt = db.prepare('SELECT * FROM recurring_rules WHERE id = ?');
-    return stmt.get(ruleId);
+    return snakeToCamel(stmt.get(ruleId));
   });
 
   // 创建规则
@@ -70,7 +81,7 @@ export function registerRecurringHandlers(db: Database.Database): void {
 
     if (freqChanged) {
       // 获取当前规则来重新计算
-      const current = db.prepare('SELECT * FROM recurring_rules WHERE id = ?').get(ruleId) as RecurringRule;
+      const current = snakeToCamel(db.prepare('SELECT * FROM recurring_rules WHERE id = ?').get(ruleId)) as RecurringRule;
       if (current) {
         const merged = { ...current, ...data };
         const nextExec = getNextExecution(merged, new Date());
@@ -106,9 +117,9 @@ export function registerRecurringHandlers(db: Database.Database): void {
   // 执行到期规则（应用启动时调用）
   ipcMain.handle('recurring:execute-pending', (_event, userId: string) => {
     const today = formatDate(new Date());
-    const rules = db.prepare(
+    const rules = snakeToCamel(db.prepare(
       'SELECT * FROM recurring_rules WHERE user_id = ? AND status = ? AND next_execution <= ?'
-    ).all(userId, 'active', today) as RecurringRule[];
+    ).all(userId, 'active', today)) as RecurringRule[];
 
     const results: { ruleId: string; transactionId: string; date: string }[] = [];
 

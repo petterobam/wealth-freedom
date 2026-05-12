@@ -680,7 +680,7 @@ onBeforeUnmount(() => {
     gap: 16px;
     padding: 20px;
     border-radius: 12px;
-    color: var(--bg-card);
+    color: #fff;
 
     .metric-icon {
       font-size: 36px;
@@ -842,7 +842,7 @@ onBeforeUnmount(() => {
     padding: 20px 24px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px;
-    color: var(--bg-card);
+    color: #fff;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 
     .insight-header {

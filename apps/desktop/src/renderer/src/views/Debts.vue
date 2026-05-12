@@ -241,12 +241,12 @@ onMounted(() => {
 
     &.total-debt {
       background: linear-gradient(135deg, #f56c6c 0%, #f89898 100%);
-      color: var(--bg-card);
+      color: #fff;
     }
 
     &.monthly-payment {
       background: linear-gradient(135deg, #e6a23c 0%, #f5d442 100%);
-      color: var(--bg-card);
+      color: #fff;
     }
 
     .summary-icon {

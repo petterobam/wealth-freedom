@@ -271,7 +271,7 @@
           <!-- 按阶段分组 -->
           <div v-for="(items, stage) in goalsByStage" :key="stage" class="stage-group">
             <h3 class="stage-title">
-              {{ stage === 'guarantee' ? t('report.guarantee') : stage === 'security' ? t('report.security') : t('report.freedom') }}
+              {{ stage === 'security' ? t('report.guarantee') : stage === 'safety' ? t('report.security') : t('report.freedom') }}
             </h3>
             <div v-for="g in items" :key="g.id" class="goal-card">
               <div class="goal-header">
@@ -396,9 +396,9 @@ const goals = ref<any[]>([])
 const avgMonthlySavings = ref(0)
 
 const goalsByStage = computed(() => {
-  const map: Record<string, any[]> = { guarantee: [], security: [], freedom: [] }
+  const map: Record<string, any[]> = { security: [], safety: [], freedom: [] }
   goals.value.forEach(g => {
-    const stage = g.stage || 'guarantee'
+    const stage = g.stage || 'security'
     if (!map[stage]) map[stage] = []
     map[stage].push(g)
   })
@@ -551,7 +551,7 @@ onMounted(() => {
 }
 
 .empty-hint {
-  color: #ccc;
+  color: var(--text-placeholder);
   text-align: center;
   padding: 12px;
   font-size: 13px;
@@ -674,8 +674,8 @@ onMounted(() => {
       border-radius: 3px;
       transition: width 0.4s ease;
     }
-    .income-fill { background: linear-gradient(90deg, var(--el-color-success), #85ce61); }
-    .expense-fill { background: linear-gradient(90deg, var(--el-color-danger), #f89898); }
+    .income-fill { background: linear-gradient(90deg, var(--el-color-success), var(--el-color-success-light-3)); }
+    .expense-fill { background: linear-gradient(90deg, var(--el-color-danger), var(--el-color-danger-light-3)); }
   }
 
   .trend-values {
@@ -686,8 +686,8 @@ onMounted(() => {
     justify-content: flex-end;
 
     span { font-size: 12px; }
-    .income { color: #67c23a; }
-    .expense { color: #f56c6c; }
+    .income { color: var(--el-color-success); }
+    .expense { color: var(--el-color-danger); }
     .net { font-weight: 600; }
   }
 }
@@ -700,17 +700,17 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   margin-bottom: 12px;
 
-  .stat-label { font-size: 12px; color: #999; margin-bottom: 4px; }
-  .stat-value { font-size: 20px; font-weight: 700; color: #1a1a2e; }
-  .stat-value.income { color: #67c23a; }
-  .stat-value.expense { color: #f56c6c; }
+  .stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .stat-value { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+  .stat-value.income { color: var(--el-color-success); }
+  .stat-value.expense { color: var(--el-color-danger); }
 }
 
 // 目标进度
 .savings-hint {
   font-size: 14px;
-  color: #666;
-  strong { color: #67c23a; }
+  color: var(--text-regular);
+  strong { color: var(--el-color-success); }
 }
 
 .stage-group {
@@ -720,7 +720,7 @@ onMounted(() => {
 .stage-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: var(--text-primary);
   margin-bottom: 12px;
 }
 
@@ -738,13 +738,13 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 8px;
 
-  .goal-name { font-weight: 600; color: #1a1a2e; }
+  .goal-name { font-weight: 600; color: var(--text-primary); }
 }
 
 .goal-progress {
   .progress-track {
     height: 8px;
-    background: #f0f0f0;
+    background: var(--border-color);
     border-radius: 4px;
     overflow: hidden;
   }
@@ -761,16 +761,16 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #666;
+  color: var(--text-regular);
   margin-top: 6px;
 
-  strong { color: #1a1a2e; }
+  strong { color: var(--text-primary); }
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #999;
+  color: var(--text-secondary);
   .empty-icon { font-size: 48px; margin-bottom: 12px; }
 }
 

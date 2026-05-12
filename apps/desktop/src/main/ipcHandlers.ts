@@ -117,13 +117,25 @@ export function initIPCHandlers(database: ReturnType<typeof initDatabase>) {
 // ==================== 用户处理函数 ====================
 async function handleUserGet() {
   const stmt = db.prepare('SELECT * FROM users LIMIT 1');
-  return stmt.get() as any;
+  return snakeToCamel(stmt.get()) as any;
 }
 
 // 生成唯一 ID 的辅助函数
 const generateId = (prefix: string): string => {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
+
+// snake_case → camelCase 转换（DB 列名 → 前端属性名）
+function snakeToCamel(obj: any): any {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(snakeToCamel);
+  const result: any = {};
+  for (const key of Object.keys(obj)) {
+    const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    result[camelKey] = obj[key];
+  }
+  return result;
+}
 
 async function handleUserCreate(_event: any, data: any) {
   const stmt = db.prepare(`
@@ -154,24 +166,33 @@ async function handleUserCreate(_event: any, data: any) {
 }
 
 async function handleUserUpdate(_event: any, data: any) {
-  const stmt = db.prepare(`
-    UPDATE users
-    SET name = ?, email = ?, avatar = ?, updated_at = datetime('now')
-    WHERE id = ?
-  `);
-  stmt.run(data.name, data.email, data.avatar, data.id);
-  return data;
+  // 动态构建 SET 子句，只更新传入的字段
+  const fields: string[] = ['updated_at = datetime(\'now\')'];
+  const values: any[] = [];
+
+  if (data.name !== undefined) { fields.push('name = ?'); values.push(data.name); }
+  if (data.email !== undefined) { fields.push('email = ?'); values.push(data.email); }
+  if (data.avatar !== undefined) { fields.push('avatar = ?'); values.push(data.avatar); }
+  if (data.settings !== undefined) { fields.push('settings = ?'); values.push(typeof data.settings === 'string' ? data.settings : JSON.stringify(data.settings)); }
+
+  values.push(data.id);
+  const stmt = db.prepare(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`);
+  stmt.run(...values);
+
+  // 返回更新后的完整用户数据
+  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(data.id);
+  return snakeToCamel(updated);
 }
 
 // ==================== 账户处理函数 ====================
 async function handleAccountGetAll() {
   const stmt = db.prepare('SELECT * FROM accounts ORDER BY created_at DESC');
-  return stmt.all() as any[];
+  return snakeToCamel(stmt.all()) as any[];
 }
 
 async function handleAccountGetById(_event: any, id: number) {
   const stmt = db.prepare('SELECT * FROM accounts WHERE id = ?');
-  return stmt.get(id) as any;
+  return snakeToCamel(stmt.get(id)) as any;
 }
 
 async function handleAccountCreate(_event: any, data: any) {
@@ -186,13 +207,22 @@ async function handleAccountCreate(_event: any, data: any) {
 }
 
 async function handleAccountUpdate(_event: any, id: number, data: any) {
-  const stmt = db.prepare(`
-    UPDATE accounts
-    SET name = ?, type = ?, balance = ?, currency = ?, institution = ?, notes = ?, updated_at = datetime('now')
-    WHERE id = ?
-  `);
-  stmt.run(data.name, data.type, data.balance, data.currency, data.institution, data.notes, id);
-  return { id, ...data };
+  const fields: string[] = ['updated_at = datetime(\'now\')'];
+  const values: any[] = [];
+
+  if (data.name !== undefined) { fields.push('name = ?'); values.push(data.name); }
+  if (data.type !== undefined) { fields.push('type = ?'); values.push(data.type); }
+  if (data.balance !== undefined) { fields.push('balance = ?'); values.push(data.balance); }
+  if (data.currency !== undefined) { fields.push('currency = ?'); values.push(data.currency); }
+  if (data.institution !== undefined) { fields.push('institution = ?'); values.push(data.institution); }
+  if (data.notes !== undefined) { fields.push('notes = ?'); values.push(data.notes); }
+
+  values.push(id);
+  const stmt = db.prepare(`UPDATE accounts SET ${fields.join(', ')} WHERE id = ?`);
+  stmt.run(...values);
+
+  const updated = db.prepare('SELECT * FROM accounts WHERE id = ?').get(id);
+  return snakeToCamel(updated);
 }
 
 async function handleAccountDelete(_event: any, id: number) {
@@ -204,12 +234,12 @@ async function handleAccountDelete(_event: any, id: number) {
 // ==================== 负债处理函数 ====================
 async function handleDebtGetAll() {
   const stmt = db.prepare('SELECT * FROM debts ORDER BY priority DESC, created_at DESC');
-  return stmt.all() as any[];
+  return snakeToCamel(stmt.all()) as any[];
 }
 
 async function handleDebtGetById(_event: any, id: number) {
   const stmt = db.prepare('SELECT * FROM debts WHERE id = ?');
-  return stmt.get(id) as any;
+  return snakeToCamel(stmt.get(id)) as any;
 }
 
 async function handleDebtCreate(_event: any, data: any) {
@@ -236,25 +266,21 @@ async function handleDebtCreate(_event: any, data: any) {
 }
 
 async function handleDebtUpdate(_event: any, id: number, data: any) {
-  const stmt = db.prepare(`
-    UPDATE debts
-    SET name = ?, total_amount = ?, paid_amount = ?, remaining_amount = ?, monthly_payment = ?, interest_rate = ?, type = ?, priority = ?, due_date = ?, notes = ?, updated_at = datetime('now')
-    WHERE id = ?
-  `);
-  stmt.run(
-    data.name,
-    data.total_amount,
-    data.paid_amount,
-    data.remaining_amount,
-    data.monthly_payment,
-    data.interest_rate,
-    data.type,
-    data.priority,
-    data.due_date,
-    data.notes,
-    id
-  );
-  return { id, ...data };
+  const allowed = ['name', 'total_amount', 'paid_amount', 'remaining_amount', 'monthly_payment', 'interest_rate', 'type', 'priority', 'due_date', 'notes'];
+  const fields = ["updated_at = datetime('now')"];
+  const values: any[] = [];
+  for (const key of allowed) {
+    if (data[key] !== undefined) { fields.push(`${key} = ?`); values.push(data[key]); }
+  }
+  // 支持 camelCase 字段名
+  const camelMap: Record<string, string> = { totalAmount: 'total_amount', paidAmount: 'paid_amount', remainingAmount: 'remaining_amount', monthlyPayment: 'monthly_payment', interestRate: 'interest_rate', dueDate: 'due_date' };
+  for (const [camel, snake] of Object.entries(camelMap)) {
+    if (data[camel] !== undefined && data[snake] === undefined) { fields.push(`${snake} = ?`); values.push(data[camel]); }
+  }
+  values.push(id);
+  db.prepare(`UPDATE debts SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+  const updated = db.prepare('SELECT * FROM debts WHERE id = ?').get(id);
+  return snakeToCamel(updated);
 }
 
 async function handleDebtDelete(_event: any, id: number) {
@@ -286,12 +312,12 @@ async function handleTransactionGetAll(_event: any, filters?: any) {
   sql += ' ORDER BY date DESC, created_at DESC';
 
   const stmt = db.prepare(sql);
-  return stmt.all(...params) as any[];
+  return snakeToCamel(stmt.all(...params)) as any[];
 }
 
 async function handleTransactionGetById(_event: any, id: number) {
   const stmt = db.prepare('SELECT * FROM transactions WHERE id = ?');
-  return stmt.get(id) as any;
+  return snakeToCamel(stmt.get(id)) as any;
 }
 
 async function handleTransactionCreate(_event: any, data: any) {
@@ -315,22 +341,20 @@ async function handleTransactionCreate(_event: any, data: any) {
 }
 
 async function handleTransactionUpdate(_event: any, id: number, data: any) {
-  const stmt = db.prepare(`
-    UPDATE transactions
-    SET date = ?, type = ?, category = ?, amount = ?, account_id = ?, description = ?, tags = ?, updated_at = datetime('now')
-    WHERE id = ?
-  `);
-  stmt.run(
-    data.date,
-    data.type,
-    data.category,
-    data.amount,
-    data.account_id,
-    data.description,
-    JSON.stringify(data.tags || []),
-    id
-  );
-  return { id, ...data };
+  const allowed = ['date', 'type', 'category', 'amount', 'account_id', 'description', 'tags'];
+  const fields = ["updated_at = datetime('now')"];
+  const values: any[] = [];
+  for (const key of allowed) {
+    if (data[key] !== undefined) {
+      fields.push(`${key} = ?`);
+      values.push(key === 'tags' ? JSON.stringify(data[key] || []) : data[key]);
+    }
+  }
+  if (data.accountId !== undefined && data.account_id === undefined) { fields.push('account_id = ?'); values.push(data.accountId); }
+  values.push(id);
+  db.prepare(`UPDATE transactions SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+  const updated = db.prepare('SELECT * FROM transactions WHERE id = ?').get(id);
+  return snakeToCamel(updated);
 }
 
 async function handleTransactionDelete(_event: any, id: number) {
@@ -342,12 +366,12 @@ async function handleTransactionDelete(_event: any, id: number) {
 // ==================== 目标处理函数 ====================
 async function handleGoalGetAll() {
   const stmt = db.prepare('SELECT * FROM goals ORDER BY stage, created_at DESC');
-  return stmt.all() as any[];
+  return snakeToCamel(stmt.all()) as any[];
 }
 
 async function handleGoalGetById(_event: any, id: number) {
   const stmt = db.prepare('SELECT * FROM goals WHERE id = ?');
-  return stmt.get(id) as any;
+  return snakeToCamel(stmt.get(id)) as any;
 }
 
 async function handleGoalCreate(_event: any, data: any) {
@@ -361,13 +385,19 @@ async function handleGoalCreate(_event: any, data: any) {
 }
 
 async function handleGoalUpdate(_event: any, id: number, data: any) {
-  const stmt = db.prepare(`
-    UPDATE goals
-    SET stage = ?, target_amount = ?, current_amount = ?, target_date = ?, notes = ?, updated_at = datetime('now')
-    WHERE id = ?
-  `);
-  stmt.run(data.stage, data.target_amount, data.current_amount, data.target_date, data.notes, id);
-  return { id, ...data };
+  const allowed = ['stage', 'target_amount', 'current_amount', 'target_date', 'notes', 'status'];
+  const fields = ["updated_at = datetime('now')"];
+  const values: any[] = [];
+  for (const key of allowed) {
+    if (data[key] !== undefined) { fields.push(`${key} = ?`); values.push(data[key]); }
+  }
+  if (data.targetAmount !== undefined && data.target_amount === undefined) { fields.push('target_amount = ?'); values.push(data.targetAmount); }
+  if (data.currentAmount !== undefined && data.current_amount === undefined) { fields.push('current_amount = ?'); values.push(data.currentAmount); }
+  if (data.targetDate !== undefined && data.target_date === undefined) { fields.push('target_date = ?'); values.push(data.targetDate); }
+  values.push(id);
+  db.prepare(`UPDATE goals SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+  const updated = db.prepare('SELECT * FROM goals WHERE id = ?').get(id);
+  return snakeToCamel(updated);
 }
 
 async function handleGoalDelete(_event: any, id: number) {
@@ -379,12 +409,12 @@ async function handleGoalDelete(_event: any, id: number) {
 // ==================== 梦想处理函数 ====================
 async function handleDreamGetAll() {
   const stmt = db.prepare('SELECT * FROM dreams ORDER BY priority DESC, created_at DESC');
-  return stmt.all() as any[];
+  return snakeToCamel(stmt.all()) as any[];
 }
 
 async function handleDreamGetById(_event: any, id: number) {
   const stmt = db.prepare('SELECT * FROM dreams WHERE id = ?');
-  return stmt.get(id) as any;
+  return snakeToCamel(stmt.get(id)) as any;
 }
 
 async function handleDreamCreate(_event: any, data: any) {
@@ -407,21 +437,22 @@ async function handleDreamCreate(_event: any, data: any) {
 }
 
 async function handleDreamUpdate(_event: any, id: number, data: any) {
-  const stmt = db.prepare(`
-    UPDATE dreams
-    SET title = ?, description = ?, image_url = ?, estimated_cost = ?, priority = ?, achieved = ?, updated_at = datetime('now')
-    WHERE id = ?
-  `);
-  stmt.run(
-    data.title,
-    data.description,
-    data.image_url,
-    data.estimated_cost,
-    data.priority,
-    data.achieved ? 1 : 0,
-    id
-  );
-  return { id, ...data };
+  const allowed = ['title', 'description', 'image_url', 'estimated_cost', 'priority', 'is_achieved'];
+  const fields = ["updated_at = datetime('now')"];
+  const values: any[] = [];
+  for (const key of allowed) {
+    if (data[key] !== undefined) {
+      fields.push(`${key} = ?`);
+      values.push(key === 'is_achieved' ? (data[key] ? 1 : 0) : data[key]);
+    }
+  }
+  if (data.imageUrl !== undefined && data.image_url === undefined) { fields.push('image_url = ?'); values.push(data.imageUrl); }
+  if (data.estimatedCost !== undefined && data.estimated_cost === undefined) { fields.push('estimated_cost = ?'); values.push(data.estimatedCost); }
+  if (data.achieved !== undefined && data.is_achieved === undefined) { fields.push('is_achieved = ?'); values.push(data.achieved ? 1 : 0); }
+  values.push(id);
+  db.prepare(`UPDATE dreams SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+  const updated = db.prepare('SELECT * FROM dreams WHERE id = ?').get(id);
+  return snakeToCamel(updated);
 }
 
 async function handleDreamDelete(_event: any, id: number) {

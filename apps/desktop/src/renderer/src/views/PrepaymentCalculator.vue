@@ -901,7 +901,7 @@ function formatCurrency(value: number): string {
         gap: 16px;
         padding: 20px;
         border-radius: 12px;
-        color: var(--bg-card);
+        color: #fff;
 
         @media (max-width: 575px) {
           padding: 16px;
@@ -995,6 +995,51 @@ function formatCurrency(value: number): string {
 
   .gradient-warning {
     background: linear-gradient(135deg, var(--el-color-warning) 0%, #f5a623 100%);
+  }
+
+  .comparison-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+
+    &.prepayment {
+      background: rgba(103, 194, 58, 0.1);
+      color: var(--el-color-success);
+      border: 1px solid var(--el-color-success-light-5);
+    }
+
+    &.investment {
+      background: rgba(230, 162, 60, 0.1);
+      color: var(--el-color-warning);
+      border: 1px solid var(--el-color-warning-light-5);
+    }
+  }
+
+  .tips-section {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--el-fill-color-light);
+
+    .tip-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--el-text-color-primary);
+    }
+
+    .tip-list {
+      padding-left: 20px;
+      font-size: 13px;
+      color: var(--el-text-color-regular);
+      line-height: 1.8;
+    }
   }
 
   .scenario-actions {

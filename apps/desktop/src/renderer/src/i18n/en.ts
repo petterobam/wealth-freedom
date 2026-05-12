@@ -551,6 +551,8 @@ export default {
     filter: 'Filter',
     export: 'Export',
     import: 'Import',
+    cancel: 'Cancel',
+    confirmDelete: 'Confirm delete?',
   },
   debts: {
     title: 'Debt Management',
@@ -578,6 +580,8 @@ export default {
       selectType: 'Select Type',
       totalAmount: 'Total Amount',
       remainingAmount: 'Remaining Amount',
+      monthlyPayment: 'Monthly Payment',
+      interestRate: 'Annual Interest Rate',
     },
   },
   dreams: {

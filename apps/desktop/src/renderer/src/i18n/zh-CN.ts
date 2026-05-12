@@ -558,6 +558,8 @@ export default {
     filter: '筛选',
     export: '导出',
     import: '导入',
+    cancel: '取消',
+    confirmDelete: '确认删除？',
   },
   debts: {
     title: '负债管理',
@@ -585,6 +587,8 @@ export default {
       selectType: '选择类型',
       totalAmount: '总金额',
       remainingAmount: '剩余金额',
+      monthlyPayment: '月还款额',
+      interestRate: '年利率',
     },
   },
   dreams: {

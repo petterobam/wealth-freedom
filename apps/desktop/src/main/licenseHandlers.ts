@@ -80,9 +80,12 @@ export function initLicenseHandlers(): void {
   // 在线激活（优先在线，失败回退本地）
   ipcMain.handle('license:activateOnline', async (_event, key: string) => {
     try {
-      return await activateLicenseOnline(key);
+      const result = await activateLicenseOnline(key);
+      if (result.success) return result;
+      // 在线激活失败（网络错误/服务器不可用），回退到本地激活
+      return activateLicense(key);
     } catch {
-      // 网络异常，回退到本地激活
+      // 异常回退到本地激活
       return activateLicense(key);
     }
   });
@@ -90,9 +93,12 @@ export function initLicenseHandlers(): void {
   // 在线续期（优先在线，失败回退本地）
   ipcMain.handle('license:renewOnline', async () => {
     try {
-      return await renewLicenseOnline();
+      const result = await renewLicenseOnline();
+      if (result.success) return result;
+      // 在线续期失败，回退到本地续期
+      return renewLicense();
     } catch {
-      // 网络异常，回退到本地续期
+      // 异常回退到本地续期
       return renewLicense();
     }
   });

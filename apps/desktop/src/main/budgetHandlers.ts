@@ -7,6 +7,17 @@ import { ipcMain } from 'electron';
 import type { Database } from 'better-sqlite3';
 import { randomUUID } from 'crypto';
 
+function snakeToCamel(obj: any): any {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(snakeToCamel);
+  const result: any = {};
+  for (const key of Object.keys(obj)) {
+    const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    result[camelKey] = obj[key];
+  }
+  return result;
+}
+
 let db: Database.Database;
 
 export function initBudgetHandlers(database: Database.Database) {
@@ -89,14 +100,14 @@ async function handleBudgetList(
   const query = data.activeOnly
     ? 'SELECT * FROM budgets WHERE user_id = ? AND is_active = 1 ORDER BY created_at DESC'
     : 'SELECT * FROM budgets WHERE user_id = ? ORDER BY created_at DESC';
-  return db.prepare(query).all(data.userId);
+  return snakeToCamel(db.prepare(query).all(data.userId));
 }
 
 async function handleBudgetGetById(
   _e: Electron.IpcMainInvokeEvent,
   data: { id: string }
 ) {
-  return db.prepare('SELECT * FROM budgets WHERE id = ?').get(data.id);
+  return snakeToCamel(db.prepare('SELECT * FROM budgets WHERE id = ?').get(data.id));
 }
 
 // ==================== 状态计算 ====================
@@ -114,9 +125,9 @@ async function handleBudgetStatus(
   _e: Electron.IpcMainInvokeEvent,
   data: { userId: string; periodStart?: string; periodEnd?: string }
 ): Promise<BudgetStatus[]> {
-  const budgets = db.prepare(
+  const budgets = snakeToCamel(db.prepare(
     'SELECT * FROM budgets WHERE user_id = ? AND is_active = 1'
-  ).all(data.userId) as any[];
+  ).all(data.userId)) as any[];
 
   if (budgets.length === 0) return [];
 
@@ -214,7 +225,7 @@ async function handleBudgetHistory(
   data: { budgetId: string; limit?: number }
 ) {
   const limit = data.limit ?? 6;
-  return db.prepare(
+  return snakeToCamel(db.prepare(
     `SELECT * FROM budget_snapshots WHERE budget_id = ? ORDER BY period_end DESC LIMIT ?`
-  ).all(data.budgetId, limit);
+  ).all(data.budgetId, limit));
 }

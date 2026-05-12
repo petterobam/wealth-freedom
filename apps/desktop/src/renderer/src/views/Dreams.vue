@@ -313,7 +313,7 @@ onMounted(() => {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px;
     padding: 30px;
-    color: var(--bg-card);
+    color: #fff;
 
     h3 {
       font-size: 20px;

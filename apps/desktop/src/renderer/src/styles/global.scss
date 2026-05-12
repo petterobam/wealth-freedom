@@ -232,3 +232,140 @@ $breakpoint-xxl: 1400px;
 .highlight-number.negative {
   color: var(--danger-color);
 }
+
+// 高亮卡片（结果区域用）
+.highlight-card {
+  border: 2px solid var(--el-color-primary-light-5);
+  background: var(--el-color-primary-light-9);
+}
+
+// 信息网格（计算结果展示）
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 24px;
+  margin-top: 16px;
+
+  @include respond-below(sm) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--el-fill-color-light);
+  transition: background 0.2s;
+
+  &.highlight {
+    background: var(--el-color-success-light-9);
+    border: 1px solid var(--el-color-success-light-7);
+  }
+
+  .label {
+    font-size: 13px;
+    color: var(--el-text-color-secondary);
+  }
+
+  .value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+
+    &.success {
+      color: var(--el-color-success);
+    }
+
+    &.warning {
+      color: var(--el-color-warning);
+    }
+
+    &.danger {
+      color: var(--el-color-danger);
+    }
+  }
+}
+
+// 对比区域（提前还款 vs 投资）
+.comparison-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  margin-top: 16px;
+  border-radius: 12px;
+  background: var(--el-fill-color-light);
+
+  @include respond-below(sm) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.comparison-item {
+  flex: 1;
+  text-align: center;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.comparison-label {
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  margin-bottom: 8px;
+}
+
+.comparison-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--el-text-color-primary);
+}
+
+.comparison-vs {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--el-text-color-secondary);
+  flex-shrink: 0;
+}
+
+.comparison-result {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+
+  &.prepay-better {
+    background: var(--el-color-success-light-9);
+    color: var(--el-color-success);
+    border: 1px solid var(--el-color-success-light-7);
+  }
+
+  &.invest-better {
+    background: var(--el-color-warning-light-9);
+    color: var(--el-color-warning);
+    border: 1px solid var(--el-color-warning-light-7);
+  }
+}
+
+// 成功/警告文本
+.success-text {
+  color: var(--el-color-success) !important;
+  font-weight: 600;
+}
+
+.warning-text {
+  color: var(--el-color-warning) !important;
+  font-weight: 600;
+}
+
+.danger-text {
+  color: var(--el-color-danger) !important;
+  font-weight: 600;
+}

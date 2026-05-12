@@ -15,6 +15,17 @@ import {
 } from '@wealth-freedom/shared';
 import type { Database } from 'better-sqlite3';
 
+function snakeToCamel(obj: any): any {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(snakeToCamel);
+  const result: any = {};
+  for (const key of Object.keys(obj)) {
+    const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    result[camelKey] = obj[key];
+  }
+  return result;
+}
+
 let db: Database.Database;
 
 /**
@@ -78,12 +89,12 @@ export function initIncomeHandlers(database: Database.Database) {
 
 async function handleIncomeSourceGetAll() {
   const stmt = db.prepare('SELECT * FROM income_sources ORDER BY created_at DESC');
-  return stmt.all();
+  return snakeToCamel(stmt.all());
 }
 
 async function handleIncomeSourceGetById(_event: any, id: string) {
   const stmt = db.prepare('SELECT * FROM income_sources WHERE id = ?');
-  return stmt.get(id);
+  return snakeToCamel(stmt.get(id));
 }
 
 async function handleIncomeSourceCreate(_event: any, data: any) {
@@ -171,12 +182,12 @@ async function handleIncomeRecordGetAll(_event: any, filters?: any) {
   sql += ' ORDER BY date DESC, created_at DESC';
 
   const stmt = db.prepare(sql);
-  return stmt.all(...params);
+  return snakeToCamel(stmt.all(...params));
 }
 
 async function handleIncomeRecordGetById(_event: any, id: string) {
   const stmt = db.prepare('SELECT * FROM income_records WHERE id = ?');
-  return stmt.get(id);
+  return snakeToCamel(stmt.get(id));
 }
 
 async function handleIncomeRecordCreate(_event: any, data: any) {
@@ -230,12 +241,12 @@ async function handleIncomeRecordDelete(_event: any, id: string) {
 
 async function handleIncomeGoalGetAll() {
   const stmt = db.prepare('SELECT * FROM income_goals ORDER BY priority DESC, created_at DESC');
-  return stmt.all();
+  return snakeToCamel(stmt.all());
 }
 
 async function handleIncomeGoalGetById(_event: any, id: string) {
   const stmt = db.prepare('SELECT * FROM income_goals WHERE id = ?');
-  return stmt.get(id);
+  return snakeToCamel(stmt.get(id));
 }
 
 async function handleIncomeGoalCreate(_event: any, data: any) {
@@ -301,12 +312,12 @@ async function handleIncomeGoalDelete(_event: any, id: string) {
 
 async function handleIncomeStrategyGetAll() {
   const stmt = db.prepare('SELECT * FROM income_strategies ORDER BY priority DESC, created_at DESC');
-  return stmt.all();
+  return snakeToCamel(stmt.all());
 }
 
 async function handleIncomeStrategyGetRecommended() {
   const stmt = db.prepare('SELECT * FROM income_strategies WHERE is_recommended = 1 ORDER BY priority DESC');
-  return stmt.all();
+  return snakeToCamel(stmt.all());
 }
 
 async function handleIncomeStrategyCreate(_event: any, data: any) {
@@ -376,7 +387,7 @@ async function handleIncomeStrategyApply(_event: any, id: string) {
   stmt.run(id);
 
   // 自动生成行动计划
-  const strategy = db.prepare('SELECT * FROM income_strategies WHERE id = ?').get(id) as any;
+  const strategy = snakeToCamel(db.prepare('SELECT * FROM income_strategies WHERE id = ?').get(id)) as any;
   if (strategy && Array.isArray(strategy.steps)) {
     for (let i = 0; i < strategy.steps.length; i++) {
       const step = strategy.steps[i];
@@ -413,12 +424,12 @@ async function handleIncomeActionGetAll(_event: any, filters?: any) {
   sql += ' ORDER BY priority DESC, due_date ASC, created_at DESC';
 
   const stmt = db.prepare(sql);
-  return stmt.all(...params);
+  return snakeToCamel(stmt.all(...params));
 }
 
 async function handleIncomeActionGetById(_event: any, id: string) {
   const stmt = db.prepare('SELECT * FROM income_actions WHERE id = ?');
-  return stmt.get(id);
+  return snakeToCamel(stmt.get(id));
 }
 
 async function handleIncomeActionCreate(_event: any, data: any) {
@@ -516,7 +527,7 @@ async function handleIncomeSimulate(_event: any, params: any) {
 
 async function handleIncomeSimulationGetAll() {
   const stmt = db.prepare('SELECT * FROM income_simulations ORDER BY created_at DESC');
-  return stmt.all();
+  return snakeToCamel(stmt.all());
 }
 
 async function handleIncomeSimulationCreate(_event: any, data: any) {

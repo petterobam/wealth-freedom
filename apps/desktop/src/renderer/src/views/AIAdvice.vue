@@ -520,17 +520,17 @@ onMounted(async () => {
 }
 
 .tip-warning {
-  background: #fdf6ec;
+  background: var(--el-color-warning-light-9, rgba(230, 162, 60, 0.1));
   border-left: 3px solid var(--el-color-warning);
 }
 
 .tip-success {
-  background: #f0f9eb;
+  background: var(--el-color-success-light-9, rgba(103, 194, 58, 0.1));
   border-left: 3px solid var(--el-color-success);
 }
 
 .tip-info {
-  background: var(--el-color-primary-light-9);
+  background: var(--el-color-primary-light-9, rgba(64, 158, 255, 0.1));
   border-left: 3px solid var(--el-color-primary);
 }
 
@@ -631,7 +631,7 @@ onMounted(async () => {
 
 .chat-msg.user .msg-content {
   background: var(--el-color-primary);
-  color: var(--bg-card);
+  color: #fff;
 }
 
 .chat-msg.assistant .msg-content {

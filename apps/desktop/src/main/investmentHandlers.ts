@@ -7,13 +7,24 @@ import { ipcMain } from 'electron';
 import Database from 'better-sqlite3';
 import { v4 as uuidv4 } from 'uuid';
 
+function snakeToCamel(obj: any): any {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(snakeToCamel);
+  const result: any = {};
+  for (const key of Object.keys(obj)) {
+    const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    result[camelKey] = obj[key];
+  }
+  return result;
+}
+
 export const registerInvestmentHandlers = (db: Database.Database): void => {
   const DEFAULT_USER_ID = 'default';
 
   // ========== 投资账户 ==========
 
   ipcMain.handle('investment:get-accounts', () => {
-    return db.prepare('SELECT * FROM investment_accounts WHERE user_id = ? ORDER BY created_at DESC').all(DEFAULT_USER_ID);
+    return snakeToCamel(db.prepare('SELECT * FROM investment_accounts WHERE user_id = ? ORDER BY created_at DESC').all(DEFAULT_USER_ID));
   });
 
   ipcMain.handle('investment:add-account', (_e, data: { name: string; platform: string; type?: string; notes?: string }) => {
@@ -34,7 +45,7 @@ export const registerInvestmentHandlers = (db: Database.Database): void => {
     fields.push('updated_at = ?'); values.push(new Date().toISOString());
     values.push(data.id);
     db.prepare(`UPDATE investment_accounts SET ${fields.join(', ')} WHERE id = ?`).run(...values);
-    return db.prepare('SELECT * FROM investment_accounts WHERE id = ?').get(data.id);
+    return snakeToCamel(db.prepare('SELECT * FROM investment_accounts WHERE id = ?').get(data.id));
   });
 
   ipcMain.handle('investment:delete-account', (_e, id: string) => {
@@ -56,9 +67,9 @@ export const registerInvestmentHandlers = (db: Database.Database): void => {
 
   ipcMain.handle('investment:get-portfolios', (_e, accountId?: string) => {
     if (accountId) {
-      return db.prepare('SELECT * FROM portfolios WHERE account_id = ? ORDER BY created_at DESC').all(accountId);
+      return snakeToCamel(db.prepare('SELECT * FROM portfolios WHERE account_id = ? ORDER BY created_at DESC').all(accountId));
     }
-    return db.prepare('SELECT p.*, ia.name AS account_name, ia.platform FROM portfolios p JOIN investment_accounts ia ON p.account_id = ia.id ORDER BY p.created_at DESC').all();
+    return snakeToCamel(db.prepare('SELECT p.*, ia.name AS account_name, ia.platform FROM portfolios p JOIN investment_accounts ia ON p.account_id = ia.id ORDER BY p.created_at DESC').all());
   });
 
   ipcMain.handle('investment:add-portfolio', (_e, data: { account_id: string; name: string; description?: string }) => {
@@ -81,7 +92,7 @@ export const registerInvestmentHandlers = (db: Database.Database): void => {
   // ========== 持仓 ==========
 
   ipcMain.handle('investment:get-holdings', (_e, portfolioId: string) => {
-    return db.prepare('SELECT * FROM holdings WHERE portfolio_id = ? ORDER BY market_value DESC').all(portfolioId);
+    return snakeToCamel(db.prepare('SELECT * FROM holdings WHERE portfolio_id = ? ORDER BY market_value DESC').all(portfolioId));
   });
 
   ipcMain.handle('investment:add-holding', (_e, data: { portfolio_id: string; symbol: string; name?: string; type?: string; quantity?: number; avg_cost?: number }) => {
@@ -95,7 +106,7 @@ export const registerInvestmentHandlers = (db: Database.Database): void => {
   });
 
   ipcMain.handle('investment:update-price', (_e, data: { id: string; current_price: number }) => {
-    const holding: any = db.prepare('SELECT * FROM holdings WHERE id = ?').get(data.id);
+    const holding: any = snakeToCamel(db.prepare('SELECT * FROM holdings WHERE id = ?').get(data.id));
     if (!holding) return null;
     const mv = holding.quantity * data.current_price;
     const cost = holding.quantity * holding.avg_cost;
@@ -136,7 +147,7 @@ export const registerInvestmentHandlers = (db: Database.Database): void => {
     if (opts.end_date) { sql += ' AND it.transaction_date <= ?'; params.push(opts.end_date); }
     sql += ' ORDER BY it.transaction_date DESC';
     if (opts.limit) { sql += ' LIMIT ?'; params.push(opts.limit); }
-    return db.prepare(sql).all(...params);
+    return snakeToCamel(db.prepare(sql).all(...params));
   });
 
   ipcMain.handle('investment:add-transaction', (_e, data: { holding_id: string; type: string; quantity: number; price: number; fee?: number; transaction_date: string; notes?: string }) => {
@@ -150,7 +161,7 @@ export const registerInvestmentHandlers = (db: Database.Database): void => {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(id, data.holding_id, data.type, data.quantity, data.price, amount, data.fee || 0, data.transaction_date, data.notes || null, now);
 
       // 更新持仓
-      const holding: any = db.prepare('SELECT * FROM holdings WHERE id = ?').get(data.holding_id);
+      const holding: any = snakeToCamel(db.prepare('SELECT * FROM holdings WHERE id = ?').get(data.holding_id));
       if (holding) {
         let newQty = holding.quantity;
         let newAvgCost = holding.avg_cost;

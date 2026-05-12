@@ -1006,7 +1006,7 @@ watch([currentScenario, newScenario], () => {
         gap: 16px;
         padding: 20px;
         border-radius: 12px;
-        color: var(--bg-card);
+        color: #fff;
 
         @media (max-width: 575px) {
           padding: 16px;

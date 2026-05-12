@@ -859,7 +859,7 @@ onUnmounted(() => {
         gap: 16px;
         padding: 20px;
         border-radius: 12px;
-        color: var(--bg-card);
+        color: #fff;
 
         @media (max-width: 575px) {
           padding: 16px;
@@ -953,6 +953,89 @@ onUnmounted(() => {
 
   .gradient-warning {
     background: linear-gradient(135deg, var(--el-color-warning) 0%, #f5a623 100%);
+  }
+
+  .status-card {
+    margin-bottom: 16px;
+
+    .status-content {
+      margin-top: 16px;
+    }
+
+    .status-success,
+    .status-warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .status-success {
+      background: rgba(103, 194, 58, 0.1);
+      border: 1px solid var(--el-color-success-light-5);
+    }
+
+    .status-warning {
+      background: rgba(230, 162, 60, 0.1);
+      border: 1px solid var(--el-color-warning-light-5);
+    }
+
+    .status-text {
+      flex: 1;
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--el-text-color-primary);
+      }
+
+      p {
+        font-size: 14px;
+        color: var(--el-text-color-regular);
+        line-height: 1.6;
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  .analysis-card {
+    margin-bottom: 16px;
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 24px;
+    }
+
+    .analysis-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--el-fill-color-light);
+    }
+
+    .analysis-label {
+      font-size: 13px;
+      color: var(--el-text-color-secondary);
+    }
+
+    .analysis-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--el-text-color-primary);
+
+      &.success {
+        color: var(--el-color-success);
+      }
+
+      &.warning {
+        color: var(--el-color-warning);
+      }
+    }
   }
 
   .scenario-actions {

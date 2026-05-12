@@ -645,7 +645,7 @@ onMounted(async () => {
     align-items: flex-start;
     gap: 12px;
     padding: 16px;
-    background: #fff9e6;
+    background: rgba(255, 193, 7, 0.1);
     border-left: 4px solid #ffc107;
     border-radius: 8px;
     margin-top: 16px;
@@ -664,13 +664,13 @@ onMounted(async () => {
         display: block;
         font-size: 14px;
         font-weight: 600;
-        color: var(--text-primary);
+        color: var(--el-text-color-primary);
         margin-bottom: 6px;
       }
 
       p {
         font-size: 13px;
-        color: var(--text-regular);
+        color: var(--el-text-color-regular);
         line-height: 1.6;
         margin: 0;
       }
@@ -682,12 +682,12 @@ onMounted(async () => {
     align-items: center;
     gap: 8px;
     padding: 16px;
-    background: var(--el-color-primary-light-9);
+    background: rgba(103, 194, 58, 0.1);
     border-left: 4px solid var(--el-color-success);
     border-radius: 8px;
     margin-top: 16px;
     font-size: 14px;
-    color: var(--text-regular);
+    color: var(--el-text-color-regular);
 
     .el-icon {
       color: var(--el-color-success);

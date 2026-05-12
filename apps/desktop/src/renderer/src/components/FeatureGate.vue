@@ -94,18 +94,26 @@ const goToLicense = () => {
   font-weight: 500;
 
   &-basic {
-    background: #e6f7ff;
+    background: rgba(24, 144, 255, 0.15);
     color: #1890ff;
   }
 
   &-pro {
-    background: #fff7e6;
+    background: rgba(250, 140, 22, 0.15);
     color: #fa8c16;
   }
 
   &-trial {
-    background: #f6ffed;
+    background: rgba(82, 196, 26, 0.15);
     color: #52c41a;
   }
+}
+
+// 暗色模式强制亮色文字
+:global([data-theme="dark"]) {
+  .badge-basic { color: #69b1ff !important; background: rgba(24, 144, 255, 0.2) !important; }
+  .badge-pro   { color: #ffc069 !important; background: rgba(250, 140, 22, 0.2) !important; }
+  .badge-trial { color: #95de64 !important; background: rgba(82, 196, 26, 0.2) !important; }
+  .gate-card   { box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important; }
 }
 </style>

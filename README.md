@@ -26,6 +26,30 @@
     <td align="center">🎯 Goal Tracking</td>
   </tr>
   <tr>
+    <td><img src="docs/screenshots/report.png" alt="Report" width="400"/></td>
+    <td><img src="docs/screenshots/pdf-report.png" alt="PDF Report" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">📊 Report Analysis</td>
+    <td align="center">📄 PDF Report</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/investment.png" alt="Investment" width="400"/></td>
+    <td><img src="docs/screenshots/budget.png" alt="Budget" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">📈 Investment Tracking</td>
+    <td align="center">📋 Budget Management</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/ai-advice.png" alt="AI Advice" width="400"/></td>
+    <td><img src="docs/screenshots/accounts.png" alt="Accounts" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">🤖 AI Financial Advisor</td>
+    <td align="center">🏦 Account Management</td>
+  </tr>
+  <tr>
     <td colspan="2" align="center"><img src="docs/screenshots/bigscreen.png" alt="Big Screen" width="600"/></td>
   </tr>
   <tr>
@@ -67,6 +91,14 @@
 <p align="center">
   <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="45%" />
   <img src="docs/screenshots/goals.png" alt="Goals" width="45%" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/report.png" alt="Report" width="45%" />
+  <img src="docs/screenshots/investment.png" alt="Investment" width="45%" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/ai-advice.png" alt="AI Advice" width="45%" />
+  <img src="docs/screenshots/budget.png" alt="Budget" width="45%" />
 </p>
 <p align="center">
   <img src="docs/screenshots/bigscreen.png" alt="Big Screen" width="90%" />

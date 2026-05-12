@@ -183,39 +183,41 @@
     border-color: var(--border-color) !important;
   }
 
-  /* ── 标签 — 暗色模式用亮色背景+深色文字 ── */
-  .el-tag.el-tag--light {
-    color: var(--el-color-primary-dark-2) !important;
-  }
-  .el-tag.el-tag--success.el-tag--light {
-    background: rgba(103, 194, 58, 0.25) !important;
-    border-color: rgba(103, 194, 58, 0.4) !important;
-    color: #67c23a !important;
-  }
-  .el-tag.el-tag--warning.el-tag--light {
-    background: rgba(230, 162, 60, 0.25) !important;
-    border-color: rgba(230, 162, 60, 0.4) !important;
-    color: #e6a23c !important;
-  }
-  .el-tag.el-tag--danger.el-tag--light {
-    background: rgba(245, 108, 108, 0.25) !important;
-    border-color: rgba(245, 108, 108, 0.4) !important;
-    color: #f56c6c !important;
-  }
-  .el-tag.el-tag--info.el-tag--light {
-    background: rgba(144, 147, 153, 0.25) !important;
-    border-color: rgba(144, 147, 153, 0.4) !important;
-    color: #a0a3ad !important;
-  }
-  .el-tag.el-tag--primary.el-tag--light {
-    background: rgba(64, 158, 255, 0.25) !important;
-    border-color: rgba(64, 158, 255, 0.4) !important;
-    color: #409eff !important;
-  }
-  /* 非 light 变体的 tag 保持原色但确保文字可读 */
-  .el-tag:not(.el-tag--light) {
+  /* ── el-tag 暗色模式全覆盖 ── */
+  /* 所有 tag 内部文字强制亮色 */
+  .el-tag .el-tag__content,
+  .el-tag .el-tag__close,
+  .el-tag {
     color: #fff !important;
   }
+  /* dark 变体 — 彩色背景 + 白字 */
+  .el-tag.el-tag--dark.el-tag--success { background-color: rgba(103, 194, 58, 0.6) !important; border-color: rgba(103, 194, 58, 0.7) !important; }
+  .el-tag.el-tag--dark.el-tag--warning { background-color: rgba(230, 162, 60, 0.6) !important; border-color: rgba(230, 162, 60, 0.7) !important; }
+  .el-tag.el-tag--dark.el-tag--danger  { background-color: rgba(245, 108, 108, 0.6) !important; border-color: rgba(245, 108, 108, 0.7) !important; }
+  .el-tag.el-tag--dark.el-tag--info    { background-color: rgba(144, 147, 153, 0.5) !important; border-color: rgba(144, 147, 153, 0.6) !important; }
+  .el-tag.el-tag--dark.el-tag--primary { background-color: rgba(64, 158, 255, 0.6) !important; border-color: rgba(64, 158, 255, 0.7) !important; }
+  /* plain 变体 — 透明背景 + 亮色字 */
+  .el-tag.el-tag--plain.el-tag--success { background-color: rgba(103, 194, 58, 0.15) !important; border-color: rgba(103, 194, 58, 0.4) !important; color: #85ce61 !important; }
+  .el-tag.el-tag--plain.el-tag--success .el-tag__content { color: #85ce61 !important; }
+  .el-tag.el-tag--plain.el-tag--warning { background-color: rgba(230, 162, 60, 0.15) !important; border-color: rgba(230, 162, 60, 0.4) !important; color: #f5da55 !important; }
+  .el-tag.el-tag--plain.el-tag--warning .el-tag__content { color: #f5da55 !important; }
+  .el-tag.el-tag--plain.el-tag--danger  { background-color: rgba(245, 108, 108, 0.15) !important; border-color: rgba(245, 108, 108, 0.4) !important; color: #f89898 !important; }
+  .el-tag.el-tag--plain.el-tag--danger .el-tag__content { color: #f89898 !important; }
+  .el-tag.el-tag--plain.el-tag--info    { background-color: rgba(144, 147, 153, 0.15) !important; border-color: rgba(144, 147, 153, 0.4) !important; color: #c0c4cc !important; }
+  .el-tag.el-tag--plain.el-tag--info .el-tag__content { color: #c0c4cc !important; }
+  .el-tag.el-tag--plain.el-tag--primary { background-color: rgba(64, 158, 255, 0.15) !important; border-color: rgba(64, 158, 255, 0.4) !important; color: #79bbff !important; }
+  .el-tag.el-tag--plain.el-tag--primary .el-tag__content { color: #79bbff !important; }
+  /* light 变体（默认）— 也强制亮色 */
+  .el-tag.el-tag--light.el-tag--success { background-color: rgba(103, 194, 58, 0.2) !important; border-color: rgba(103, 194, 58, 0.35) !important; }
+  .el-tag.el-tag--light.el-tag--success .el-tag__content { color: #85ce61 !important; }
+  .el-tag.el-tag--light.el-tag--warning { background-color: rgba(230, 162, 60, 0.2) !important; border-color: rgba(230, 162, 60, 0.35) !important; }
+  .el-tag.el-tag--light.el-tag--warning .el-tag__content { color: #f5da55 !important; }
+  .el-tag.el-tag--light.el-tag--danger  { background-color: rgba(245, 108, 108, 0.2) !important; border-color: rgba(245, 108, 108, 0.35) !important; }
+  .el-tag.el-tag--light.el-tag--danger .el-tag__content { color: #f89898 !important; }
+  .el-tag.el-tag--light.el-tag--info    { background-color: rgba(144, 147, 153, 0.2) !important; border-color: rgba(144, 147, 153, 0.35) !important; }
+  .el-tag.el-tag--light.el-tag--info .el-tag__content { color: #c0c4cc !important; }
+  .el-tag.el-tag--light.el-tag--primary { background-color: rgba(64, 158, 255, 0.2) !important; border-color: rgba(64, 158, 255, 0.35) !important; }
+  .el-tag.el-tag--light.el-tag--primary .el-tag__content { color: #79bbff !important; }
 
   /* ── 进度条 — 轨道暗色 ── */
   .el-progress-bar__outer {
@@ -944,5 +946,169 @@
   }
   .stage-eta {
     color: #409eff !important;
+  }
+
+  /* ── Element Plus el-alert 暗色模式优化 ── */
+  .el-alert--warning {
+    background-color: rgba(230, 162, 60, 0.15) !important;
+    border-color: rgba(230, 162, 60, 0.3) !important;
+    .el-alert__title { color: #f5da55 !important; }
+    .el-alert__description { color: rgba(245, 218, 85, 0.85) !important; }
+    .el-alert__content { color: rgba(245, 218, 85, 0.85) !important; }
+    p, li, strong { color: rgba(245, 218, 85, 0.85) !important; }
+  }
+  .el-alert--error {
+    background-color: rgba(245, 108, 108, 0.15) !important;
+    border-color: rgba(245, 108, 108, 0.3) !important;
+    .el-alert__title { color: #f89898 !important; }
+    .el-alert__description { color: rgba(248, 152, 152, 0.85) !important; }
+    .el-alert__content { color: rgba(248, 152, 152, 0.85) !important; }
+    p, li, strong { color: rgba(248, 152, 152, 0.85) !important; }
+  }
+  .el-alert--success {
+    background-color: rgba(103, 194, 58, 0.15) !important;
+    border-color: rgba(103, 194, 58, 0.3) !important;
+    .el-alert__title { color: #85ce61 !important; }
+    .el-alert__description { color: rgba(133, 206, 97, 0.85) !important; }
+    .el-alert__content { color: rgba(133, 206, 97, 0.85) !important; }
+    p, li, strong { color: rgba(133, 206, 97, 0.85) !important; }
+  }
+  .el-alert--info {
+    background-color: rgba(64, 158, 255, 0.15) !important;
+    border-color: rgba(64, 158, 255, 0.3) !important;
+    .el-alert__title { color: #79bbff !important; }
+    .el-alert__description { color: rgba(121, 187, 255, 0.85) !important; }
+    .el-alert__content { color: rgba(121, 187, 255, 0.85) !important; }
+    p, li, strong { color: rgba(121, 187, 255, 0.85) !important; }
+  }
+
+  /* ── AI 助手快速建议卡片暗色模式 ── */
+  .tip-card.tip-warning {
+    background: rgba(230, 162, 60, 0.15) !important;
+    .tip-title { color: #f5da55 !important; }
+    .tip-desc { color: rgba(245, 218, 85, 0.85) !important; }
+  }
+  .tip-card.tip-success {
+    background: rgba(103, 194, 58, 0.15) !important;
+    .tip-title { color: #85ce61 !important; }
+    .tip-desc { color: rgba(133, 206, 97, 0.85) !important; }
+  }
+  .tip-card.tip-info {
+    background: rgba(64, 158, 255, 0.15) !important;
+    .tip-title { color: #79bbff !important; }
+    .tip-desc { color: rgba(121, 187, 255, 0.85) !important; }
+  }
+
+  /* ── 计算器结果卡片暗色模式 ── */
+  .info-item {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+  .info-item.highlight {
+    background: rgba(103, 194, 58, 0.15) !important;
+    border-color: rgba(103, 194, 58, 0.3) !important;
+  }
+  .info-item .label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .info-item .value {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  .info-item .value.success {
+    color: #85ce61 !important;
+  }
+
+  /* 退休规划状态卡片 */
+  .status-success {
+    background: rgba(103, 194, 58, 0.12) !important;
+    border-color: rgba(103, 194, 58, 0.25) !important;
+  }
+  .status-warning {
+    background: rgba(230, 162, 60, 0.12) !important;
+    border-color: rgba(230, 162, 60, 0.25) !important;
+  }
+  .status-text h3 {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  .status-text p {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  /* 退休规划详细分析 */
+  .analysis-item {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+  .analysis-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .analysis-value {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  /* 大额支出规划指标卡片 */
+  .metrics-grid .metric-card {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .metrics-grid .metric-card.success {
+    background: rgba(103, 194, 58, 0.12) !important;
+    border-color: rgba(103, 194, 58, 0.25) !important;
+  }
+  .metrics-grid .metric-card.warning {
+    background: rgba(230, 162, 60, 0.12) !important;
+    border-color: rgba(230, 162, 60, 0.25) !important;
+  }
+  .metrics-grid .metric-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .metrics-grid .metric-value {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .metrics-grid .metric-sub {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  /* 大额支出规划详细分析 */
+  .detail-item {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+  .detail-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .detail-value {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  /* 大额支出规划时间计算器 */
+  .time-item {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+  .time-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .time-value {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  /* 大额支出规划建议 */
+  .suggestion-item {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  /* 对比区域 */
+  .comparison-section {
+    background: rgba(255, 255, 255, 0.04) !important;
+  }
+  .comparison-item {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+  .comparison-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .comparison-value {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .comparison-vs {
+    color: rgba(255, 255, 255, 0.5) !important;
   }
 }

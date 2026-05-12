@@ -160,7 +160,7 @@
             {{ result.isAchievable ? t('largeExpensePlanner.yes') : t('largeExpensePlanner.no') }}
           </div>
           <div class="metric-sub">
-            {{ result.isAchievable ? `${result.yearsToAchieve}${t('largeExpensePlanner.achievedIn')}` : `${t('largeExpensePlanner.gap')}${formatMoney(result.gap)}` }}
+            {{ result.isAchievable ? (Number(result.yearsToAchieve) === 0 ? '已有足够资金' : `${result.yearsToAchieve}${t('largeExpensePlanner.achievedIn')}`) : `${t('largeExpensePlanner.gap')}${formatMoney(result.gap)}` }}
           </div>
         </div>
 
@@ -458,14 +458,16 @@ function planLargeExpense(targetAmount: number, monthsToTarget: number, currentS
   
   let monthsToAchieve = null
   if (isAchievable) {
-    if (annualReturn === 0) {
+    if (currentSavings >= targetAmount) {
+      monthsToAchieve = 0
+    } else if (annualReturn === 0) {
       monthsToAchieve = Math.ceil((targetAmount - currentSavings) / monthlySavings)
     } else {
       const monthlyRate = annualReturn / 100 / 12
       let assets = currentSavings
       monthsToAchieve = 0
-      
-      while (assets < targetAmount && monthsToAchieve < monthsToTarget) {
+
+      while (assets < targetAmount) {
         const monthlyReturn = assets * monthlyRate
         assets += monthlyReturn + monthlySavings
         monthsToAchieve++
@@ -508,7 +510,7 @@ function planLargeExpense(targetAmount: number, monthsToTarget: number, currentS
     futureAssets: futureAssets.totalFuture,
     isAchievable: isAchievable,
     monthsToAchieve: monthsToAchieve,
-    yearsToAchieve: monthsToAchieve ? (monthsToAchieve / 12).toFixed(1) : null,
+    yearsToAchieve: monthsToAchieve !== null ? (monthsToAchieve / 12).toFixed(1) : null,
     gap: gap > 0 ? Math.round(gap) : 0,
     additionalSavingsNeeded: additionalSavingsNeeded > 0 ? additionalSavingsNeeded : 0,
     recommendation: recommendation,
@@ -832,7 +834,7 @@ onUnmounted(() => {
         gap: 16px;
         padding: 20px;
         border-radius: 12px;
-        color: var(--bg-card);
+        color: #fff;
 
         @media (max-width: 575px) {
           padding: 16px;
@@ -926,6 +928,158 @@ onUnmounted(() => {
 
   .gradient-warning {
     background: linear-gradient(135deg, var(--el-color-warning) 0%, #f5a623 100%);
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+
+    @media (max-width: 767px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 575px) {
+      grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--el-border-color-lighter);
+      text-align: center;
+
+      &.success {
+        background: rgba(103, 194, 58, 0.08);
+        border-color: var(--el-color-success-light-5);
+      }
+
+      &.warning {
+        background: rgba(230, 162, 60, 0.08);
+        border-color: var(--el-color-warning-light-5);
+      }
+
+      .metric-label {
+        font-size: 13px;
+        color: var(--el-text-color-secondary);
+        margin-bottom: 8px;
+      }
+
+      .metric-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--el-text-color-primary);
+
+        &.success-text {
+          color: var(--el-color-success);
+        }
+
+        &.warning-text {
+          color: var(--el-color-warning);
+        }
+      }
+
+      .metric-sub {
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+        margin-top: 6px;
+      }
+    }
+  }
+
+  .detail-card {
+    margin-bottom: 16px;
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 24px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--el-fill-color-light);
+    }
+
+    .detail-label {
+      font-size: 13px;
+      color: var(--el-text-color-secondary);
+    }
+
+    .detail-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--el-text-color-primary);
+    }
+  }
+
+  .time-calculator-card {
+    margin-bottom: 16px;
+
+    .time-result {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+
+      @media (max-width: 575px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .time-item {
+      text-align: center;
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--el-fill-color-light);
+    }
+
+    .time-label {
+      font-size: 13px;
+      color: var(--el-text-color-secondary);
+      margin-bottom: 8px;
+    }
+
+    .time-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--el-text-color-primary);
+    }
+  }
+
+  .suggestion-card {
+    margin-bottom: 16px;
+
+    .suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .suggestion-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: var(--el-fill-color-light);
+      font-size: 14px;
+      color: var(--el-text-color-regular);
+      line-height: 1.5;
+
+      .suggestion-icon {
+        color: var(--el-color-success);
+        font-size: 18px;
+        margin-top: 1px;
+        flex-shrink: 0;
+      }
+    }
   }
 
   .scenario-actions {

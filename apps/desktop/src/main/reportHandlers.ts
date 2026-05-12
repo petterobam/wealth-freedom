@@ -366,6 +366,12 @@ async function handleGoalProgress(
     )
   `).get(data.userId) as { avg: number };
 
+  const stageNames: Record<string, string> = {
+    security: '财务保障',
+    safety: '财务安全',
+    freedom: '财务自由',
+  };
+
   const goalsWithEta = goals.map((g: any) => {
     const remaining = g.target_amount - g.current_amount;
     let estimatedMonths = null;
@@ -380,6 +386,7 @@ async function handleGoalProgress(
 
     return {
       ...g,
+      name: stageNames[g.stage] || g.notes || g.stage,
       remaining,
       estimatedMonths,
       estimatedDate,
@@ -388,8 +395,8 @@ async function handleGoalProgress(
 
   // 按阶段分组
   const byStage = {
-    guarantee: goalsWithEta.filter((g: any) => g.stage === 'guarantee'),
     security: goalsWithEta.filter((g: any) => g.stage === 'security'),
+    safety: goalsWithEta.filter((g: any) => g.stage === 'safety'),
     freedom: goalsWithEta.filter((g: any) => g.stage === 'freedom'),
   };
 

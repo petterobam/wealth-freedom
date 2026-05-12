@@ -550,6 +550,8 @@ export default {
     filter: 'フィルター',
     export: 'エクスポート',
     import: 'インポート',
+    cancel: 'キャンセル',
+    confirmDelete: '削除しますか？',
   },
   debts: {
     title: '借入管理',
@@ -577,6 +579,8 @@ export default {
       selectType: '種別を選択',
       totalAmount: '総額',
       remainingAmount: '残高',
+      monthlyPayment: '月間返済額',
+      interestRate: '年利',
     },
   },
   dreams: {
