@@ -45,7 +45,8 @@ jobs:
         run: pnpm -F @wealth-freedom/shared build
 
       - name: Rebuild native modules for Electron
-        run: npx electron-rebuild -m apps/desktop
+        working-directory: apps/desktop
+        run: npx electron-rebuild
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
