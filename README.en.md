@@ -4,13 +4,58 @@
 >
 > Three-stage wealth philosophy: **Security** → **Stability** → **Freedom**
 
-[![Banner](docs/banner.png)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
+[![Banner](docs/screenshots/bigscreen.png)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
 
 [![Version](https://img.shields.io/badge/v2.0.0-blue?style=flat-square&label=Release)](https://github.com/petterobam/wealth-freedom/releases/tag/v2.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/macOS-arm64%20%7C%20x64-blue?style=flat-square&logo=apple)](https://github.com/petterobam/wealth-freedom/releases)
 
 **[中文文档](./README.md)**
+
+---
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td><img src="docs/screenshots/dashboard.png" alt="Dashboard" width="400"/></td>
+    <td><img src="docs/screenshots/goals.png" alt="Goals" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">📊 Dashboard</td>
+    <td align="center">🎯 Goal Tracking</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/report.png" alt="Report" width="400"/></td>
+    <td><img src="docs/screenshots/pdf-report.png" alt="PDF Report" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">📊 Report Analysis</td>
+    <td align="center">📄 PDF Report</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/investment.png" alt="Investment" width="400"/></td>
+    <td><img src="docs/screenshots/budget.png" alt="Budget" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">📈 Investment Tracking</td>
+    <td align="center">📋 Budget Management</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/ai-advice.png" alt="AI Advice" width="400"/></td>
+    <td><img src="docs/screenshots/accounts.png" alt="Accounts" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">🤖 AI Financial Advisor</td>
+    <td align="center">🏦 Account Management</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/screenshots/bigscreen.png" alt="Big Screen" width="600"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">🖥️ Data Visualization Big Screen</td>
+  </tr>
+</table>
 
 ---
 

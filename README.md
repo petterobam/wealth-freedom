@@ -86,24 +86,6 @@
 | 🔑 **许可证系统** | License | 免费/Pro/终身三版，在线激活验证 |
 | 🌐 **网页端** | Web App | Next.js 16 + PWA，移动端友好 |
 
-### 🎨 截图
-
-<p align="center">
-  <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="45%" />
-  <img src="docs/screenshots/goals.png" alt="Goals" width="45%" />
-</p>
-<p align="center">
-  <img src="docs/screenshots/report.png" alt="Report" width="45%" />
-  <img src="docs/screenshots/investment.png" alt="Investment" width="45%" />
-</p>
-<p align="center">
-  <img src="docs/screenshots/ai-advice.png" alt="AI Advice" width="45%" />
-  <img src="docs/screenshots/budget.png" alt="Budget" width="45%" />
-</p>
-<p align="center">
-  <img src="docs/screenshots/bigscreen.png" alt="Big Screen" width="90%" />
-</p>
-
 ### 🆚 与其他工具对比
 
 | 特性 | Wealth Freedom | Ghostfolio | YNAB | Excel |
