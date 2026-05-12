@@ -44,6 +44,11 @@ jobs:
       - name: Build shared package
         run: pnpm -F @wealth-freedom/shared build
 
+      - name: Rebuild native modules for Electron
+        run: npx electron-rebuild -m apps/desktop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build & package (macOS)
         if: matrix.platform == 'mac'
         run: |
